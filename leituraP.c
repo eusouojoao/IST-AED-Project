@@ -236,6 +236,10 @@ void leituraP(FILE *fp)
     printf("numero total de paredes é %d\n", n_walls);
 
     int *board = (int *)malloc(n_Col * n_Lines * sizeof(int)); //aloca tabuleiro
+    if (board == NULL)
+    {
+        exit(EXIT_FAILURE);
+    }
     //int board[n_Lines][n_Col];
     inicializeBoard(board, n_Lines, n_Col); //inicializa o tabuleiro
     while (fscanf(fp, "%d %d %d", &l, &c, &w) != EOF)
