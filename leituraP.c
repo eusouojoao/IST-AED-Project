@@ -283,7 +283,7 @@ void pushAdjacent(int *board, int tile, int n_Lines, int n_Col)
 int checkSameRoom(int *board, int n_Lines, int n_Col, int p1, int p2)
 {
     int aux = p1;
-    initPilha(n_Col * n_Lines); //OTIMIZAR O TAMANHO
+    initPilha(2 * n_Col + 3 * n_Lines); //ocupação máxima que a pilha poderia ter
     push(aux);
     while (!isEmpty())
     {
