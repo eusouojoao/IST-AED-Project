@@ -1,3 +1,5 @@
+#ifndef pilha
+#define pilha
 #include "Item.h"
 
 typedef enum
@@ -12,3 +14,4 @@ Item pop();
 int isEmpty();
 
 //função que desaloca memoria da stack
+#endif

@@ -13,8 +13,6 @@ int main(int argc, char *argv[])
         return 1;
 
     leituraP(fp);
-
     fclose(fp);
-
     return 0;
 }
