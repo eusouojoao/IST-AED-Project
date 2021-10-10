@@ -37,3 +37,8 @@ Item pop()
     }
     exit(EXIT_FAILURE);
 }
+
+void freePilha()
+{
+    free(gP);
+}

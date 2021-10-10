@@ -1,0 +1,14 @@
+==291770== Memcheck, a memory error detector
+==291770== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==291770== Using Valgrind-3.17.0 and LibVEX; rerun with -h for copyright info
+==291770== Command: ./roap teste.txt
+==291770== Parent PID: 275691
+==291770== 
+==291770== 
+==291770== HEAP SUMMARY:
+==291770==     in use at exit: 0 bytes in 0 blocks
+==291770==   total heap usage: 5 allocs, 5 frees, 6,712 bytes allocated
+==291770== 
+==291770== All heap blocks were freed -- no leaks are possible
+==291770== 
+==291770== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

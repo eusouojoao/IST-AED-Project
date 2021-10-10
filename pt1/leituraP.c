@@ -290,11 +290,21 @@ int checkSameRoom(int *board, int n_Lines, int n_Col, int p1, int p2)
         aux = pop();
         if (aux == p2)
         {
+            freePilha();
             return 1; //encontrou a peça 2 na mesma sala
         }
         pushAdjacent(board, aux, n_Lines, n_Col);
     }
+    freePilha();
     return 0; //não encontrou a peça 2 na mesma sala
+}
+
+int checkVariante(char *variante)
+{
+    if((strcmp(variante,"A1") == 0) || (strcmp(variante,"A2") == 0) || (strcmp(variante,"A3") == 0) ||\
+        (strcmp(variante,"A4") == 0) || (strcmp(variante,"A5") == 0) || (strcmp(variante,"A6") == 0))
+        return 1;
+    return 0;
 }
 
 /**
@@ -306,15 +316,18 @@ int checkSameRoom(int *board, int n_Lines, int n_Col, int p1, int p2)
  */
 void leituraP(FILE *fp)
 {
-    int n_V = 0, n_Col = 0, n_Lines = 0, key_Line = -1, key_Col = -1, n_walls = 0, l = 0, c = 0, w = 0;
-    char variante[2]; //vai guardar o modo de jogo (A1 ou A2 ou ...)
+    int n_V = 0, n_Col = 0, n_Lines = 0, key_Line = -1,\
+        key_Col = -1, n_walls = 0, l = 0, c = 0, w = 0;
+    int a = 0;
+    char variante[3]; //vai guardar o modo de jogo (A1 ou A2 ou ...)
     fscanf(fp, "%d %d", &n_Lines, &n_Col);
     fscanf(fp, "%d %d", &key_Line, &key_Col);
     fscanf(fp, "%s", variante);
     n_V = n_Col * n_Lines;
     printf("numero de vertices é %d\n", n_V);
     printf("o tesouro está em %d %d\n", key_Line, key_Col);
-    if ((strcmp(variante, "A1") == 0) || (strcmp(variante, "A2") == 0) || (strcmp(variante, "A3") == 0) || (strcmp(variante, "A4") == 0) || (strcmp(variante, "A5") == 0) || (strcmp(variante, "A6") == 0))
+
+    if (checkVariante(variante))
     {
         printf("a variante é %s\n", variante);
     }
@@ -332,7 +345,7 @@ void leituraP(FILE *fp)
         exit(EXIT_FAILURE);
     }
     inicializeBoard(board, n_Lines, n_Col); //inicializa o tabuleiro
-    while (fscanf(fp, "%d %d %d", &l, &c, &w) != EOF)
+    while (fscanf(fp, "%d %d %d", &l, &c, &w) <= 0)
     {
         printf("parede em %d %d com custo %d\n", l, c, w);
         board[(l - 1) * n_Col + c - 1] = w; //colocar a parede no tabuleiro
@@ -340,13 +353,13 @@ void leituraP(FILE *fp)
     printf("\n\n");
     printBoard(board, n_Lines, n_Col);               //imprimir o tabuleiro (APAGAR SERVE SÓ PARA CHECK)
     int A1 = checkPeca(board, n_Lines, n_Col, 4, 5); //TESTE do modo A1
-    printf("\n %d", A1);
+    printf("\nA1:\t%d", A1);
     int A2 = checkAdjacencia(board, n_Lines, n_Col, 3, 2, 4); //TESTE do modo A2, A3 e A4
-    printf("\n %d", A2);
+    printf("\nA2:\t%d", A2);
     int A5 = checkBreakable(board, n_Lines, n_Col, 3, 3); //TESTE do modo A5
-    printf("\n %d", A5);
+    printf("\nA5:\t%d", A5);
     int A6 = checkSameRoom(board, n_Lines, n_Col, convertTile(5, 5, n_Col), convertTile(1, 1, n_Col));
-    printf("\n %d", A6);
+    printf("\nA6:\t%d", A6);
     printf("\n");
     free(board);
 }

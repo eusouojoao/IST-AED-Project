@@ -12,6 +12,6 @@ void initPilha(unsigned pNumb); //parametro é o comprimento máximo
 void push(Item pI);
 Item pop();
 int isEmpty();
-
 //função que desaloca memoria da stack
+void freePilha();
 #endif

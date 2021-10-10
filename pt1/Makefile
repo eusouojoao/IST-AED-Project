@@ -20,5 +20,5 @@ clean:
 	rm -f *.o $(TARGET)
 
 # -> opção DEBUG, acrescenta a flag -g ao compilador para ajudar a usar no gdb e valgrind; uso -> 'make debug'
-debug: CFLAGS+= -g -Wextra -Werror
+debug: CFLAGS+= -g -Wextra
 debug: $(TARGET)
