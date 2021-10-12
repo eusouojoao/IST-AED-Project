@@ -68,7 +68,7 @@ void printBoard(int *board, int n_Lines, int n_Col)
  */
 int checkInsideBoard(int *board, int n_Lines, int n_Col, int l, int c)
 {
-    if ((l >= n_Lines) || (l < 1) || (c >= n_Col) || (c < 1))
+    if ((l > n_Lines) || (l < 1) || (c > n_Col) || (c < 1))
         return 0; //fora do tabuleiro
     return 1;     //dentro do tabuleiro
 }
@@ -108,7 +108,7 @@ int checkPeca(int *board, int n_Lines, int n_Col, int l, int c)
  */
 int checkBreakable(int *board, int n_Lines, int n_Col, int l, int c)
 {
-    int up, down, right, left;
+    int up = -1, down = -1, right = -1, left = -1;
     int auxC = c, auxL = l;
     if (checkInsideBoard(board, n_Lines, n_Col, l, c) == 0)
         return -2; //peça fora do tabuleiro
@@ -283,9 +283,13 @@ void pushAdjacent(int *board, int tile, int n_Lines, int n_Col)
 int checkSameRoom(int *board, int n_Lines, int n_Col, int p1, int p2)
 {
     int aux = p1;
+
     // initPilha(2 * n_Col + 3 * n_Lines); //ocupação máxima que a pilha poderia ter
     initPilha(n_Lines * n_Col);
-    push(aux);
+    if (board[aux] == 0)
+        push(aux);
+    else
+        return 0;
     while (!isEmpty())
     {
         aux = pop();
@@ -296,6 +300,31 @@ int checkSameRoom(int *board, int n_Lines, int n_Col, int p1, int p2)
         pushAdjacent(board, aux, n_Lines, n_Col);
     }
     return 0; //não encontrou a peça 2 na mesma sala
+}
+
+void QuickUnion(int *id, int p, int q)
+{
+    int i, j;
+    for (i = p; i != id[i]; i = id[i])
+        ;
+    for (j = q; j != id[j]; j = id[j])
+        ;
+    if (i == j)
+        return;
+    else
+    {
+        id[i] = j;
+    }
+    /*for (i = p; i != id[i]; i = x)
+    {
+        x = id[i];
+        id[i] = t;
+    }
+    for (j = p; j != id[j]; j = x)
+    {
+        x = id[j];
+        id[j] = t;
+    } //parte da compressão de caminho */
 }
 
 void WQU(int *id, int *sz, int p, int q)
@@ -319,7 +348,7 @@ void WQU(int *id, int *sz, int p, int q)
         sz[i] += sz[j];
         t = i;
     }
-    /*   for (i = p; i != id[i]; i = x)
+    /*for (i = p; i != id[i]; i = x)
     {
         x = id[i];
         id[i] = t;
@@ -328,10 +357,10 @@ void WQU(int *id, int *sz, int p, int q)
     {
         x = id[j];
         id[j] = t;
-    } parte da compressão de caminho*/
+    } //parte da compressão de caminho */
 }
 
-void conectivityAdjacent(int *id, int *sz, int *board, int tile, int n_Lines, int n_Col)
+void conectivityAdjacentWQU(int *id, int *sz, int *board, int tile, int n_Lines, int n_Col)
 {
     int aux = tile;
     aux++;
@@ -373,7 +402,99 @@ void conectivityAdjacent(int *id, int *sz, int *board, int tile, int n_Lines, in
     }
 }
 
-int sameRoom(int *board, int n_Lines, int n_Col, int p1, int p2)
+void conectivityAdjacentQU(int *id, int *board, int tile, int n_Lines, int n_Col)
+{
+    int aux = tile;
+    aux++;
+    if (checkInsideBoardP(aux, n_Lines, n_Col, 1) == 1) //soma horizontal
+    {
+        if (board[aux] == 0)
+        {
+            //board[aux] = -2;
+            QuickUnion(id, tile, aux);
+        }
+    }
+    aux = aux - 2;
+    if (checkInsideBoardP(aux, n_Lines, n_Col, 2) == 1) //subtração horizontal
+    {
+        if (board[aux] == 0)
+        {
+            //board[aux] = -2;
+            QuickUnion(id, tile, aux);
+        }
+    }
+    aux++;
+    aux = aux + n_Col;
+    if (checkInsideBoardP(aux, n_Lines, n_Col, 0) == 1) //soma vertical
+    {
+        if (board[aux] == 0)
+        {
+            //board[aux] = -2;
+            QuickUnion(id, tile, aux);
+        }
+    }
+    aux = aux - 2 * n_Col;
+    if (checkInsideBoardP(aux, n_Lines, n_Col, 0) == 1) //subtração vertical
+    {
+        if (board[aux] == 0)
+        {
+            //board[aux] = -2;
+            QuickUnion(id, tile, aux);
+        }
+    }
+}
+
+int sameRoomQU(int *board, int n_Lines, int n_Col, int p1, int p2)
+{
+    int i, j, p, q, t, x, N = n_Col * n_Lines, aux = 0;
+    int *id = (int *)malloc(N * sizeof(int));
+    if (p2 < p1)
+    {
+        i = p2;
+        p2 = p1;
+        p1 = i;
+    }
+    for (i = 0; i < N; i++)
+    {
+        id[i] = i;
+    }
+    for (i = p1; i < N; i++)
+    {
+        if (board[i] == 0)
+        {
+            board[i] = -2;
+            conectivityAdjacentQU(id, board, i, n_Lines, n_Col);
+        }
+    }
+    for (i = p1; i != id[i]; i = id[i])
+        ;
+    for (j = p2; j != id[j]; j = id[j])
+        ;
+    if (j == i)
+    {
+        aux = 1;
+        free(id);
+        return aux;
+    }
+    for (i = 0; i < p1; i++)
+    {
+        if (board[i] == 0)
+        {
+            board[i] = -2;
+            conectivityAdjacentQU(id, board, i, n_Lines, n_Col);
+        }
+    }
+    for (i = p1; i != id[i]; i = id[i])
+        ;
+    for (j = p2; j != id[j]; j = id[j])
+        ;
+    if (j == i)
+        aux = 1;
+    free(id);
+    return aux;
+}
+
+int sameRoomWQU(int *board, int n_Lines, int n_Col, int p1, int p2)
 {
     int i, j, p, q, t, x, N = n_Col * n_Lines, aux = 0;
     int *id = (int *)malloc(N * sizeof(int));
@@ -394,15 +515,26 @@ int sameRoom(int *board, int n_Lines, int n_Col, int p1, int p2)
         if (board[i] == 0)
         {
             board[i] = -2;
-            conectivityAdjacent(id, sz, board, i, n_Lines, n_Col);
+            conectivityAdjacentWQU(id, sz, board, i, n_Lines, n_Col);
         }
+    }
+    for (i = p1; i != id[i]; i = id[i])
+        ;
+    for (j = p2; j != id[j]; j = id[j])
+        ;
+    if (j == i)
+    {
+        aux = 1;
+        free(id);
+        free(sz);
+        return aux;
     }
     for (i = 0; i < p1; i++)
     {
         if (board[i] == 0)
         {
             board[i] = -2;
-            conectivityAdjacent(id, sz, board, i, n_Lines, n_Col);
+            conectivityAdjacentWQU(id, sz, board, i, n_Lines, n_Col);
         }
     }
     for (i = p1; i != id[i]; i = id[i])
@@ -426,7 +558,8 @@ int sameRoom(int *board, int n_Lines, int n_Col, int p1, int p2)
 void leituraP(FILE *fp)
 {
     int n_V = 0, n_Col = 0, n_Lines = 0, key_Line = -1, key_Col = -1, n_walls = 0, l = 0, c = 0, w = 0;
-    char variante[2]; //vai guardar o modo de jogo (A1 ou A2 ou ...)
+    int key2_Col, key2_Line;
+    char variante[3]; //vai guardar o modo de jogo (A1 ou A2 ou ...)
     fscanf(fp, "%d %d", &n_Lines, &n_Col);
     fscanf(fp, "%d %d", &key_Line, &key_Col);
     fscanf(fp, "%s", variante);
@@ -436,6 +569,10 @@ void leituraP(FILE *fp)
     if ((strcmp(variante, "A1") == 0) || (strcmp(variante, "A2") == 0) || (strcmp(variante, "A3") == 0) || (strcmp(variante, "A4") == 0) || (strcmp(variante, "A5") == 0) || (strcmp(variante, "A6") == 0))
     {
         printf("a variante é %s\n", variante);
+        if ((strcmp(variante, "A6") == 0))
+        {
+            fscanf(fp, "%d %d", &key2_Line, &key2_Col);
+        }
     }
     else
     {                                                                     //caso não haja variante
@@ -453,22 +590,33 @@ void leituraP(FILE *fp)
     inicializeBoard(board, n_Lines, n_Col); //inicializa o tabuleiro
     while (fscanf(fp, "%d %d %d", &l, &c, &w) != EOF)
     {
+
         printf("parede em %d %d com custo %d\n", l, c, w);
         board[(l - 1) * n_Col + c - 1] = w; //colocar a parede no tabuleiro
     }
     printf("\n\n");
-    printBoard(board, n_Lines, n_Col);               //imprimir o tabuleiro (APAGAR SERVE SÓ PARA CHECK)
-    int A1 = checkPeca(board, n_Lines, n_Col, 4, 5); //TESTE do modo A1
-    printf("\n %d", A1);
-    int A2 = checkAdjacencia(board, n_Lines, n_Col, 3, 2, 4); //TESTE do modo A2, A3 e A4
-    printf("\n %d", A2);
-    int A5 = checkBreakable(board, n_Lines, n_Col, 3, 3); //TESTE do modo A5
-    printf("\n %d", A5);
-    //pilha
-    //int A6 = checkSameRoom(board, n_Lines, n_Col, convertTile(1, 1, n_Col), convertTile(100000, 10000, n_Col));
-    //conetividade
-    int A6 = sameRoom(board, n_Lines, n_Col, convertTile(1, 1, n_Col), convertTile(100000, 10000, n_Col));
-    printf("\n A6= %d", A6);
+    //printBoard(board, n_Lines, n_Col); //imprimir o tabuleiro (APAGAR SERVE SÓ PARA CHECK)
+    //int A1 = checkPeca(board, n_Lines, n_Col, key_Line, key_Col); //TESTE do modo A1
+    //printf("\n %d", A1);
+    int A4 = checkAdjacencia(board, n_Lines, n_Col, key_Line, key_Col, 4); //TESTE do modo A2, A3 e A4
+    printf("\n %d", A4);
+    //int A5 = checkBreakable(board, n_Lines, n_Col, key_Line, key_Col); //TESTE do modo A5
+    //printf("\n %d", A5);
+    int A6;
+    if (checkInsideBoard(board, n_Lines, n_Col, key_Line, key_Col) == 0 || checkInsideBoard(board, n_Lines, n_Col, key2_Line, key2_Col) == 0)
+    {
+        A6 = -2;
+    }
+    else
+    {
+        //pilha
+        //A6 = checkSameRoom(board, n_Lines, n_Col, convertTile(key_Line, key_Col, n_Col), convertTile(key2_Line, key2_Col, n_Col));
+        //conetividade WQU
+        //A6 = sameRoomWQU(board, n_Lines, n_Col, convertTile(key_Line, key_Col, n_Col), convertTile(key2_Line, key2_Col, n_Col));
+        //conetividade QU
+        //A6 = sameRoomQU(board, n_Lines, n_Col, convertTile(key_Line, key_Col, n_Col), convertTile(key2_Line, key2_Col, n_Col));
+    }
+    //printf("\n A6= %d", A6);
     printf("\n");
     free(board);
 }
