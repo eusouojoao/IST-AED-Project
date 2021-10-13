@@ -4,23 +4,26 @@
 /*#include "graph.h"*/
 #include "header.h"
 #include "readInputFile.h"
+#include "commandLineOps.h"
 
 int main(int argc, char *argv[])
 {
     boardRules *brp = NULL;
+    cLineOps *CLOps = NULL;
     clock_t begin = clock();
     double time_spent = 0.0;
 
-    if (argc < 2)
-        return 1;
+    CLOps = cLineOptions(argv, argc, CLOps);
+    printf("%s\n", CLOps->input);
+    printf("%s\n", CLOps->output);
 
-    char *filename = argv[1];
-    FILE *fp = fopen(filename, "r");
+    FILE *fp = fopen(CLOps->input, "r");
     if (fp == NULL)
         return 1;
 
     readInputFile(fp, brp);
     fclose(fp);
+    freeOps(CLOps);
 
     clock_t end = clock();
     // calculate elapsed time by finding difference (end - begin) and
