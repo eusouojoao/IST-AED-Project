@@ -127,16 +127,19 @@ void readInputFile (FILE *fp, boardRules *brp, char *output)
     if ((i = checkVariante(brp->gameMode)) == 0)
     {
         rewind(fp);
-        fscanf(fp, "%d %d %d %d", &(brp->board.lines), &(brp->board.columns), 
-                &(brp->key.Column), &(brp->key.Line));
+        if (fscanf(fp, "%d %d %d %d", &(brp->board.lines), &(brp->board.columns), 
+                &(brp->key.Column), &(brp->key.Line)) != 4)
+            exit(0);
     
     } else if (i == 6) {
         /* segunda coordenada (l2, c2), sendo que (l1, c2) são brp->key.Line e brp->key.Column */
-        fscanf(fp, "%d %d", &(brp->A6.l2), &(brp->A6.c2));
+        if( fscanf(fp, "%d %d", &(brp->A6.l2), &(brp->A6.c2)) != 2)
+            exit(0);
     }
 
     /* obtem o nº de paredes */
-    fscanf(fp, "%d", &(brp->n_walls));
+    if (fscanf(fp, "%d", &(brp->n_walls)) != 1)
+        exit(0);
 
     /* verifica se a alocação foi sucedida */
     if ( (board = (int *)malloc( brp->board.lines * brp->board.columns * sizeof(int) )) == NULL )
@@ -149,7 +152,8 @@ void readInputFile (FILE *fp, boardRules *brp, char *output)
 
     /* leitura das paredes */
     fseek(fp, -1L, SEEK_CUR);
-    fscanf(fp, "%*[^\n]\n");
+    if(fscanf(fp, "%*[^\n]\n") != 0)
+        exit(0);
     while (fgets(buf, 127, fp) != NULL )
     {
         if (buf[0] == '\n')
