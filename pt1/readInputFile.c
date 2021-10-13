@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "readInputFile.h"
-#include "board.h"
+#include "Common.h"
 #include "writeOutputFile.h"
+#include "Pilha.h"
 
 struct board
 {
@@ -76,10 +77,10 @@ void initGameMode (boardRules *brp, int *board, char *output)
             /* proceder... */
             //if (4 * 3 * brp->board.lines * brp->board.columns <= 90 * 1000000)
             //conetividade WQU
-            A = sameRoomWQU(board, brp->board.lines, brp->board.columns, convertTile(brp->key.Line, brp->key.Column, brp->board.columns), convertTile(brp->A6.l2, brp->A6.c2, brp->board.columns));
+            //A = sameRoomWQU(board, brp->board.lines, brp->board.columns, convertTile(brp->key.Line, brp->key.Column, brp->board.columns), convertTile(brp->A6.l2, brp->A6.c2, brp->board.columns));
             //else if (4 * 2 * brp->board.lines * brp->board.columns > 90 * 1000000)
             //pilha
-            //A = checkSameRoom(board, brp->board.lines, brp->board.columns, convertTile(brp->key.Line, brp->key.Column, brp->board.columns), convertTile(brp->A6.l2, brp->A6.c2, brp->board.columns));
+            A = checkSameRoom(board, brp->board.lines, brp->board.columns, convertTile(brp->key.Line, brp->key.Column, brp->board.columns), convertTile(brp->A6.l2, brp->A6.c2, brp->board.columns));
             //else
             //conetividade QU
             //A = sameRoomQU(board, brp->board.lines, brp->board.columns, convertTile(brp->key.Line, brp->key.Column, brp->board.columns), convertTile(brp->A6.l2, brp->A6.c2, brp->board.columns));
