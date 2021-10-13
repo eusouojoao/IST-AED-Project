@@ -133,7 +133,6 @@ void initGameMode(boardRules *brp, int *board, char *output)
 void readInputFile(FILE *fp, boardRules *brp, char *output)
 {
     int *board = NULL, i = 0;
-    char buf[128];
     wall *Wall = (wall *)malloc(sizeof(wall));
     if (Wall == NULL)
         exit(0);
@@ -179,22 +178,15 @@ void readInputFile(FILE *fp, boardRules *brp, char *output)
     /* inicializa o tabuleiro com o tamanho especificado */
     inicializeBoard(board, brp->board.lines, brp->board.columns);
 
-    /* leitura das paredes */
-    fseek(fp, -1L, SEEK_CUR);
-    if (fscanf(fp, "%*[^\n]\n") != 0)
-        exit(0);
-    while (fgets(buf, 127, fp) != NULL)
+    while (brp->n_walls > 0)
     {
-        if (buf[0] == '\n')
-        {
-            break; /* sai do while loop */
-        }
 
-        if (sscanf(buf, "%d %d %d", &(Wall->l1), &(Wall->c1), &(Wall->weight)) != 3)
+        if (fscanf(fp, "%d %d %d", &(Wall->l1), &(Wall->c1), &(Wall->weight)) != 3)
             exit(0);
 
         /* !TESTE! REMOVER DEPOIS */
         board[(Wall->l1 - 1) * brp->board.columns + Wall->c1 - 1] = Wall->weight;
+        brp->n_walls -= 1;
     }
 
     /* inicia o jogo */
@@ -204,7 +196,7 @@ void readInputFile(FILE *fp, boardRules *brp, char *output)
     free(brp);
 
     /* verifica se há outro tabuleiro, se sim, chama readInputFile() recursivamente */
-    if (buf[0] == '\n')
+    if (fp != NULL)
     {
         readInputFile(fp, brp, output);
     }
