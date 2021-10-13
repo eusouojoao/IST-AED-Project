@@ -2,16 +2,9 @@
 #define pilha
 #include "Item.h"
 
-typedef enum
-{
-    FALSE,
-    TRUE
-} BOOL;
-void initPilha(unsigned pNumb); //parametro é o comprimento máximo
-//int Empty();
+void initPilha(unsigned pNumb);
 void push(Item pI);
 Item pop();
 int isEmpty();
-//função que desaloca memoria da stack
 void freePilha();
 #endif

@@ -17,7 +17,7 @@ int convertTile(int l, int c, int n_Col)
 /**
  * @brief  Função que inicializa o tabuleiro a zeros
  * @note   Tabuleiro é um vetor unidimensional cujo elemento (l,c) é acedido
- *         através board[l * n_Lines + c - 1]
+ *         através da função convertTile() 
  * @param  *board: tabuleiro (vetor unidimensional)
  * @param  n_Lines: número total de linhas do tabuleiro 
  * @param  n_Col: número total de colunas do tabuleiro
@@ -28,7 +28,7 @@ void inicializeBoard(int *board, int n_Lines, int n_Col)
     int i, j;
     for (i = 1; i <= n_Lines; i++)
         for (j = 1; j <= n_Col; j++)
-            board[(i - 1) * n_Col + j - 1] = 0; //inicializar a 0
+            board[convertTile(i, j, n_Col)] = 0; //inicializar a 0
 }
 
 /**
@@ -52,7 +52,7 @@ int checkInsideBoard(int n_Lines, int n_Col, int l, int c)
 /**
  * @brief  Informa que tipo de peça é, e o seu custo
  * @note   Tabuleiro é um vetor unidimensional cujo elemento (l,c) é acedido
- *         através board[l * n_Lines + c - 1]  
+ *         através da função convertTile() 
  * @param  *board: tabuleiro (vetor unidimensional)
  * @param  n_Lines: número total de linhas do tabuleiro 
  * @param  n_Col: número total de colunas do tabuleiro
@@ -65,13 +65,13 @@ int checkPeca(int *board, int n_Lines, int n_Col, int l, int c)
 {
     if (checkInsideBoard(n_Lines, n_Col, l, c) == 0)
         return -2; //fora do tabuleiro
-    return board[(l - 1) * n_Col + c - 1];
+    return board[convertTile(l, c, n_Col)];
 }
 
 /**
  * @brief  Verifica se uma peça é cinzenta, e caso seja verifica se é quebrável ou não
  * @note   Tabuleiro é um vetor unidimensional cujo elemento (l,c) é acedido
- *         através board[l * n_Lines + c - 1]  
+ *         através da função convertTile() 
  * @param  *board: tabuleiro (vetor unidimensional)
  * @param  n_Lines: número total de linhas do tabuleiro 
  * @param  n_Col: número total de colunas do tabuleiro
@@ -84,7 +84,7 @@ int checkPeca(int *board, int n_Lines, int n_Col, int l, int c)
  */
 int checkBreakable(int *board, int n_Lines, int n_Col, int l, int c)
 {
-    int up = -1, down = -1, right = -1, left = -1;
+    int up = -2, down = -2, right = -2, left = -2; //inicializar as peças adjacentes como peças não brancas
     int auxC = c, auxL = l;
     if (checkInsideBoard(n_Lines, n_Col, l, c) == 0)
         return -2; //peça fora do tabuleiro
@@ -92,17 +92,17 @@ int checkBreakable(int *board, int n_Lines, int n_Col, int l, int c)
         return -1; //peça não é cinzenta
     auxC++;        //peça da direita (right)
     if (checkInsideBoard(n_Lines, n_Col, auxL, auxC) == 1)
-        right = board[(auxL - 1) * n_Col + auxC - 1];
+        right = board[convertTile(auxL, auxC, n_Col)];
     auxC = auxC - 2; //peça da esquerda (left)
     if (checkInsideBoard(n_Lines, n_Col, auxL, auxC) == 1)
-        left = board[(auxL - 1) * n_Col + auxC - 1];
+        left = board[convertTile(auxL, auxC, n_Col)];
     auxC++;
     auxL++; //peça de cima (up)
     if (checkInsideBoard(n_Lines, n_Col, auxL, auxC) == 1)
-        up = board[(auxL - 1) * n_Col + auxC - 1];
+        up = board[convertTile(auxL, auxC, n_Col)];
     auxL = auxL - 2; //peça de baixo (down)
-    if (checkInsideBoard( n_Lines, n_Col, auxL, auxC) == 1)
-        down = board[(auxL - 1) * n_Col + auxC - 1];
+    if (checkInsideBoard(n_Lines, n_Col, auxL, auxC) == 1)
+        down = board[convertTile(auxL, auxC, n_Col)];
     //peça da direita e a da esquerda brancas ou peça de cima e de baixo brancas => peça é quebrável
     if ((right == 0 && left == 0) || (up == 0 && down == 0))
         return 1; //peça cinzenta quebrável
@@ -113,7 +113,7 @@ int checkBreakable(int *board, int n_Lines, int n_Col, int l, int c)
  * @brief  Verifica se uma peça tem alguma adjacente (branca, cinzenta ou preta)
  *         tem em conta se é o mode (2, 3 ou 4 respetivamente)
  * @note   Tabuleiro é um vetor unidimensional cujo elemento (l,c) é acedido
- *         através board[l * n_Lines + c - 1]   
+ *         através da função convertTile() 
  * @param  *board: tabuleiro (vetor unidimensional)
  * @param  n_Lines: número total de linhas do tabuleiro 
  * @param  n_Col: número total de colunas do tabuleiro
@@ -129,26 +129,26 @@ int checkBreakable(int *board, int n_Lines, int n_Col, int l, int c)
 int checkAdjacencia(int *board, int n_Lines, int n_Col, int l, int c, int mode)
 {
     int auxC = c, auxL = l;
-    if (checkInsideBoard(n_Lines, n_Col, l, c) == 0) //peça fora de tabuleiro
-        return -2;                                          //fora do tabuleiro
-    if (mode == 2)                                          //procurar peça adjacente branca
+    if (checkInsideBoard(n_Lines, n_Col, l, c) == 0)
+        return -2; //fora do tabuleiro
+    if (mode == 2) //procurar peça adjacente branca
     {
         auxC++; //verificar a peça adjacente à direita
         if (checkInsideBoard(n_Lines, n_Col, auxL, auxC) == 1)
-            if (board[(auxL - 1) * n_Col + auxC - 1] == 0)
+            if (board[convertTile(auxL, auxC, n_Col)] == 0)
                 return 1; //encontramos peça branca
         auxC = auxC - 2;  //verificar a peça adjacente à esquerda
         if (checkInsideBoard(n_Lines, n_Col, auxL, auxC) == 1)
-            if (board[(auxL - 1) * n_Col + auxC - 1] == 0)
+            if (board[convertTile(auxL, auxC, n_Col)] == 0)
                 return 1;
         auxC++;
         auxL++; //verificar a peça adjacente de cima
-        if (checkInsideBoard( n_Lines, n_Col, auxL, auxC) == 1)
-            if (board[(auxL - 1) * n_Col + auxC - 1] == 0)
+        if (checkInsideBoard(n_Lines, n_Col, auxL, auxC) == 1)
+            if (board[convertTile(auxL, auxC, n_Col)] == 0)
                 return 1;
         auxL = auxL - 2; //verificar a peça adjacente de baixo
         if (checkInsideBoard(n_Lines, n_Col, auxL, auxC) == 1)
-            if (board[(auxL - 1) * n_Col + auxC - 1] == 0)
+            if (board[convertTile(auxL, auxC, n_Col)] == 0)
                 return 1;
         return 0;
     }
@@ -156,20 +156,20 @@ int checkAdjacencia(int *board, int n_Lines, int n_Col, int l, int c, int mode)
     {
         auxC++; //verificar a peça adjacente à direita
         if (checkInsideBoard(n_Lines, n_Col, auxL, auxC) == 1)
-            if (board[(auxL - 1) * n_Col + auxC - 1] > 0)
+            if (board[convertTile(auxL, auxC, n_Col)] > 0)
                 return 1; //encontramos peça cinzenta
         auxC = auxC - 2;  //verificar a peça adjacente à esquerda
         if (checkInsideBoard(n_Lines, n_Col, auxL, auxC) == 1)
-            if (board[(auxL - 1) * n_Col + auxC - 1] > 0)
+            if (board[convertTile(auxL, auxC, n_Col)] > 0)
                 return 1;
         auxC++;
         auxL++; //verificar a peça adjacente de cima
         if (checkInsideBoard(n_Lines, n_Col, auxL, auxC) == 1)
-            if (board[(auxL - 1) * n_Col + auxC - 1] > 0)
+            if (board[convertTile(auxL, auxC, n_Col)] > 0)
                 return 1;
         auxL = auxL - 2; //verificar a peça adjacente de baixo
         if (checkInsideBoard(n_Lines, n_Col, auxL, auxC) == 1)
-            if (board[(auxL - 1) * n_Col + auxC - 1] > 0)
+            if (board[convertTile(auxL, auxC, n_Col)] > 0)
                 return 1;
         return 0;
     }
@@ -177,48 +177,89 @@ int checkAdjacencia(int *board, int n_Lines, int n_Col, int l, int c, int mode)
     {
         auxC++; //verificar a peça adjacente à direita
         if (checkInsideBoard(n_Lines, n_Col, auxL, auxC) == 1)
-            if (board[(auxL - 1) * n_Col + auxC - 1] == -1)
+            if (board[convertTile(auxL, auxC, n_Col)] == -1)
                 return 1; //encontramos peça preta
         auxC = auxC - 2;  //verificar a peça adjacente à esquerda
         if (checkInsideBoard(n_Lines, n_Col, auxL, auxC) == 1)
-            if (board[(auxL - 1) * n_Col + auxC - 1] == -1)
+            if (board[convertTile(auxL, auxC, n_Col)] == -1)
                 return 1;
         auxC++;
         auxL++; //verificar a peça adjacente de cima
         if (checkInsideBoard(n_Lines, n_Col, auxL, auxC) == 1)
-            if (board[(auxL - 1) * n_Col + auxC - 1] == -1)
+            if (board[convertTile(auxL, auxC, n_Col)] == -1)
                 return 1;
         auxL = auxL - 2; //verificar a peça adjacente de baixo
         if (checkInsideBoard(n_Lines, n_Col, auxL, auxC) == 1)
-            if (board[(auxL - 1) * n_Col + auxC - 1] == -1)
+            if (board[convertTile(auxL, auxC, n_Col)] == -1)
                 return 1;
         return 0;
     }
     return -5; //erro
 }
 
-int checkInsideBoardP(int tile, int n_Lines, int n_Col, int HouV)
+/**
+ * @brief  Verifica se após uma soma/subtração horizontal ou vertical (adicionar
+ *         1 ou n_Col), a peça resultante faz parte do tabuleiro e é adjacente
+ * @note   Nesta função pressupõe-se que a peça, cuja a operação após a qual
+ *         obteu-se a "tile", pertence ao tabuleiro 
+ * @param  tile: Peça a verificar adjacencia
+ * @param  n_Lines: número total de linhas do tabuleiro 
+ * @param  n_Col: número total de colunas do tabuleiro
+ * @param  HouV: Informa se operação realizada (anteriormente) à tile foi uma
+ *         soma horizontal (HouV=1) ou subtração horizontal (HouV=2) 
+ * @retval 0 se a peça estiver fora do tabuleiro, ou não fôr adjacente
+ *         1 se a peça for adjacente e pertencer ao tabuleiro
+ */
+int isTileAdjacent(int tile, int n_Lines, int n_Col, int HouV)
 {
-    if (tile < 0 || tile > (n_Lines * n_Col - 1))
-        return 0;  //não é adjacente
-    if (HouV == 1) //HouV==1 soma horizontal
+    if (tile < 0 || tile > (n_Lines * n_Col - 1)) //fora das dimensões do tabuleiro
+        return 0;                                 //não é adjacente
+    if (HouV == 1)                                //HouV==1 soma horizontal
     {
-        if ((tile % n_Col) == 0)
-            return 0; //não é adjacente
+        if ((tile % n_Col) == 0) //após a soma horizontal a peça "saltou" para a outra ponta do tabuleiro
+            return 0;            //não é adjacente
     }
     if (HouV == 2) //HouV==2 subtração horizontal
     {
-        if ((tile % n_Col) == (n_Col - 1))
-            return 0; //não é adjacente
+        if ((tile % n_Col) == (n_Col - 1)) //após a subtração horizontal a peça "saltou" para a outra ponta do tabuleiro
+            return 0;                      //não é adjacente
     }
     return 1; //é adjacente
 }
 
+/**
+ * @brief  Função cujo o papel é fazer o push() (para a pilha), das peças adjacentes à tile
+ * @note   Esta função também vai escrever -2 nas posições do tabuleiro a que se faz push()
+ * @param  *board: tabuleiro (vetor unidimensional)
+ * @param  tile: Peça à qual se vai fazer push() das adjacentes
+ * @param  n_Lines: número total de linhas do tabuleiro 
+ * @param  n_Col: número total de colunas do tabuleiro
+ * @retval None
+ */
 void pushAdjacent(int *board, int tile, int n_Lines, int n_Col)
 {
     int aux = tile;
+    aux++;                                           //verificar a peça adjacente à direita
+    if (isTileAdjacent(aux, n_Lines, n_Col, 1) == 1) //1-soma horizontal
+    {
+        if (board[aux] == 0) // caso a peça adjacente seja branca
+        {
+            board[aux] = -2; //alterar o valor do tabuleiro para informar que a peça já foi para a pilha
+            push(aux);       //fazer o push para a pilha
+        }
+    }
+    aux = aux - 2;                                   //verificar a peça adjacente à esquerda
+    if (isTileAdjacent(aux, n_Lines, n_Col, 2) == 1) //2-subtração horizontal
+    {
+        if (board[aux] == 0)
+        {
+            board[aux] = -2;
+            push(aux);
+        }
+    }
     aux++;
-    if (checkInsideBoardP(aux, n_Lines, n_Col, 1) == 1) //soma horizontal
+    aux = aux + n_Col;                               //verificar a peça adjacente em cima
+    if (isTileAdjacent(aux, n_Lines, n_Col, 0) == 1) //0-soma vertical
     {
         if (board[aux] == 0)
         {
@@ -226,27 +267,8 @@ void pushAdjacent(int *board, int tile, int n_Lines, int n_Col)
             push(aux);
         }
     }
-    aux = aux - 2;
-    if (checkInsideBoardP(aux, n_Lines, n_Col, 2) == 1) //subtração horizontal
-    {
-        if (board[aux] == 0)
-        {
-            board[aux] = -2;
-            push(aux);
-        }
-    }
-    aux++;
-    aux = aux + n_Col;
-    if (checkInsideBoardP(aux, n_Lines, n_Col, 0) == 1) //soma vertical
-    {
-        if (board[aux] == 0)
-        {
-            board[aux] = -2;
-            push(aux);
-        }
-    }
-    aux = aux - 2 * n_Col;
-    if (checkInsideBoardP(aux, n_Lines, n_Col, 0) == 1) //subtração vertical
+    aux = aux - 2 * n_Col;                           //verificar a peça adjacente em baixo
+    if (isTileAdjacent(aux, n_Lines, n_Col, 0) == 1) // 0-subtração vertical
     {
         if (board[aux] == 0)
         {
