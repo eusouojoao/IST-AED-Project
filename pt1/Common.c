@@ -31,6 +31,24 @@ void inicializeBoard(int *board, int n_Lines, int n_Col)
             board[convertTile(i, j, n_Col)] = 0; //inicializar a 0
 }
 
+
+int checkInsideBoardP(int tile, int n_Lines, int n_Col, int HouV)
+{
+    if (tile < 0 || tile > (n_Lines * n_Col - 1))
+        return 0;  //não é adjacente
+    if (HouV == 1) //HouV==1 soma horizontal
+    {
+        if ((tile % n_Col) == 0)
+            return 0; //não é adjacente
+    }
+    if (HouV == 2) //HouV==2 subtração horizontal
+    {
+        if ((tile % n_Col) == (n_Col - 1))
+            return 0; //não é adjacente
+    }
+    return 1; //é adjacente
+}
+
 /**
  * @brief  Verifica se uma peça está dentro ou fora do tabuleiro
  * @note   

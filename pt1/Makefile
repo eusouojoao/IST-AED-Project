@@ -17,7 +17,7 @@ $(TARGET): $(OBJS) Makefile
 
 # -> opção clean para limpar os object files; uso -> 'make clean'
 clean:
-	rm -f *.o *.log $(TARGET)
+	rm -f *.sol1 *.sol *.o *.log $(TARGET)
 
 # -> opção DEBUG, acrescenta a flag -g ao compilador para ajudar a usar no gdb e valgrind; uso -> 'make debug'
 debug: CFLAGS+= -g -Wextra
