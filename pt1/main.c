@@ -20,7 +20,6 @@ int main(int argc, char *argv[])
         return 0;
 
     readInputFile(fp, brp, CLOps->output);
-    fprintf(fp,"\n");
     fclose(fp);
     freeOps(CLOps);
 
