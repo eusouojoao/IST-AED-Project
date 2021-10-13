@@ -64,10 +64,10 @@ void genCLOps (cLineOps *CLOps, char **argv)
     if (CLOps->fase == 1)
     {
         if ((CLOps->input = (char *)malloc((strlen(argv[2]) + 1) * sizeof(char))) == NULL)
-            exit(EXIT_FAILURE);
+            exit(0);
 
         if ((CLOps->output = (char *)malloc((strlen(argv[2]) + 2) * sizeof(char))) == NULL)
-            exit(EXIT_FAILURE);
+            exit(0);
 
         strcpy(CLOps->input, argv[2]);
         changeExt(CLOps);
@@ -76,10 +76,10 @@ void genCLOps (cLineOps *CLOps, char **argv)
 
     } else {
         if ((CLOps->input = (char *)malloc((strlen(argv[2]) + 1) * sizeof(char))) == NULL)
-            exit(EXIT_FAILURE);
+            exit(0);
 
         if ((CLOps->output = (char *)malloc((strlen(argv[2]) + 2) * sizeof(char))) == NULL)
-            exit(EXIT_FAILURE);
+            exit(0);
 
         strcpy(CLOps->input, argv[1]);
         changeExt(CLOps);
@@ -102,21 +102,21 @@ int verifyExt (char *str, int fase)
     if (fase == 1)
     {
         if (str == NULL)
-            exit(EXIT_FAILURE);
+            exit(0);
 
         if (str[strlen(str) - 4] == '.' && str[strlen(str) - 3] == 'i' && str[strlen(str) - 2] == 'n' && str[strlen(str) - 1] == '1')
             return fase;
 
     } else if (fase == 1) {
         if (str == NULL)
-            exit(EXIT_FAILURE);
+            exit(0);
 
         if (str[strlen(str) - 3] == '.' && str[strlen(str) - 2] == 'i' && str[strlen(str) - 1] == 'n')
             return fase;
     }
 
     /* se o nome do ficheiro não terminar numa destas extensões, então termina o programa */
-    exit(EXIT_FAILURE); 
+    exit(0); 
 }
 
 /* ---
@@ -130,14 +130,14 @@ int verifyExt (char *str, int fase)
 cLineOps *cLineOptions (char **argv, int argc, cLineOps *CLOps)
 {
     if ((CLOps = (cLineOps *)malloc(sizeof(cLineOps))) == NULL)
-        exit(EXIT_FAILURE);  
+        exit(0);  
 
     CLOps->fase = 0;
     CLOps->input = NULL;
     CLOps->output = NULL;
 
     if ((argc < 2) || (argc > 3))
-        exit(EXIT_FAILURE);
+        exit(0);
 
     if (strcmp(argv[1], "-s") != 0) {
         CLOps->fase = verifyExt(argv[1], 2);
@@ -147,7 +147,7 @@ cLineOps *cLineOptions (char **argv, int argc, cLineOps *CLOps)
         CLOps->fase = verifyExt(argv[2], 1);
         genCLOps(CLOps, argv);
 
-    } else exit(EXIT_FAILURE);
+    } else exit(0);
 
 
     return CLOps;

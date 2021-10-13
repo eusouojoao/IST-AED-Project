@@ -37,25 +37,6 @@ void inicializeBoard(int *board, int n_Lines, int n_Col)
 }
 
 /**
- * @brief  Função de teste que imprime o tabuleiro APAGAR DEPOIS
- * @note   Tabuleiro é um vetor unidimensional cujo elemento (l,c) é acedido
- *         através board[l * n_Lines + c - 1]
- *         Imprime apenas as peças não brancas
- * @param  *board: tabuleiro (vetor unidimensional)
- * @param  n_Lines: número total de linhas do tabuleiro 
- * @param  n_Col: número total de colunas do tabuleiro
- * @retval None
- */
-void printBoard(int *board, int n_Lines, int n_Col)
-{
-    int i, j;
-    for (i = 1; i <= n_Lines; i++)
-        for (j = 1; j <= n_Col; j++)
-            if (board[(i - 1) * n_Col + j - 1] != 0) //imprime apenas as peças não brancas
-                printf("Na posição (%d,%d) está uma peça de custo %d \n", i, j, board[(i - 1) * n_Col + j - 1]);
-}
-
-/**
  * @brief  Verifica se uma peça está dentro ou fora do tabuleiro
  * @note   
  * @param  *board: tabuleiro (vetor unidimensional)
@@ -66,7 +47,7 @@ void printBoard(int *board, int n_Lines, int n_Col)
  * @retval 0 se a peça estiver fora do tabuleiro
  *         1 se a peça estiver dentro do tabuleiro
  */
-int checkInsideBoard(int *board, int n_Lines, int n_Col, int l, int c)
+int checkInsideBoard(int n_Lines, int n_Col, int l, int c)
 {
     if ((l > n_Lines) || (l < 1) || (c > n_Col) || (c < 1))
         return 0; //fora do tabuleiro
@@ -87,7 +68,7 @@ int checkInsideBoard(int *board, int n_Lines, int n_Col, int l, int c)
  */
 int checkPeca(int *board, int n_Lines, int n_Col, int l, int c)
 {
-    if (checkInsideBoard(board, n_Lines, n_Col, l, c) == 0)
+    if (checkInsideBoard(n_Lines, n_Col, l, c) == 0)
         return -2; //fora do tabuleiro
     return board[(l - 1) * n_Col + c - 1];
 }
@@ -110,22 +91,22 @@ int checkBreakable(int *board, int n_Lines, int n_Col, int l, int c)
 {
     int up = -1, down = -1, right = -1, left = -1;
     int auxC = c, auxL = l;
-    if (checkInsideBoard(board, n_Lines, n_Col, l, c) == 0)
+    if (checkInsideBoard(n_Lines, n_Col, l, c) == 0)
         return -2; //peça fora do tabuleiro
     if (checkPeca(board, n_Lines, n_Col, l, c) < 1)
         return -1; //peça não é cinzenta
     auxC++;        //peça da direita (right)
-    if (checkInsideBoard(board, n_Lines, n_Col, auxL, auxC) == 1)
+    if (checkInsideBoard(n_Lines, n_Col, auxL, auxC) == 1)
         right = board[(auxL - 1) * n_Col + auxC - 1];
     auxC = auxC - 2; //peça da esquerda (left)
-    if (checkInsideBoard(board, n_Lines, n_Col, auxL, auxC) == 1)
+    if (checkInsideBoard(n_Lines, n_Col, auxL, auxC) == 1)
         left = board[(auxL - 1) * n_Col + auxC - 1];
     auxC++;
     auxL++; //peça de cima (up)
-    if (checkInsideBoard(board, n_Lines, n_Col, auxL, auxC) == 1)
+    if (checkInsideBoard(n_Lines, n_Col, auxL, auxC) == 1)
         up = board[(auxL - 1) * n_Col + auxC - 1];
     auxL = auxL - 2; //peça de baixo (down)
-    if (checkInsideBoard(board, n_Lines, n_Col, auxL, auxC) == 1)
+    if (checkInsideBoard( n_Lines, n_Col, auxL, auxC) == 1)
         down = board[(auxL - 1) * n_Col + auxC - 1];
     //peça da direita e a da esquerda brancas ou peça de cima e de baixo brancas => peça é quebrável
     if ((right == 0 && left == 0) || (up == 0 && down == 0))
@@ -153,25 +134,25 @@ int checkBreakable(int *board, int n_Lines, int n_Col, int l, int c)
 int checkAdjacencia(int *board, int n_Lines, int n_Col, int l, int c, int mode)
 {
     int auxC = c, auxL = l;
-    if (checkInsideBoard(board, n_Lines, n_Col, l, c) == 0) //peça fora de tabuleiro
+    if (checkInsideBoard(n_Lines, n_Col, l, c) == 0) //peça fora de tabuleiro
         return -2;                                          //fora do tabuleiro
     if (mode == 2)                                          //procurar peça adjacente branca
     {
         auxC++; //verificar a peça adjacente à direita
-        if (checkInsideBoard(board, n_Lines, n_Col, auxL, auxC) == 1)
+        if (checkInsideBoard(n_Lines, n_Col, auxL, auxC) == 1)
             if (board[(auxL - 1) * n_Col + auxC - 1] == 0)
                 return 1; //encontramos peça branca
         auxC = auxC - 2;  //verificar a peça adjacente à esquerda
-        if (checkInsideBoard(board, n_Lines, n_Col, auxL, auxC) == 1)
+        if (checkInsideBoard(n_Lines, n_Col, auxL, auxC) == 1)
             if (board[(auxL - 1) * n_Col + auxC - 1] == 0)
                 return 1;
         auxC++;
         auxL++; //verificar a peça adjacente de cima
-        if (checkInsideBoard(board, n_Lines, n_Col, auxL, auxC) == 1)
+        if (checkInsideBoard( n_Lines, n_Col, auxL, auxC) == 1)
             if (board[(auxL - 1) * n_Col + auxC - 1] == 0)
                 return 1;
         auxL = auxL - 2; //verificar a peça adjacente de baixo
-        if (checkInsideBoard(board, n_Lines, n_Col, auxL, auxC) == 1)
+        if (checkInsideBoard(n_Lines, n_Col, auxL, auxC) == 1)
             if (board[(auxL - 1) * n_Col + auxC - 1] == 0)
                 return 1;
         return 0;
@@ -179,20 +160,20 @@ int checkAdjacencia(int *board, int n_Lines, int n_Col, int l, int c, int mode)
     if (mode == 3) //procurar peça adjacente cinzenta
     {
         auxC++; //verificar a peça adjacente à direita
-        if (checkInsideBoard(board, n_Lines, n_Col, auxL, auxC) == 1)
+        if (checkInsideBoard(n_Lines, n_Col, auxL, auxC) == 1)
             if (board[(auxL - 1) * n_Col + auxC - 1] > 0)
                 return 1; //encontramos peça cinzenta
         auxC = auxC - 2;  //verificar a peça adjacente à esquerda
-        if (checkInsideBoard(board, n_Lines, n_Col, auxL, auxC) == 1)
+        if (checkInsideBoard(n_Lines, n_Col, auxL, auxC) == 1)
             if (board[(auxL - 1) * n_Col + auxC - 1] > 0)
                 return 1;
         auxC++;
         auxL++; //verificar a peça adjacente de cima
-        if (checkInsideBoard(board, n_Lines, n_Col, auxL, auxC) == 1)
+        if (checkInsideBoard(n_Lines, n_Col, auxL, auxC) == 1)
             if (board[(auxL - 1) * n_Col + auxC - 1] > 0)
                 return 1;
         auxL = auxL - 2; //verificar a peça adjacente de baixo
-        if (checkInsideBoard(board, n_Lines, n_Col, auxL, auxC) == 1)
+        if (checkInsideBoard(n_Lines, n_Col, auxL, auxC) == 1)
             if (board[(auxL - 1) * n_Col + auxC - 1] > 0)
                 return 1;
         return 0;
@@ -200,20 +181,20 @@ int checkAdjacencia(int *board, int n_Lines, int n_Col, int l, int c, int mode)
     if (mode == 4) //procurar peça adjacente preta
     {
         auxC++; //verificar a peça adjacente à direita
-        if (checkInsideBoard(board, n_Lines, n_Col, auxL, auxC) == 1)
+        if (checkInsideBoard(n_Lines, n_Col, auxL, auxC) == 1)
             if (board[(auxL - 1) * n_Col + auxC - 1] == -1)
                 return 1; //encontramos peça preta
         auxC = auxC - 2;  //verificar a peça adjacente à esquerda
-        if (checkInsideBoard(board, n_Lines, n_Col, auxL, auxC) == 1)
+        if (checkInsideBoard(n_Lines, n_Col, auxL, auxC) == 1)
             if (board[(auxL - 1) * n_Col + auxC - 1] == -1)
                 return 1;
         auxC++;
         auxL++; //verificar a peça adjacente de cima
-        if (checkInsideBoard(board, n_Lines, n_Col, auxL, auxC) == 1)
+        if (checkInsideBoard(n_Lines, n_Col, auxL, auxC) == 1)
             if (board[(auxL - 1) * n_Col + auxC - 1] == -1)
                 return 1;
         auxL = auxL - 2; //verificar a peça adjacente de baixo
-        if (checkInsideBoard(board, n_Lines, n_Col, auxL, auxC) == 1)
+        if (checkInsideBoard(n_Lines, n_Col, auxL, auxC) == 1)
             if (board[(auxL - 1) * n_Col + auxC - 1] == -1)
                 return 1;
         return 0;
@@ -313,7 +294,7 @@ void QuickUnion(int *id, int p, int q)
         return;
     else
     {
-        id[i] = j;
+        id[j] = i;
     }
     /*for (i = p; i != id[i]; i = x)
     {
@@ -329,7 +310,7 @@ void QuickUnion(int *id, int p, int q)
 
 void WQU(int *id, int *sz, int p, int q)
 {
-    int i, j, t, x;
+    int i, j;
     for (i = p; i != id[i]; i = id[i])
         ;
     for (j = q; j != id[j]; j = id[j])
@@ -340,13 +321,11 @@ void WQU(int *id, int *sz, int p, int q)
     {
         id[i] = j;
         sz[j] += sz[i];
-        t = j;
     }
     else
     {
         id[j] = i;
         sz[i] += sz[j];
-        t = i;
     }
     /*for (i = p; i != id[i]; i = x)
     {
@@ -446,8 +425,11 @@ void conectivityAdjacentQU(int *id, int *board, int tile, int n_Lines, int n_Col
 
 int sameRoomQU(int *board, int n_Lines, int n_Col, int p1, int p2)
 {
-    int i, j, p, q, t, x, N = n_Col * n_Lines, aux = 0;
+    int i, j, N = n_Col * n_Lines, aux = 0;
     int *id = (int *)malloc(N * sizeof(int));
+    if (id == NULL)
+        exit(0);
+
     if (p2 < p1)
     {
         i = p2;
@@ -496,9 +478,15 @@ int sameRoomQU(int *board, int n_Lines, int n_Col, int p1, int p2)
 
 int sameRoomWQU(int *board, int n_Lines, int n_Col, int p1, int p2)
 {
-    int i, j, p, q, t, x, N = n_Col * n_Lines, aux = 0;
+    int i, j, N = n_Col * n_Lines, aux = 0;
     int *id = (int *)malloc(N * sizeof(int));
+    if (id == NULL) 
+        exit(0);
+
     int *sz = (int *)malloc(N * sizeof(int));
+    if (id == NULL) 
+        exit(0);
+
     if (p2 < p1)
     {
         i = p2;
@@ -546,77 +534,4 @@ int sameRoomWQU(int *board, int n_Lines, int n_Col, int p1, int p2)
     free(id);
     free(sz);
     return aux;
-}
-
-/**
- * @brief  Faz a leitura dos parametros no ficheiro lido VER ISTO!!
- * @note   TEMOS DE SEPARAR EM 2 FUNÇÕES UMA QUE FAZ A LEITURA DOS PARAMETROS
- *         INICIAIS E OUTRA QUE FAZ A LEITURA DAS PAREDES EM SI
- * @param  *fp: apontador para o ficheiro lido
- * @retval None
- */
-void leituraP(FILE *fp)
-{
-    int n_V = 0, n_Col = 0, n_Lines = 0, key_Line = -1, key_Col = -1, n_walls = 0, l = 0, c = 0, w = 0;
-    int key2_Col, key2_Line;
-    char variante[3]; //vai guardar o modo de jogo (A1 ou A2 ou ...)
-    fscanf(fp, "%d %d", &n_Lines, &n_Col);
-    fscanf(fp, "%d %d", &key_Line, &key_Col);
-    fscanf(fp, "%s", variante);
-    n_V = n_Col * n_Lines;
-    printf("numero de vertices é %d\n", n_V);
-    printf("o tesouro está em %d %d\n", key_Line, key_Col);
-    if ((strcmp(variante, "A1") == 0) || (strcmp(variante, "A2") == 0) || (strcmp(variante, "A3") == 0) || (strcmp(variante, "A4") == 0) || (strcmp(variante, "A5") == 0) || (strcmp(variante, "A6") == 0))
-    {
-        printf("a variante é %s\n", variante);
-        if ((strcmp(variante, "A6") == 0))
-        {
-            fscanf(fp, "%d %d", &key2_Line, &key2_Col);
-        }
-    }
-    else
-    {                                                                     //caso não haja variante
-        rewind(fp);                                                       //voltar ao inicio do ficheiro
-        fscanf(fp, "%d %d %d %d", &n_Lines, &n_Col, &key_Line, &key_Col); // volta a ler o q já tinha sido lido até à variante
-    }
-    fscanf(fp, "%d", &n_walls);
-    printf("numero total de paredes é %d\n", n_walls);
-
-    int *board = (int *)malloc(n_Col * n_Lines * sizeof(int)); //aloca tabuleiro
-    if (board == NULL)
-    {
-        exit(EXIT_FAILURE);
-    }
-    inicializeBoard(board, n_Lines, n_Col); //inicializa o tabuleiro
-    while (fscanf(fp, "%d %d %d", &l, &c, &w) != EOF)
-    {
-
-        printf("parede em %d %d com custo %d\n", l, c, w);
-        board[(l - 1) * n_Col + c - 1] = w; //colocar a parede no tabuleiro
-    }
-    printf("\n\n");
-    //printBoard(board, n_Lines, n_Col); //imprimir o tabuleiro (APAGAR SERVE SÓ PARA CHECK)
-    //int A1 = checkPeca(board, n_Lines, n_Col, key_Line, key_Col); //TESTE do modo A1
-    //printf("\n %d", A1);
-    int A4 = checkAdjacencia(board, n_Lines, n_Col, key_Line, key_Col, 4); //TESTE do modo A2, A3 e A4
-    printf("\n %d", A4);
-    //int A5 = checkBreakable(board, n_Lines, n_Col, key_Line, key_Col); //TESTE do modo A5
-    //printf("\n %d", A5);
-    int A6;
-    if (checkInsideBoard(board, n_Lines, n_Col, key_Line, key_Col) == 0 || checkInsideBoard(board, n_Lines, n_Col, key2_Line, key2_Col) == 0)
-    {
-        A6 = -2;
-    }
-    else
-    {
-        //pilha
-        //A6 = checkSameRoom(board, n_Lines, n_Col, convertTile(key_Line, key_Col, n_Col), convertTile(key2_Line, key2_Col, n_Col));
-        //conetividade WQU
-        //A6 = sameRoomWQU(board, n_Lines, n_Col, convertTile(key_Line, key_Col, n_Col), convertTile(key2_Line, key2_Col, n_Col));
-        //conetividade QU
-        //A6 = sameRoomQU(board, n_Lines, n_Col, convertTile(key_Line, key_Col, n_Col), convertTile(key2_Line, key2_Col, n_Col));
-    }
-    //printf("\n A6= %d", A6);
-    printf("\n");
-    free(board);
 }

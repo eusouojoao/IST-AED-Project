@@ -11,7 +11,7 @@ void initPilha(unsigned pSize)
     gP = (Item *)malloc(pSize * sizeof(Item));
     if (gP == NULL)
     {
-        exit(EXIT_FAILURE);
+        exit(0);
     }
     gN = 0;
 }
@@ -35,7 +35,7 @@ Item pop()
         Item aux = gP[--gN];
         return aux;
     }
-    exit(EXIT_FAILURE);
+    exit(0);
 }
 
 void freePilha()

@@ -7,7 +7,7 @@ void write2outputFile (char *output, int to_print)
     FILE *fp = fopen(output, "a");
 
     if (fp == NULL)
-        exit(EXIT_FAILURE);
+        exit(0);
 
     if (p != 0)
         fprintf(fp, "\n\n");

@@ -57,34 +57,34 @@ void initGameMode (boardRules *brp, int *board, char *output)
     if (brp->gameMode[1] == '1')
     {
         A = checkPeca(board, brp->board.lines, brp->board.columns, brp->key.Line, brp->key.Column);
-        printf ("A1:\t%d\n\n", A);
-        /* substituir printf por função que escreve output file */
         write2outputFile (output, A);
 
     } else if ((brp->gameMode[1] == '2') || (brp->gameMode[1] == '3') || (brp->gameMode[1] == '4')) {
         A = checkAdjacencia(board, brp->board.lines, brp->board.columns, brp->key.Line, brp->key.Column, (int) (brp->gameMode[1] - '0'));
-        printf ("A%d:\t%d\n\n", (int) (brp->gameMode[1] - '0'), A);
-        /* substituir printf por função que escreve output file */
         write2outputFile (output, A);
 
     } else if (brp->gameMode[1] == '5') {
         A = checkBreakable(board, brp->board.lines, brp->board.columns, brp->key.Line, brp->key.Column);
-        printf ("A5:\t%d\n\n", A);
-        /* substituir printf por função que escreve output file */
         write2outputFile (output, A);
 
     } else if (brp->gameMode[1] == '6') {
-        if ((checkInsideBoard(board, brp->board.lines, brp->board.columns, brp->key.Line, brp->key.Column)) == 0 ||\
-            (checkInsideBoard(board, brp->board.lines, brp->board.columns, brp->key.Line, brp->key.Column)) == 0)
+        if ((checkInsideBoard(brp->board.lines, brp->board.columns, brp->key.Line, brp->key.Column)) == 0 ||\
+            (checkInsideBoard(brp->board.lines, brp->board.columns, brp->A6.l2, brp->A6.c2)) == 0)
         {
             A = -2;
         } else {
             /* proceder... */
-            ;
+            //if (4 * 3 * brp->board.lines * brp->board.columns <= 90 * 1000000)
+            //conetividade WQU
+            A = sameRoomWQU(board, brp->board.lines, brp->board.columns, convertTile(brp->key.Line, brp->key.Column, brp->board.columns), convertTile(brp->A6.l2, brp->A6.c2, brp->board.columns));
+            //else if (4 * 2 * brp->board.lines * brp->board.columns > 90 * 1000000)
+            //pilha
+            //A = checkSameRoom(board, brp->board.lines, brp->board.columns, convertTile(brp->key.Line, brp->key.Column, brp->board.columns), convertTile(brp->A6.l2, brp->A6.c2, brp->board.columns));
+            //else
+            //conetividade QU
+            //A = sameRoomQU(board, brp->board.lines, brp->board.columns, convertTile(brp->key.Line, brp->key.Column, brp->board.columns), convertTile(brp->A6.l2, brp->A6.c2, brp->board.columns));
         }
 
-        printf ("A6:\t%d\n\n", A);
-        /* substituir printf por função que escreve output file */
         write2outputFile (output, A);
     }
 
@@ -107,13 +107,21 @@ void readInputFile (FILE *fp, boardRules *brp, char *output)
     int *board = NULL, i = 0;
     char buf[128];
     wall *Wall = (wall *)malloc(sizeof(wall));
+    if (Wall == NULL)
+        exit(0);
+
     brp = (boardRules *)malloc(sizeof(boardRules));
+    if (brp == NULL)
+        exit(0);
 
     /* obtem as dimensões do tabuleiro, as coordenadas da peça 1, e a variante do jogo (A1..6) */
-    fscanf(fp, "%d %d %d %d %2s", &(brp->board.lines), &(brp->board.columns), 
-            &(brp->key.Line), &(brp->key.Column), brp->gameMode);
-    
-    printf("%d %d %d %d %s\n", brp->board.lines, brp->board.columns, brp->key.Line, brp->key.Line, brp->gameMode);
+    if ((fscanf(fp, "%d %d %d %d %2s", &(brp->board.lines), &(brp->board.columns), 
+            &(brp->key.Line), &(brp->key.Column), brp->gameMode)) != 5)
+    {
+        free(brp);
+        free(Wall);
+        return;
+    }
 
     /* isto é para a 2ª parte, possivelmente pode ser deleted */
     if ((i = checkVariante(brp->gameMode)) == 0)
@@ -133,7 +141,7 @@ void readInputFile (FILE *fp, boardRules *brp, char *output)
     /* verifica se a alocação foi sucedida */
     if ( (board = (int *)malloc( brp->board.lines * brp->board.columns * sizeof(int) )) == NULL )
     {
-        exit(EXIT_FAILURE);
+        exit(0);
     }
 
     /* inicializa o tabuleiro com o tamanho especificado */
@@ -146,20 +154,13 @@ void readInputFile (FILE *fp, boardRules *brp, char *output)
     {
         if (buf[0] == '\n')
         {
-            /* linha vazia, ou seja pode vir um novo tabuleiro a seguir */
-            /* pensar no que fazer */
-            /* possivelmente break e depois no final (após completar o 1º tabuleiro) 
-             * verificar que buf[0] == '\0', libertar toda a memória e chamar readInputFile() 
-             * recursivamente */
-            printf("Existe outro tabuleiro neste ficheiro!\n");
             break; /* sai do while loop */
         }
 
         if (sscanf(buf, "%d %d %d", &(Wall->l1), &(Wall->c1), &(Wall->weight)) != 3)
-            exit(EXIT_FAILURE);
+            exit(0);
 
         /* !TESTE! REMOVER DEPOIS */
-        printf("Parede (%d, %d) com peso %d\n", Wall->l1, Wall->c1, Wall->weight);
         board[(Wall->l1 - 1) * brp->board.columns + Wall->c1 - 1] = Wall->weight;
     }
 
