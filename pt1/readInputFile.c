@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "readInputFile.h"
 #include "board.h"
+#include "writeOutputFile.h"
 
 struct board
 {
@@ -48,7 +49,7 @@ int checkVariante(char *var)
  *
  *  Returns: - (void)
  * */
-void initGameMode (boardRules *brp, int *board)
+void initGameMode (boardRules *brp, int *board, char *output)
 {
     /* !ATENÇÃO! apenas declaradas pra teste! */
     int A = -1337;
@@ -58,16 +59,19 @@ void initGameMode (boardRules *brp, int *board)
         A = checkPeca(board, brp->board.lines, brp->board.columns, brp->key.Line, brp->key.Column);
         printf ("A1:\t%d\n\n", A);
         /* substituir printf por função que escreve output file */
+        write2outputFile (output, A);
 
     } else if ((brp->gameMode[1] == '2') || (brp->gameMode[1] == '3') || (brp->gameMode[1] == '4')) {
         A = checkAdjacencia(board, brp->board.lines, brp->board.columns, brp->key.Line, brp->key.Column, (int) (brp->gameMode[1] - '0'));
         printf ("A%d:\t%d\n\n", (int) (brp->gameMode[1] - '0'), A);
         /* substituir printf por função que escreve output file */
+        write2outputFile (output, A);
 
     } else if (brp->gameMode[1] == '5') {
         A = checkBreakable(board, brp->board.lines, brp->board.columns, brp->key.Line, brp->key.Column);
         printf ("A5:\t%d\n\n", A);
         /* substituir printf por função que escreve output file */
+        write2outputFile (output, A);
 
     } else if (brp->gameMode[1] == '6') {
         if ((checkInsideBoard(board, brp->board.lines, brp->board.columns, brp->key.Line, brp->key.Column)) == 0 ||\
@@ -81,6 +85,7 @@ void initGameMode (boardRules *brp, int *board)
 
         printf ("A6:\t%d\n\n", A);
         /* substituir printf por função que escreve output file */
+        write2outputFile (output, A);
     }
 
     return;
@@ -97,7 +102,7 @@ void initGameMode (boardRules *brp, int *board)
  *  Returns: - (void)
  *
  * --- */
-void readInputFile (FILE *fp, boardRules *brp)
+void readInputFile (FILE *fp, boardRules *brp, char *output)
 {
     int *board = NULL, i = 0;
     char buf[128];
@@ -159,7 +164,7 @@ void readInputFile (FILE *fp, boardRules *brp)
     }
 
     /* inicia o jogo */
-    initGameMode(brp, board);
+    initGameMode(brp, board, output);
     free(Wall);
     free(board);
     free(brp);
@@ -167,7 +172,7 @@ void readInputFile (FILE *fp, boardRules *brp)
     /* verifica se há outro tabuleiro, se sim, chama readInputFile() recursivamente */
     if (buf[0] == '\n')
     {
-        readInputFile(fp, brp);
+        readInputFile(fp, brp, output);
     }
 
     return;

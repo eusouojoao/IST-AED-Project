@@ -1,8 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-/*#include "graph.h"*/
-#include "header.h"
 #include "readInputFile.h"
 #include "commandLineOps.h"
 
@@ -21,7 +19,7 @@ int main(int argc, char *argv[])
     if (fp == NULL)
         return 1;
 
-    readInputFile(fp, brp);
+    readInputFile(fp, brp, CLOps->output);
     fclose(fp);
     freeOps(CLOps);
 
