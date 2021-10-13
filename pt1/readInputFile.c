@@ -5,21 +5,25 @@
 #include "writeOutputFile.h"
 #include "Pilha.h"
 
+/* linhas e colunas do tabuleiro */
 struct board
 {
     int lines, columns;
 };
 
+/* chave na segunda parte, na primeira é a peça (l1, c1) */
 struct key
 {
     int Line, Column;
 };
 
+/* caso seja o modo A6 na primeira parte do projeto comporta-se como (l2, c2) */
 struct A6
 {
     int l2, c2;
 };
 
+/* regras do tabuleiro, necessárias para o criar */
 struct _boardRules
 {
     struct board board;
@@ -29,16 +33,18 @@ struct _boardRules
     char gameMode[3];
 };
 
+/* parede (l1, c1) com valor weight */
 typedef struct _wall
 {
     int l1, c1, weight;
 } wall;
 
 /**
- * @brief  
+ * @brief  Verifica a variante do jogo (A1..A6)
  * @note   
- * @param  *var: 
- * @retval 
+ *
+ * @param  *var: variante do jogo em modo string
+ * @retval Retorna a variante do jogo 1..6 
  */
 int checkVariante(char *var)
 {
@@ -47,21 +53,13 @@ int checkVariante(char *var)
     return 0;
 }
 
-/*
- *  initGameMode()
- *
- *  Description: Inicia o modo de jogo consoante a variante especificada no ficheiro de input
- *
- *  Side-Effects: Inicia o jogo...
- *
- *  Returns: - (void)
- * */
 /**
- * @brief  
- * @note   
- * @param  *brp: 
- * @param  *board: 
- * @param  *output: 
+ * @brief   Inicia o modo de jogo consoante a variante especificada no ficheiro de input
+ * @note    Inicia o jogo... 
+ *
+ * @param  *brp: apontador para as regras do tabuleiro 
+ * @param  *board: tabuleiro
+ * @param  *output: nome do ficheiro de output
  * @retval None
  */
 void initGameMode(boardRules *brp, int *board, char *output)
@@ -111,23 +109,14 @@ void initGameMode(boardRules *brp, int *board, char *output)
     return;
 }
 
-/* ---
- *  readInputFile()
- *
- *  Description: Função que lê do ficheiro de input
- *
- *  Side-Effects: Preenche o brp (apontador para boardRules) com as regras do jogo, i.e.,
+/**
+ * @brief  Função que lê do ficheiro de input
+ * @note   Preenche o brp (apontador para boardRules) com as regras do jogo, i.e.,
  *  tamanho tabuleiro, variante do jogo... e inicializa o tabuleiro ao ler do ficheiro
  *
- *  Returns: - (void)
- *
- * --- */
-/**
- * @brief  
- * @note   
- * @param  *fp: 
- * @param  *brp: 
- * @param  *output: 
+ * @param  *fp: file pointer 
+ * @param  *brp: apontador para as regras do tabuleiro
+ * @param  *output: nome do ficheiro de output 
  * @retval None
  */
 void readInputFile(FILE *fp, boardRules *brp, char *output)

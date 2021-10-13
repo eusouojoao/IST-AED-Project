@@ -2,14 +2,14 @@
 #include <string.h>
 #include "commandLineOps.h"
 
-/*
+/* ---
  *  freeOps()
  *
  *  Description: liberta a memória dinamicamente alocada para as strings input e output,
  *  e finalmente liberta a memória ocupada pela estrutura do tipo commandLineOps.c
  *
  *  Returns: - (void)
- * */
+ * --- */
 void freeOps (cLineOps *CLOps)
 {
     free(CLOps->input);
@@ -18,14 +18,14 @@ void freeOps (cLineOps *CLOps)
     return;
 }
 
-/*
+/* ---
  *  changeExt()
  *
  *  Description: recebe o nome do ficheiro de input e retorna o nome do ficheiro de output
  *  SEM O NULL CARACTER que termina a string!!!
  *
  *  Returns: char *str (nome do ficheiro de output SEM O NULL CARACTER!!!)
- * */
+ * --- */
 void changeExt (cLineOps *CLOps)
 {
     unsigned long int i = 0;

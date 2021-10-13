@@ -3,13 +3,6 @@
 #include "readInputFile.h"
 #include "commandLineOps.h"
 
-/**
- * @brief  
- * @note   
- * @param  argc: a
- * @param  *argv[]: 
- * @retval 
- */
 int main(int argc, char *argv[])
 {
     boardRules *brp = NULL;
