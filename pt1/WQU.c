@@ -49,7 +49,7 @@ void connectivityAdjacentWQU(int *id, int *sz, int *board, int tile, int n_Lines
 {
     int aux = tile;
     aux++;                                              //verificar a peça adjacente à direita
-    if (checkInsideBoardP(aux, n_Lines, n_Col, 1) == 1) //1-soma horizontal
+    if (isTileAdjacent(aux, n_Lines, n_Col, 1) == 1) //1-soma horizontal
     {
         if (board[aux] == 0)
         {
@@ -57,7 +57,7 @@ void connectivityAdjacentWQU(int *id, int *sz, int *board, int tile, int n_Lines
         }
     }
     aux = aux - 2;                                      //verificar a peça adjacente à esquerda
-    if (checkInsideBoardP(aux, n_Lines, n_Col, 2) == 1) //2-subtração horizontal
+    if (isTileAdjacent(aux, n_Lines, n_Col, 2) == 1) //2-subtração horizontal
     {
         if (board[aux] == 0)
         {
@@ -66,7 +66,7 @@ void connectivityAdjacentWQU(int *id, int *sz, int *board, int tile, int n_Lines
     }
     aux++;
     aux = aux + n_Col;                                  //verificar a peça adjacente em cima
-    if (checkInsideBoardP(aux, n_Lines, n_Col, 0) == 1) //0-soma vertical
+    if (isTileAdjacent(aux, n_Lines, n_Col, 0) == 1) //0-soma vertical
     {
         if (board[aux] == 0)
         {
@@ -74,7 +74,7 @@ void connectivityAdjacentWQU(int *id, int *sz, int *board, int tile, int n_Lines
         }
     }
     aux = aux - 2 * n_Col;                              //verificar a peça adjacente em baixo
-    if (checkInsideBoardP(aux, n_Lines, n_Col, 0) == 1) //0-subtração vertical
+    if (isTileAdjacent(aux, n_Lines, n_Col, 0) == 1) //0-subtração vertical
     {
         if (board[aux] == 0)
         {

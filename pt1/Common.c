@@ -32,33 +32,6 @@ void inicializeBoard(int *board, int n_Lines, int n_Col)
 }
 
 /**
- * @brief  Verifica se uma peça é adjacente (?) verifica se a peça está dentro do tabuleiro !ATENÇÃO!
- * @note   
- * @param  tile: peça a testar (convertida para coordenada de array)
- * @param  l: nº de linhas do tabuleiro
- * @param  c: nº de colunas do tabuleiro
- * @param  HouV: subtração horizontal ou vertical
- * @retval 0 se a peça não é adjacente
- *         1 se a peça é adjacente
- */
-int checkInsideBoardP(int tile, int n_Lines, int n_Col, int HouV)
-{
-    if (tile < 0 || tile > (n_Lines * n_Col - 1))
-        return 0;  //não é adjacente
-    if (HouV == 1) //HouV==1 soma horizontal
-    {
-        if ((tile % n_Col) == 0)
-            return 0; //não é adjacente
-    }
-    if (HouV == 2) //HouV==2 subtração horizontal
-    {
-        if ((tile % n_Col) == (n_Col - 1))
-            return 0; //não é adjacente
-    }
-    return 1; //é adjacente
-}
-
-/**
  * @brief  Verifica se uma peça está dentro ou fora do tabuleiro
  * @note   
  * @param  *board: tabuleiro (vetor unidimensional)

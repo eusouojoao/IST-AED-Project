@@ -4,6 +4,8 @@
 #include "Common.h"
 #include "writeOutputFile.h"
 #include "Pilha.h"
+#include "WQU.h"
+#include "QU.h"
 
 /* linhas e colunas do tabuleiro */
 struct board
@@ -92,12 +94,15 @@ void initGameMode(boardRules *brp, int *board, char *output)
         else
         {
             /* proceder... */
-            //if (4 * 3 * brp->board.lines * brp->board.columns <= 90 * 1000000)
+            //if (brp->board.lines * brp->board.columns < 15000000) {
             //conetividade WQU
             //A = sameRoomWQU(board, brp->board.lines, brp->board.columns, convertTile(brp->key.Line, brp->key.Column, brp->board.columns), convertTile(brp->A6.l2, brp->A6.c2, brp->board.columns));
+            //}
             //else if (4 * 2 * brp->board.lines * brp->board.columns > 90 * 1000000)
+            //else {
             //pilha
             A = checkSameRoom(board, brp->board.lines, brp->board.columns, convertTile(brp->key.Line, brp->key.Column, brp->board.columns), convertTile(brp->A6.l2, brp->A6.c2, brp->board.columns));
+            //}
             //else
             //conetividade QU
             //A = sameRoomQU(board, brp->board.lines, brp->board.columns, convertTile(brp->key.Line, brp->key.Column, brp->board.columns), convertTile(brp->A6.l2, brp->A6.c2, brp->board.columns));
@@ -173,7 +178,6 @@ void readInputFile(FILE *fp, boardRules *brp, char *output)
         if (fscanf(fp, "%d %d %d", &(Wall->l1), &(Wall->c1), &(Wall->weight)) != 3)
             exit(0);
 
-        /* !TESTE! REMOVER DEPOIS */
         board[(Wall->l1 - 1) * brp->board.columns + Wall->c1 - 1] = Wall->weight;
         brp->n_walls -= 1;
     }

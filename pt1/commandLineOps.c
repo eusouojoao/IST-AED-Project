@@ -2,14 +2,13 @@
 #include <string.h>
 #include "commandLineOps.h"
 
-/* ---
- *  freeOps()
- *
- *  Description: liberta a memória dinamicamente alocada para as strings input e output,
- *  e finalmente liberta a memória ocupada pela estrutura do tipo commandLineOps.c
- *
- *  Returns: - (void)
- * --- */
+/**
+* @brief liberta a memória dinamicamente alocada para as strings input e output,
+*        e finalmente liberta a memória acupada pela estrutura do tipo _commandLineOptions
+* @note 
+* @param *CLOps: estrutura do tipo _commandLineOptions
+* @retval None
+*/
 void freeOps (cLineOps *CLOps)
 {
     free(CLOps->input);
@@ -18,14 +17,13 @@ void freeOps (cLineOps *CLOps)
     return;
 }
 
-/* ---
- *  changeExt()
- *
- *  Description: recebe o nome do ficheiro de input e retorna o nome do ficheiro de output
- *  SEM O NULL CARACTER que termina a string!!!
- *
- *  Returns: char *str (nome do ficheiro de output SEM O NULL CARACTER!!!)
- * --- */
+/**
+* @brief recebe o nome do ficheiro de input e retorna o nome do ficheiro de output 
+* SEM O NULL CARACTER que termina a string!!!
+* @note 
+* @param *CLOps: estrutura do tipo _commandLineOptions 
+* @retval None
+*/
 void changeExt (cLineOps *CLOps)
 {
     unsigned long int i = 0;
@@ -50,15 +48,14 @@ void changeExt (cLineOps *CLOps)
     return;
 }
 
-/* ---
- *  genCLOps(
- *
- *  Description: consoante a fase do projeto preenche a variavel do tipo CLOps com as informações relevantes da fase, i.e.,
- *  nome do ficheiro (com a extensão correta)
- *
- *  Returns: - (void)
- *  )
- * --- */
+/*
+* @brief consoante a fase do projeto preenche a variavel do tipo CLOps com as informações relevantes da fase, i.e.,
+*  nome do ficheiro (com a extensão correta)
+* @note 
+* @param *CLOps: estrutura do tipo _commandLineOptions 
+* @param **argv: argumentos de linha de comandos
+* @retval None
+*/
 void genCLOps (cLineOps *CLOps, char **argv)
 {
     if (CLOps->fase == 1)
@@ -90,13 +87,13 @@ void genCLOps (cLineOps *CLOps, char **argv)
     return;
 }
 
-/* ---
- *  verifyExt()
- *
- *  Description: verifica, consoante a fase do projeto, se a extensão do ficheiro está correta
- *  
- *  Returns: retorna a fase do projeto (int)
- * --- */
+/**
+* @brief verifica, consoante a fase do projeto, se a extensão do ficheiro está correta
+* @note 
+* @param *str: string a ser testada 
+* @param fase: fase do projeto
+* @retval retorna a fase do projeto (int)
+*/
 int verifyExt (char *str, int fase)
 {
     if (fase == 1)
@@ -119,14 +116,15 @@ int verifyExt (char *str, int fase)
     exit(0); 
 }
 
-/* ---
- *  cLineOptions()
- *
- *  Description: verifica se o programa foi invocado corretamente, para além de verificar o modo de jogo 
- *  e a extensão do ficheiro de entrada
- *
- *  Returns: - (void)
- * --- */
+/**
+* @brief verifica se o programa foi invocado corretamente, para além de verificar o modo de jogo 
+*  e a extensão do ficheiro de entrada
+* @note 
+* @param **argv: argumentos da linha de comando 
+* @param argc: contador dos argumentos de linha de comando 
+* @param *CLOps: estrutura do tipo _commandLineOptions 
+* @retval apontador para a estrutura do tipo _commandLineOptions 
+*/
 cLineOps *cLineOptions (char **argv, int argc, cLineOps *CLOps)
 {
     if ((CLOps = (cLineOps *)malloc(sizeof(cLineOps))) == NULL)
