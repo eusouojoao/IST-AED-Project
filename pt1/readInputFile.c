@@ -178,6 +178,8 @@ void readInputFile(FILE *fp, boardRules *brp, char *output)
         if (fscanf(fp, "%d %d %d", &(Wall->l1), &(Wall->c1), &(Wall->weight)) != 3)
             exit(0);
 
+        /* teste provavelmente redundante dado que os tabuleiros não vêm com inputs errados */
+        /*if(checkInsideBoard(brp->board.lines, brp->board.columns, Wall->l1, Wall->c1))*/
         board[(Wall->l1 - 1) * brp->board.columns + Wall->c1 - 1] = Wall->weight;
         brp->n_walls -= 1;
     }
