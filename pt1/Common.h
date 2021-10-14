@@ -10,5 +10,7 @@ int checkAdjacencia(int *board, int n_Lines, int n_Col, int l, int c, int mode);
 int checkSameRoom(int *board, int n_Lines, int n_Col, int p1, int p2);
 int convertTile(int l, int c, int n_Col);
 void pushAdjacent(int *board, int tile, int n_Lines, int n_Col);
+int adjacenyTile(int l, int c, int p2L, int p2C);
+int checkAA(int *AA, int mode);
 
 #endif
