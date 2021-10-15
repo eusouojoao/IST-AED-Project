@@ -1,6 +1,50 @@
 #include "Pilha.h"
 
 /**
+ * @brief  Verifica se 2 peças são adjacentes
+ * @note   
+ * @param  l: linha da peça 1
+ * @param  c: coluna da peça 1
+ * @param  p2L: linha da peça 1
+ * @param  p2C: coluna da peça 2
+ * @retval 1 caso as 2 peças sejam adjacentes
+ *         0 caso as 2 peças não sejam adjacentes
+ */
+int adjacenyTile(int l, int c, int p2L, int p2C)
+{
+    if ((p2L == l + 1 || p2L == l - 1) && c == p2C) //adjacente vertical
+        return 1;
+    if ((p2C == c + 1 || p2C == c - 1) && l == p2L) //adjacente horizontal
+        return 1;
+    return 0;
+}
+
+/**
+ * @brief  Verifica se há uma peça adjacente de uma determinada cor (depende do mode)
+ * @note   
+ * @param  *AA: vector com as 4 possíveis peças adjacentes
+ * @param  mode: modo de jogo (A2, A3 ou A4) associado aos números (2, 3 e 4 respetivamente)
+ * @retval 
+ */
+int checkAA(int *AA, int mode, int n_adj)
+{
+    int i;
+    for (i = 0; i < n_adj; i++)
+    {
+        if (mode == 2)
+            if (AA[i] == 0)
+                return 1; //modo 2- branca adjacente
+        if (mode == 3)
+            if (AA[i] > 1)
+                return 1; //modo 3- cinzenta adjacente
+        if (mode == 4)
+            if (AA[i] == -1)
+                return 1; //modo 4- preta adjacente
+    }
+    return 0; //não tem a "cor" requerida adjacente
+}
+
+/**
  * @brief  Converte coordenadas do tabuleiro, por exemplo (3,2) num único inteiro
  * @note   
  * @param  l: linha em que está a peça

@@ -64,7 +64,7 @@ int checkVariante(char *var)
  * @param  *output: nome do ficheiro de output
  * @retval None
  */
-void initGameMode(boardRules *brp, int *board, char *output, int A1, int *AA)
+void initGameMode(boardRules *brp, int *board, char *output, int A1, int *AA, int n_adj)
 {
     /* !ATENÇÃO! apenas declaradas pra teste! */
     int A = -1337;
@@ -76,7 +76,7 @@ void initGameMode(boardRules *brp, int *board, char *output, int A1, int *AA)
     }
     else if ((brp->gameMode[1] == '2') || (brp->gameMode[1] == '3') || (brp->gameMode[1] == '4'))
     {
-        A = checkAA(AA, (int)(brp->gameMode[1] - '0'));
+        A = checkAA(AA, (int)(brp->gameMode[1] - '0'), n_adj);
         write2outputFile(output, A);
     }
     else if (brp->gameMode[1] == '5')
@@ -129,6 +129,7 @@ void initGameMode(boardRules *brp, int *board, char *output, int A1, int *AA)
 void readInputFile(FILE *fp, boardRules *brp, char *output)
 {
     int *board = NULL, i = 0, A1, *A, j = 0;
+    int k, n_adj = 4;
     wall *Wall = (wall *)malloc(sizeof(wall));
     if (Wall == NULL)
         exit(0);
@@ -171,10 +172,14 @@ void readInputFile(FILE *fp, boardRules *brp, char *output)
         A1 = 0;
     else if (brp->gameMode[1] == '2' || brp->gameMode[1] == '3' || brp->gameMode[1] == '4')
     {
-        A = (int *)malloc(4 * sizeof(int));
-        // A[4] = {0, 0, 0, 0};
-        int k;
-        for (k = 0; k < 4; k++)
+        //verificar se é uma peça de canto
+        if ((brp->key.Line == 1 && brp->key.Column == 1) || (brp->key.Line == 1 && brp->key.Column == brp->board.columns) || (brp->key.Line == brp->board.lines && brp->key.Column == 1) || (brp->key.Line == brp->board.lines && brp->key.Column == brp->board.columns))
+            n_adj = 2;
+        //verificar se tile é uma peça lateral
+        else if (brp->key.Line == brp->board.lines || brp->key.Column == brp->board.columns || brp->key.Line == 1 || brp->key.Column == 1)
+            n_adj = 3;
+        A = (int *)malloc(n_adj * sizeof(int));
+        for (k = 0; k < n_adj; k++)
             A[k] = 0;
     }
     else
@@ -231,7 +236,7 @@ void readInputFile(FILE *fp, boardRules *brp, char *output)
         gameAResult(A1, output);
     else
     {*/
-    initGameMode(brp, board, output, A1, A);
+    initGameMode(brp, board, output, A1, A, n_adj);
     if (brp->gameMode[1] != '1' && brp->gameMode[1] != '2' && brp->gameMode[1] != '3' && brp->gameMode[1] != '4')
         free(board);
     if (brp->gameMode[1] == '2' || brp->gameMode[1] == '3' || brp->gameMode[1] == '4')
