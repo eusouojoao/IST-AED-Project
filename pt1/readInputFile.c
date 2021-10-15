@@ -64,19 +64,19 @@ int checkVariante(char *var)
  * @param  *output: nome do ficheiro de output
  * @retval None
  */
-void initGameMode(boardRules *brp, int *board, char *output)
+void initGameMode(boardRules *brp, int *board, char *output, int A1, int *AA)
 {
     /* !ATENÇÃO! apenas declaradas pra teste! */
     int A = -1337;
 
     if (brp->gameMode[1] == '1')
     {
-        A = checkPeca(board, brp->board.lines, brp->board.columns, brp->key.Line, brp->key.Column);
+        A = A1;
         write2outputFile(output, A);
     }
     else if ((brp->gameMode[1] == '2') || (brp->gameMode[1] == '3') || (brp->gameMode[1] == '4'))
     {
-        A = checkAdjacencia(board, brp->board.lines, brp->board.columns, brp->key.Line, brp->key.Column, (int)(brp->gameMode[1] - '0'));
+        A = checkAA(AA, (int)(brp->gameMode[1] - '0'));
         write2outputFile(output, A);
     }
     else if (brp->gameMode[1] == '5')
@@ -94,15 +94,17 @@ void initGameMode(boardRules *brp, int *board, char *output)
         else
         {
             /* proceder... */
-            //if (brp->board.lines * brp->board.columns < 15000000) {
-            //conetividade WQU
-            //A = sameRoomWQU(board, brp->board.lines, brp->board.columns, convertTile(brp->key.Line, brp->key.Column, brp->board.columns), convertTile(brp->A6.l2, brp->A6.c2, brp->board.columns));
-            //}
+            if (brp->board.lines * brp->board.columns < 15000000)
+            {
+                //conetividade WQU
+                A = sameRoomWQU(board, brp->board.lines, brp->board.columns, convertTile(brp->key.Line, brp->key.Column, brp->board.columns), convertTile(brp->A6.l2, brp->A6.c2, brp->board.columns));
+            }
             //else if (4 * 2 * brp->board.lines * brp->board.columns > 90 * 1000000)
-            //else {
-            //pilha
-            A = checkSameRoom(board, brp->board.lines, brp->board.columns, convertTile(brp->key.Line, brp->key.Column, brp->board.columns), convertTile(brp->A6.l2, brp->A6.c2, brp->board.columns));
-            //}
+            else
+            {
+                //pilha
+                A = checkSameRoom(board, brp->board.lines, brp->board.columns, convertTile(brp->key.Line, brp->key.Column, brp->board.columns), convertTile(brp->A6.l2, brp->A6.c2, brp->board.columns));
+            }
             //else
             //conetividade QU
             //A = sameRoomQU(board, brp->board.lines, brp->board.columns, convertTile(brp->key.Line, brp->key.Column, brp->board.columns), convertTile(brp->A6.l2, brp->A6.c2, brp->board.columns));
@@ -126,7 +128,7 @@ void initGameMode(boardRules *brp, int *board, char *output)
  */
 void readInputFile(FILE *fp, boardRules *brp, char *output)
 {
-    int *board = NULL, i = 0;
+    int *board = NULL, i = 0, A1, *A, j = 0;
     wall *Wall = (wall *)malloc(sizeof(wall));
     if (Wall == NULL)
         exit(0);
@@ -163,31 +165,79 @@ void readInputFile(FILE *fp, boardRules *brp, char *output)
     if (fscanf(fp, "%d", &(brp->n_walls)) != 1)
         exit(0);
 
-    /* verifica se a alocação foi sucedida */
-    if ((board = (int *)malloc(brp->board.lines * brp->board.columns * sizeof(int))) == NULL)
-    {
-        exit(0);
-    }
-
     /* inicializa o tabuleiro com o tamanho especificado */
-    inicializeBoard(board, brp->board.lines, brp->board.columns);
 
-    while (brp->n_walls > 0)
+    if (brp->gameMode[1] == '1')
+        A1 = 0;
+    else if (brp->gameMode[1] == '2' || brp->gameMode[1] == '3' || brp->gameMode[1] == '4')
     {
-
-        if (fscanf(fp, "%d %d %d", &(Wall->l1), &(Wall->c1), &(Wall->weight)) != 3)
-            exit(0);
-
-        /* teste provavelmente redundante dado que os tabuleiros não vêm com inputs errados */
-        /*if(checkInsideBoard(brp->board.lines, brp->board.columns, Wall->l1, Wall->c1))*/
-        board[(Wall->l1 - 1) * brp->board.columns + Wall->c1 - 1] = Wall->weight;
-        brp->n_walls -= 1;
+        A = (int *)malloc(4 * sizeof(int));
+        // A[4] = {0, 0, 0, 0};
+        int k;
+        for (k = 0; k < 4; k++)
+            A[k] = 0;
     }
+    else
+    {
+        /* verifica se a alocação foi sucedida */
+        if ((board = (int *)malloc(brp->board.lines * brp->board.columns * sizeof(int))) == NULL)
+        {
+            exit(0);
+        }
+        inicializeBoard(board, brp->board.lines, brp->board.columns);
+    }
+    if (brp->gameMode[1] == '1')
+    {
+        while (brp->n_walls > 0)
+        {
 
+            if (fscanf(fp, "%d %d %d", &(Wall->l1), &(Wall->c1), &(Wall->weight)) != 3)
+                exit(0);
+            if (Wall->l1 == brp->key.Line && Wall->c1 == brp->key.Column)
+                A1 = Wall->weight;
+        }
+    }
+    else if (brp->gameMode[1] == '2' || brp->gameMode[1] == '3' || brp->gameMode[1] == '4')
+    {
+        j = 0;
+        while (brp->n_walls > 0)
+        {
+
+            if (fscanf(fp, "%d %d %d", &(Wall->l1), &(Wall->c1), &(Wall->weight)) != 3)
+                exit(0);
+            if (adjacenyTile(brp->key.Line, brp->key.Column, Wall->l1, Wall->c1) == 1)
+            {
+                A[j] = Wall->weight;
+                j++;
+            }
+        }
+    }
+    else
+    {
+        while (brp->n_walls > 0)
+        {
+
+            if (fscanf(fp, "%d %d %d", &(Wall->l1), &(Wall->c1), &(Wall->weight)) != 3)
+                exit(0);
+
+            board[(Wall->l1 - 1) * brp->board.columns + Wall->c1 - 1] = Wall->weight;
+            brp->n_walls -= 1;
+        }
+    }
     /* inicia o jogo */
-    initGameMode(brp, board, output);
+    /*   if (brp->gameMode[1] == '1')
+        gameA1Result(A, output);
+    if (brp->gameMode[1] == '2' || brp->gameMode[1] == '3' || brp->gameMode[1] == '4')
+        gameAResult(A1, output);
+    else
+    {*/
+    initGameMode(brp, board, output, A1, A);
+    if (brp->gameMode[1] != '1' && brp->gameMode[1] != '2' && brp->gameMode[1] != '3' && brp->gameMode[1] != '4')
+        free(board);
+    if (brp->gameMode[1] == '2' || brp->gameMode[1] == '3' || brp->gameMode[1] == '4')
+        free(A);
+    //   }
     free(Wall);
-    free(board);
     free(brp);
 
     /* verifica se há outro tabuleiro, se sim, chama readInputFile() recursivamente */
