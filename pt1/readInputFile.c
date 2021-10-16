@@ -71,17 +71,35 @@ void initGameMode(boardRules *brp, int *board, char *output, int A1, int *AA, in
 
     if (brp->gameMode[1] == '1')
     {
-        A = A1;
+        if ((checkInsideBoard(brp->board.lines, brp->board.columns, brp->key.Line, brp->key.Column)) == 0) 
+        {
+            A = -2;
+        }
+        else 
+            A = A1;
+
         write2outputFile(output, A);
     }
     else if ((brp->gameMode[1] == '2') || (brp->gameMode[1] == '3') || (brp->gameMode[1] == '4'))
     {
-        A = checkAA(AA, (int)(brp->gameMode[1] - '0'), n_adj);
+        if ((checkInsideBoard(brp->board.lines, brp->board.columns, brp->key.Line, brp->key.Column)) == 0) 
+        {
+            A = -2;
+        }
+        else
+            A = checkAA(AA, (int)(brp->gameMode[1] - '0'), n_adj);
+
         write2outputFile(output, A);
     }
     else if (brp->gameMode[1] == '5')
     {
-        A = checkBreakable(board, brp->board.lines, brp->board.columns, brp->key.Line, brp->key.Column);
+        if ((checkInsideBoard(brp->board.lines, brp->board.columns, brp->key.Line, brp->key.Column)) == 0) 
+        {
+            A = -2;
+        }
+        else
+            A = checkBreakable(board, brp->board.lines, brp->board.columns, brp->key.Line, brp->key.Column);
+
         write2outputFile(output, A);
     }
     else if (brp->gameMode[1] == '6')
@@ -128,16 +146,22 @@ void initGameMode(boardRules *brp, int *board, char *output, int A1, int *AA, in
  */
 void readInputFile(FILE *fp, boardRules *brp, char *output)
 {
-    int *board = NULL, i = 0, A1, *A, j = 0;
-    int k, n_adj = 4;
+    //---------------------------//
+    int *board = NULL, *A = NULL;
+    int i = 0, j = 0, k = 0;
+    int n_adj = 4, A1 = -1337;
+
+    //---------------------------//
     wall *Wall = (wall *)malloc(sizeof(wall));
     if (Wall == NULL)
         exit(0);
 
+    //---------------------------//
     brp = (boardRules *)malloc(sizeof(boardRules));
     if (brp == NULL)
         exit(0);
 
+    //---------------------------//
     /* obtem as dimensões do tabuleiro, as coordenadas da peça 1, e a variante do jogo (A1..6) */
     if ((fscanf(fp, "%d %d %d %d %2s", &(brp->board.lines), &(brp->board.columns),
                 &(brp->key.Line), &(brp->key.Column), brp->gameMode)) != 5)
@@ -147,8 +171,9 @@ void readInputFile(FILE *fp, boardRules *brp, char *output)
         return;
     }
 
+    //---------------------------//
     /* isto é para a 2ª parte, possivelmente pode ser deleted */
-    if ((i = checkVariante(brp->gameMode)) == 0)
+    if ((i = checkVariante(brp->gameMode)) == 0) /* NOTA! o «i» fica com o numero da variante do jogo! */
     {
         rewind(fp);
         if (fscanf(fp, "%d %d %d %d", &(brp->board.lines), &(brp->board.columns),
@@ -162,28 +187,34 @@ void readInputFile(FILE *fp, boardRules *brp, char *output)
             exit(0);
     }
 
+    //---------------------------//
     /* obtem o nº de paredes */
     if (fscanf(fp, "%d", &(brp->n_walls)) != 1)
         exit(0);
 
-    /* inicializa o tabuleiro com o tamanho especificado */
+    //---------------------------//
+    /* inicializa o «tabuleiro» com o tamanho especificado/necessário */
+    if (i == 1) A1 = 0;
+    else if (i >= 2 && i <= 4) {
+         /* verificar se tile é uma peça lateral */
+        if ((brp->key.Line == brp->board.lines) ||\
+                (brp->key.Column == brp->board.columns) ||\
+                (brp->key.Line == 1) || (brp->key.Column == 1)) n_adj = 3;
 
-    if (brp->gameMode[1] == '1')
-        A1 = 0;
-    else if (brp->gameMode[1] == '2' || brp->gameMode[1] == '3' || brp->gameMode[1] == '4')
-    {
-        //verificar se é uma peça de canto
-        if ((brp->key.Line == 1 && brp->key.Column == 1) || (brp->key.Line == 1 && brp->key.Column == brp->board.columns) || (brp->key.Line == brp->board.lines && brp->key.Column == 1) || (brp->key.Line == brp->board.lines && brp->key.Column == brp->board.columns))
-            n_adj = 2;
-        //verificar se tile é uma peça lateral
-        else if (brp->key.Line == brp->board.lines || brp->key.Column == brp->board.columns || brp->key.Line == 1 || brp->key.Column == 1)
-            n_adj = 3;
+       /* verificar se é uma peça de canto */
+        else if ((brp->key.Line == 1 && brp->key.Column == 1) ||\
+            (brp->key.Line == 1 && brp->key.Column == brp->board.columns) ||\
+            (brp->key.Line == brp->board.lines && brp->key.Column == 1) ||\
+            (brp->key.Line == brp->board.lines && brp->key.Column == brp->board.columns)) n_adj = 2;
+
         A = (int *)malloc(n_adj * sizeof(int));
+        if (A == NULL)
+            exit(0);
+
         for (k = 0; k < n_adj; k++)
             A[k] = 0;
-    }
-    else
-    {
+
+    } else {
         /* verifica se a alocação foi sucedida */
         if ((board = (int *)malloc(brp->board.lines * brp->board.columns * sizeof(int))) == NULL)
         {
@@ -191,60 +222,60 @@ void readInputFile(FILE *fp, boardRules *brp, char *output)
         }
         inicializeBoard(board, brp->board.lines, brp->board.columns);
     }
-    if (brp->gameMode[1] == '1')
-    {
-        while (brp->n_walls > 0)
-        {
+
+    //---------------------------//
+    /* ler paredes do ficheiro de input */
+    if (i == 1) {
+
+        for (/* stares into the void */; brp->n_walls > 0; brp->n_walls--) {
 
             if (fscanf(fp, "%d %d %d", &(Wall->l1), &(Wall->c1), &(Wall->weight)) != 3)
                 exit(0);
-            if (Wall->l1 == brp->key.Line && Wall->c1 == brp->key.Column)
+
+            if ( (Wall->l1 == brp->key.Line) && (Wall->c1 == brp->key.Column) )
                 A1 = Wall->weight;
         }
-    }
-    else if (brp->gameMode[1] == '2' || brp->gameMode[1] == '3' || brp->gameMode[1] == '4')
-    {
-        j = 0;
-        while (brp->n_walls > 0)
-        {
+
+    } else if (i >= 2 && i <= 4) {
+
+        for (j = 0; brp->n_walls > 0; brp->n_walls--) {
 
             if (fscanf(fp, "%d %d %d", &(Wall->l1), &(Wall->c1), &(Wall->weight)) != 3)
                 exit(0);
-            if (adjacenyTile(brp->key.Line, brp->key.Column, Wall->l1, Wall->c1) == 1)
-            {
+
+            if (adjacentTile(brp->key.Line, brp->key.Column, Wall->l1, Wall->c1) == 1) {
                 A[j] = Wall->weight;
                 j++;
             }
         }
-    }
-    else
-    {
-        while (brp->n_walls > 0)
-        {
+
+    } else {
+
+        for (/* stares into the void */; brp->n_walls > 0; brp->n_walls--) {
 
             if (fscanf(fp, "%d %d %d", &(Wall->l1), &(Wall->c1), &(Wall->weight)) != 3)
                 exit(0);
 
+            /* preencher o tabuleiro com as paredes */
             board[(Wall->l1 - 1) * brp->board.columns + Wall->c1 - 1] = Wall->weight;
-            brp->n_walls -= 1;
+
         }
     }
-    /* inicia o jogo */
-    /*   if (brp->gameMode[1] == '1')
-        gameA1Result(A, output);
-    if (brp->gameMode[1] == '2' || brp->gameMode[1] == '3' || brp->gameMode[1] == '4')
-        gameAResult(A1, output);
-    else
-    {*/
+    
+    //---------------------------//
+    /* inicializa o modo de jogo */
     initGameMode(brp, board, output, A1, A, n_adj);
-    if (brp->gameMode[1] != '1' && brp->gameMode[1] != '2' && brp->gameMode[1] != '3' && brp->gameMode[1] != '4')
+
+    if (i >= 5 && i <= 6)
         free(board);
-    if (brp->gameMode[1] == '2' || brp->gameMode[1] == '3' || brp->gameMode[1] == '4')
+
+    if (i >= 2 && i <= 4)
         free(A);
-    //   }
+
     free(Wall);
     free(brp);
 
+    //---------------------------//
     /* verifica se há outro tabuleiro, se sim, chama readInputFile() recursivamente */
     if (fp != NULL)
     {

@@ -10,11 +10,11 @@
  * @retval 1 caso as 2 peças sejam adjacentes
  *         0 caso as 2 peças não sejam adjacentes
  */
-int adjacenyTile(int l, int c, int p2L, int p2C)
+int adjacentTile(int l, int c, int p2L, int p2C)
 {
-    if ((p2L == l + 1 || p2L == l - 1) && c == p2C) //adjacente vertical
+    if (( (p2L == l + 1) || (p2L == l - 1) ) && c == p2C) //adjacente vertical
         return 1;
-    if ((p2C == c + 1 || p2C == c - 1) && l == p2L) //adjacente horizontal
+    if (( (p2C == c + 1) || (p2C == c - 1) ) && l == p2L) //adjacente horizontal
         return 1;
     return 0;
 }
@@ -35,7 +35,7 @@ int checkAA(int *AA, int mode, int n_adj)
             if (AA[i] == 0)
                 return 1; //modo 2- branca adjacente
         if (mode == 3)
-            if (AA[i] > 1)
+            if (AA[i] > 0)
                 return 1; //modo 3- cinzenta adjacente
         if (mode == 4)
             if (AA[i] == -1)
