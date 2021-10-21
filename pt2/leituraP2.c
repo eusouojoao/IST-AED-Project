@@ -505,10 +505,10 @@ void leituraP(FILE *fp)
     n_rooms = divideRooms(board, n_Lines, n_Col);
     printf("O total de salas é %d\n", n_rooms);
     treasure = board[convertTile(key_Line, key_Col, n_Col)];
-    free(board);
     Graph *myGraph = graphInit(n_rooms);
     fillGraph(myGraph, board, walls, n_walls, n_Lines, n_Col);
-    printWalls(walls, n_walls);
-    graphDestroy(myGraph);
+    //printWalls(walls, n_walls);
+    free(board);
     free(walls);
+    graphDestroy(myGraph);
 }
