@@ -77,16 +77,19 @@ void graphInsertE(Graph *G, Edge *newE)
                     {
                         aux->p = p;
                         aux->weight = weight;
+                        break;
                     }
+                    aux2 = aux2->next;
                 }
                 free(newE);
                 return;
             }
+        aux = aux->next;
     }
     //caso a aresta não exista, criar uma nova
     G->adj[v] = newRoom(w, G->adj[v], weight, p);
     G->adj[w] = newRoom(v, G->adj[w], weight, p);
-    G->E++;
+    G->E++; //Confirmar isto
     free(newE);
     return;
 }
