@@ -59,7 +59,7 @@ Graph *graphInit(int V)
 
 void graphInsertE(Graph *G, Edge *newE)
 {
-    int v = newE->p;
+    int v = newE->v;
     int w = newE->w;
     int weight = newE->weight;
     int p = newE->p;
