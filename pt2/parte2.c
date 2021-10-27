@@ -111,7 +111,7 @@ void pushAdjacentTiles(int *board, int *walls, int tile, int n_Lines, int n_Col,
 
 int findRoom(int *board, int *walls, int n_Lines, int n_Col)
 {
-    int aux = 0, cursor = 0, room = 0;
+    int aux = 0, cursor = 0, room = 1;
     initPilha(2 * n_Col + 3 * n_Lines); //ocupação máxima que a pilha poderia ter
     while (isTileAdjacent(cursor, n_Lines, n_Col, 0) == 1)
     {
@@ -128,7 +128,7 @@ int findRoom(int *board, int *walls, int n_Lines, int n_Col)
                 break;
     }
     freePilha();
-    return room;
+    return --room;
 }
 
 void pushTiles(int *board, int tile, int n_Lines, int n_Col, int room)
@@ -175,7 +175,7 @@ void pushTiles(int *board, int tile, int n_Lines, int n_Col, int room)
 
 int divideRooms(int *board, int n_Lines, int n_Col)
 {
-    int aux = 0, cursor = 0, room = 0;
+    int aux = 0, cursor = 0, room = 1;
     initPilha(2 * n_Col + 3 * n_Lines); //ocupação máxima que a pilha poderia ter
     while (isTileAdjacent(cursor, n_Lines, n_Col, 0) == 1)
     {
@@ -192,14 +192,15 @@ int divideRooms(int *board, int n_Lines, int n_Col)
                 break;
     }
     freePilha();
+    room--;
     return room;
 }
 
 void insertInGraph(Graph *myGraph, int room1, int room2, int p_wall, int weight_wall)
 {
     Edge *newE;
-    room1 = -room1 - 1; //conversão para numero psoitivo das salas (note-se que os numeros das salas começavam em -2 e iam decrescendo)
-    room2 = -room2 - 1;
+    room1 = -room1 - 2; //conversão para numero psoitivo das salas (note-se que os numeros das salas começavam em -2 e iam decrescendo)
+    room2 = -room2 - 2;
     newE = newEdge(room1, room2, p_wall, weight_wall);
     graphInsertE(myGraph, newE);
     //free(newE);
@@ -232,9 +233,13 @@ void fillGraph(Graph *myGraph, int *board, int *walls, int n_walls, int n_Lines,
         {
             down = board[aux];
         }
-        if (down < -1 && up < -1)
-            insertInGraph(myGraph, down, up, walls[i], board[walls[i]]);
-        if (right < -1 && left < -1)
-            insertInGraph(myGraph, right, left, walls[i], board[walls[i]]);
+        if ((down < -1 && up < -1) && (down != up))
+            if (board[walls[i]] != -1)
+                insertInGraph(myGraph, down, up, walls[i], board[walls[i]]);
+        if ((right < -1 && left < -1) && (right != left))
+        {
+            if (board[walls[i]] != -1)
+                insertInGraph(myGraph, right, left, walls[i], board[walls[i]]);
+        }
     }
 }

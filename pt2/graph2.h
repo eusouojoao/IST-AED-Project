@@ -9,3 +9,5 @@ void graphInsertE(Graph *, Edge *); //insere uma aresta no grafo
 //int graphEdges(Edge **, Graph *); //diz o numero de quadrados e coloca as arestas num vetor
 
 void graphDestroy(Graph *);
+
+void printGraph(Graph *);

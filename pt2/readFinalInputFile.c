@@ -31,30 +31,25 @@ typedef struct _wall
     int l1, c1, weight;
 } wall;
 
-
-
-
 /* APAGAR DEPOIS */
 
-void printBoard (int *board, int columns, int lines)
+void printBoard(int *board, int columns, int lines)
 {
     printf("lines:\t%d", lines);
     printf("columns:\t%d\n", columns);
     for (int j = 1; j <= lines; j++)
         for (int i = 1; i <= columns; i++)
         {
-            if (i == (columns) ) 
-                printf("%d\t\n", board[ ((j - 1) * columns + i - 1) ] );
-            else 
-                printf("%d\t", board[ ((j - 1) * columns + i - 1) ] );
+            if (i == (columns))
+                printf("%d\t\n", board[((j - 1) * columns + i - 1)]);
+            else
+                printf("%d\t", board[((j - 1) * columns + i - 1)]);
         }
 
     return;
 }
 
 /* APAGAR DEPOIS */
-
-
 
 /* adicionar comentarios lol */
 /*
@@ -65,7 +60,7 @@ void readFinalInputFile(FILE *fp, boardRules *brp, char *output)
 {
     //---------------------------//
     int *board = NULL, *wallVec = NULL;
-    int n_rooms = 0;
+    int n_rooms = 0, j = 0, counter = 0;
 
     //---------------------------//
     wall *Wall = (wall *)malloc(sizeof(wall));
@@ -107,27 +102,32 @@ void readFinalInputFile(FILE *fp, boardRules *brp, char *output)
 
     //---------------------------//
     /* ler paredes do ficheiro de input */
-    for (/* stares into the void */; brp->n_walls > 0; brp->n_walls--) {
+    counter = brp->n_walls;
+    for (/* stares into the void */; counter > 0; counter--)
+    {
 
         if (fscanf(fp, "%d %d %d", &(Wall->l1), &(Wall->c1), &(Wall->weight)) != 3)
             exit(0);
 
         /* preencher o tabuleiro com as paredes */
         board[(Wall->l1 - 1) * brp->board.columns + Wall->c1 - 1] = Wall->weight;
+        wallVec[j] = (Wall->l1 - 1) * brp->board.columns + Wall->c1 - 1;
+        j++;
     }
 
-    board[ (brp->key.Line - 1) * brp->board.columns + brp->key.Column - 1 ] = -1337; 
+    //board[(brp->key.Line - 1) * brp->board.columns + brp->key.Column - 1] = -1337;
     /* testes (APAGAR depois) */
     printBoard(board, brp->board.columns, brp->board.lines);
-    
+
     //---------------------------//
     /* inicializa o jogo */
     n_rooms = divideRooms(board, brp->board.lines, brp->board.columns);
     printf("\n\nO total de salas é %d\n\n\n", n_rooms);
     Graph *myGraph = graphInit(n_rooms);
     fillGraph(myGraph, board, wallVec, brp->n_walls, brp->board.lines, brp->board.columns);
-
-        /* garbage collector */
+    //teste
+    printGraph(myGraph);
+    /* garbage collector */
     free(board);
     free(Wall);
     free(wallVec);

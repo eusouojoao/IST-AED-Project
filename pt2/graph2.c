@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include "graph2.h"
 
 typedef struct room Room;
@@ -67,16 +68,17 @@ void graphInsertE(Graph *G, Edge *newE)
     while (aux != NULL) //procurar no grafo se a aresta já existe
     {
         if (aux->n == w)
+        {
             if (aux->weight > weight) //substituir a aresta caso, se encontre uma de menor custo
             {
                 aux->p = p;
                 aux->weight = weight;
                 while (aux2 != NULL)
                 {
-                    if (aux->n == v)
+                    if (aux2->n == v)
                     {
-                        aux->p = p;
-                        aux->weight = weight;
+                        aux2->p = p;
+                        aux2->weight = weight;
                         break;
                     }
                     aux2 = aux2->next;
@@ -84,6 +86,8 @@ void graphInsertE(Graph *G, Edge *newE)
                 free(newE);
                 return;
             }
+            return;
+        }
         aux = aux->next;
     }
     //caso a aresta não exista, criar uma nova
@@ -99,4 +103,18 @@ void graphDestroy(Graph *myGraph)
     int v = 0, V = myGraph->V;
     free(myGraph->adj);
     free(myGraph);
+}
+
+void printGraph(Graph *G)
+{
+    int i, n_rooms = G->V;
+    for (i = 0; i < n_rooms; i++)
+    {
+        //  if (G->adj[i] != NULL)
+        while (G->adj[i] != NULL)
+        {
+            printf("A sala %d está unida à sala %d com o custo %d na posição %d\n", i, G->adj[i]->n, G->adj[i]->weight, G->adj[i]->p);
+            G->adj[i] = G->adj[i]->next;
+        }
+    }
 }
