@@ -5,7 +5,7 @@
 void inicializeWallVector(int *walls, int n_walls)
 {
     int i, j;
-    for (i = 0; i < 6 * n_walls; i++)
+    for (i = 0; i < n_walls; i++)
     {
         walls[i] = 0;
     }

@@ -71,11 +71,11 @@ void genCLOps (cLineOps *CLOps, char **argv)
         /* é necessário acrescentar o null caracter no final da string visto que nome output > input */
         CLOps->output[strlen(argv[2]) + 1] = '\0';
 
-    } else {
-        if ((CLOps->input = (char *)malloc((strlen(argv[2]) + 1) * sizeof(char))) == NULL)
+    } else if (CLOps->fase == 2){
+        if ((CLOps->input = (char *)malloc((strlen(argv[1]) + 1) * sizeof(char))) == NULL)
             exit(0);
 
-        if ((CLOps->output = (char *)malloc((strlen(argv[2]) + 2) * sizeof(char))) == NULL)
+        if ((CLOps->output = (char *)malloc((strlen(argv[1]) + 2) * sizeof(char))) == NULL)
             exit(0);
 
         strcpy(CLOps->input, argv[1]);
@@ -104,7 +104,7 @@ int verifyExt (char *str, int fase)
         if (str[strlen(str) - 4] == '.' && str[strlen(str) - 3] == 'i' && str[strlen(str) - 2] == 'n' && str[strlen(str) - 1] == '1')
             return fase;
 
-    } else if (fase == 1) {
+    } else if (fase == 2) {
         if (str == NULL)
             exit(0);
 

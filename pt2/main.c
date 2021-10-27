@@ -1,7 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "readInputFile.h"
+#include "readFinalInputFile.h"
 #include "commandLineOps.h"
+
+#define _FILE_READER ( (CLOps->fase == 1) ? (readInputFile(fp, brp, CLOps->output)) : (readFinalInputFile(fp, brp, CLOps->output)) )
+    
 
 int main(int argc, char *argv[])
 {
@@ -14,7 +18,7 @@ int main(int argc, char *argv[])
     if (fp == NULL)
         return 0;
 
-    readInputFile(fp, brp, CLOps->output);
+    _FILE_READER;
 
     fclose(fp);
     freeOps(CLOps);

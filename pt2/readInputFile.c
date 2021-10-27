@@ -172,15 +172,7 @@ void readInputFile(FILE *fp, boardRules *brp, char *output)
     }
 
     //---------------------------//
-    /* isto é para a 2ª parte, possivelmente pode ser deleted */
-    if ((i = checkVariante(brp->gameMode)) == 0) /* NOTA! o «i» fica com o numero da variante do jogo! */
-    {
-        rewind(fp);
-        if (fscanf(fp, "%d %d %d %d", &(brp->board.lines), &(brp->board.columns),
-                   &(brp->key.Column), &(brp->key.Line)) != 4)
-            exit(0);
-    }
-    else if (i == 6)
+     if ((i = checkVariante(brp->gameMode)) == 6)
     {
         /* segunda coordenada (l2, c2), sendo que (l1, c2) são brp->key.Line e brp->key.Column */
         if (fscanf(fp, "%d %d", &(brp->A6.l2), &(brp->A6.c2)) != 2)
