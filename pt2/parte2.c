@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "Common.h"
 #include "Pilha.h"
 #include "graph2.h"
@@ -176,7 +177,7 @@ void pushTiles(int *board, int tile, int n_Lines, int n_Col, int room)
 int divideRooms(int *board, int n_Lines, int n_Col)
 {
     int aux = 0, cursor = 0, room = 1;
-    initPilha(2 * n_Col + 3 * n_Lines); //ocupação máxima que a pilha poderia ter
+    initPilha(n_Col * n_Lines); //ocupação máxima que a pilha poderia ter
     while (isTileAdjacent(cursor, n_Lines, n_Col, 0) == 1)
     {
         room++;
@@ -188,8 +189,12 @@ int divideRooms(int *board, int n_Lines, int n_Col)
             pushTiles(board, aux, n_Lines, n_Col, room);
         }
         for (; cursor < n_Lines * n_Col; cursor++)
-            if (board[cursor] == 0 || isTileAdjacent(cursor, n_Lines, n_Col, 0) == 0)
+        {
+            if ((board[cursor] == 0 && cursor != aux) || isTileAdjacent(cursor, n_Lines, n_Col, 0) == 0)
                 break;
+            if (board[cursor] == 0 && cursor == aux)
+                board[cursor] = -(room);
+        }
     }
     freePilha();
     room--;
@@ -212,6 +217,7 @@ void fillGraph(Graph *myGraph, int *board, int *walls, int n_walls, int n_Lines,
     for (i = 0; i < n_walls; i++)
     {
         aux = walls[i];
+        right = -1, left = -1, up = -1, down = -1;
         aux++;                                           //verificar a peça adjacente à direita
         if (isTileAdjacent(aux, n_Lines, n_Col, 1) == 1) //1-soma horizontal
         {
