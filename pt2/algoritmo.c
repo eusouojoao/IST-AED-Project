@@ -98,7 +98,7 @@ int Coluna (int coord, int Linha, int colunas)
 void getParede (Room *list, int p, int *wall, int *weight)
 {
     Room *aux = list;
-    while (aux != NULL && list->n != p)
+    while (aux != NULL && aux->n != p)
         aux = aux->next;
 
     if (aux == NULL) exit(0);
@@ -125,7 +125,7 @@ void printRecursivo (FILE *fp, Graph *G, int p, int colunas)
         return;
     }
 
-    printRecursivo(fp, G, p, colunas);
+    printRecursivo(fp, G, parent[p], colunas);
 
     getParede (G->adj[ parent[p] ], p, &wall, &weight);
     linha = Linha (wall, colunas);
