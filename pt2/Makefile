@@ -30,5 +30,5 @@ diff1:
 	for F in ${FILES2} ; ${DIFF} $${F} ../sol/$${F} ; done ;
 
 # -> opção DEBUG, acrescenta a flag -g ao compilador para ajudar a usar no gdb e valgrind; uso -> 'make debug'
-debug: CFLAGS+= -g -Wextra
+debug: CFLAGS+= -ggdb -Wextra
 debug: $(TARGET)

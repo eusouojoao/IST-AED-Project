@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "graph2.h"
+#include "Item.h"
 
 typedef struct room Room;
 
@@ -11,12 +12,14 @@ struct room
     int p;      //posição da parede (que tem o peso w)
     Room *next;
 };
+
 struct graph
 {
     int V; //nº total de salas
     int E; //nº total de arestas
     Room **adj;
 };
+
 struct edge
 {
     int v;      //vertice 1 da aresta

@@ -3,7 +3,10 @@
 #include "readFinalInputFile.h"
 #include "Common.h"
 #include "graph2.h"
+#include "algoritmo.h"
 #include "parte2.h"
+
+#define tesouroSala (-board[ convertTile(brp->key.Line, brp->key.Column, brp->board.columns) ] - 2)
 
 /* linhas e colunas do tabuleiro */
 struct board
@@ -35,8 +38,8 @@ typedef struct _wall
 
 void printBoard(int *board, int columns, int lines)
 {
-    printf("lines:\t%d", lines);
-    printf("columns:\t%d\n", columns);
+    printf("lines:\t%d\n", lines);
+    printf("columns:\t%d\n\n", columns);
     for (int j = 1; j <= lines; j++)
         for (int i = 1; i <= columns; i++)
         {
@@ -125,8 +128,13 @@ void readFinalInputFile(FILE *fp, boardRules *brp, char *output)
     printf("\n\nO total de salas é %d\n\n\n", n_rooms);
     Graph *myGraph = graphInit(n_rooms);
     fillGraph(myGraph, board, wallVec, brp->n_walls, brp->board.lines, brp->board.columns);
-    //teste
-    printGraph(myGraph);
+    algoritmo(myGraph);
+    
+    /* escreve para o ficheiro de saída */
+    writeSolution(output, myGraph, tesouroSala, brp->board.columns);
+
+    //printGraph(myGraph);
+
     /* garbage collector */
     free(board);
     free(Wall);
