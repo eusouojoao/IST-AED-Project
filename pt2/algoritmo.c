@@ -158,7 +158,6 @@ void writeSolution (char *output, Graph *G, int tesouroRoom, int colunas)
 
         fprintf(fp, "%d\n", cnt);
         printRecursivo(fp, G, tesouroRoom, colunas);
-        fprintf(fp, "\n");
 
     } else {
         fprintf(fp, "-1\n");
