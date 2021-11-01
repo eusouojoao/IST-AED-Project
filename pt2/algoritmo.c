@@ -146,6 +146,9 @@ void writeSolution (char *output, Graph *G, int tesouroRoom, int colunas)
 
         if (cnt == 0)
         {
+            fclose(fp);
+            free(dist);
+            free(parent);
             return;
         } 
 
