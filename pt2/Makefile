@@ -33,15 +33,15 @@ diff1:
 
 FILES2 = $(shell ls ../testesF/*.in)
 VALG = valgrind --leak-check=full --track-origins=yes --show-leak-kinds=all -s --log-file="valgrind_$$(date +"%Y_%m_%d_%T").log" 
-testes1:
-	rm -f ../testes/*.sol1
-	for F in ${FILES1}; do sleep 1 ; ${VALG} ./roap -s $${F} ; done;
+testesfinais:
+	rm -f ../testesF/*.sol1
+	for F in ${FILES2}; do sleep 1 ; ${VALG} ./roap -s $${F} ; done;
 
 FILES4 = $(shell ls ../testesF/*.sol)
 DIFF = diff -s
-diff1:
+diffsfinais:
 	mkdir -p diffs
-	for F in ${FILES2} ; do ${DIFF} $${F} $$(echo $${F} | sed 's/testes/sol/g') > diffs/$$(echo $${F} | sed "s/\.\.\/testes\/*/DIFF_/g") ; done ;
+	for F in ${FILES4} ; do ${DIFF} $${F} $$(echo $${F} | sed 's/testesF/finais/g') > diffs/$$(echo $${F} | sed "s/\.\.\/testesF\/*/DIFF_/g") ; done ;
 
 
 # -> opção DEBUG, acrescenta a flag -g ao compilador para ajudar a usar no gdb e valgrind; uso -> 'make debug'

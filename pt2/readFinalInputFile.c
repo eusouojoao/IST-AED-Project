@@ -36,17 +36,40 @@ typedef struct _wall
 
 /* APAGAR DEPOIS */
 
-void printBoard(int *board, int columns, int lines)
+void printBoard(int *board, int columns, int lines, int tesouro)
 {
-    printf("lines:\t%d\n", lines);
+    printf("lines:\t\t%d\n", lines);
     printf("columns:\t%d\n\n", columns);
     for (int j = 1; j <= lines; j++)
         for (int i = 1; i <= columns; i++)
         {
-            if (i == (columns))
-                printf("%d\t\n", board[((j - 1) * columns + i - 1)]);
-            else
-                printf("%d\t", board[((j - 1) * columns + i - 1)]);
+            if (i == (columns)){
+
+                if ( tesouro == ((j - 1) * columns + i - 1)){
+                    printf("\033[0;35m😀 \033[0m\n");
+                    continue;
+                }
+
+                if (board[((j - 1) * columns + i - 1)] == -1 )
+                    printf("\033[0;31m█ \033[0m\n");
+                else if (board[((j - 1) * columns + i - 1)] > 0)
+                    printf("\033[0;37m█ \033[0m\n");
+                else
+                    printf("0 \n");
+            } else {
+
+                if ( tesouro == ((j - 1) * columns + i - 1)){
+                    printf("\033[0;35m😀 \033[0m");
+                    continue;
+                }
+
+                if (board[((j - 1) * columns + i - 1)] == -1)
+                    printf("\033[0;31m█ \033[0m");
+                else if (board[((j - 1) * columns + i - 1)] > 0)
+                    printf("\033[0;37m█ \033[0m");
+                else
+                    printf("0 ");
+            }
         }
 
     return;
@@ -120,7 +143,7 @@ void readFinalInputFile(FILE *fp, boardRules *brp, char *output)
 
     //board[(brp->key.Line - 1) * brp->board.columns + brp->key.Column - 1] = -1337;
     /* testes (APAGAR depois) */
-    printBoard(board, brp->board.columns, brp->board.lines);
+    printBoard(board, brp->board.columns, brp->board.lines, (brp->key.Line - 1) * brp->board.columns + brp->key.Column - 1);
 
     //---------------------------//
     /* inicializa o jogo */

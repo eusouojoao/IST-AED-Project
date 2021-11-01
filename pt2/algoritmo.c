@@ -72,16 +72,6 @@ void algoritmo (Graph *G)
                 }
     }
 
-    printf("\n\n$$$ !-TESTE! -$$$\n");
-    for (int j = 0; j < G->V; j++){
-        printf("%d\t", parent[j]);
-    }
-    printf("\n");
-    for (int j = 0; j < G->V; j++){
-        printf("%d\t", dist[j]);
-    }
-    printf("\n");
-
     return;
 }
 
