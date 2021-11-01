@@ -67,7 +67,8 @@ void algoritmo (Graph *G)
                 if (dist[ (w = t->n) ] > P )
                 {
                     dist[w] = P;
-                    if (parent[w] == -1) acervoAdd(A, w);
+                    //if (parent[w] == -1) 
+                    acervoAdd(A, w);
                     parent[w] = v;
                 }
     }
