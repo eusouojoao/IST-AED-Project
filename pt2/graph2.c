@@ -38,7 +38,7 @@ Room *newRoom(int n, Room *next, int weight, int p)
     return newR;
 }
 
-Edge *newEdge(v, w, p, weight)
+Edge *newEdge(int v, int w, int p, int weight)
 {
     Edge *newE = (Edge *)malloc(sizeof(struct edge));
     newE->p = p;
@@ -89,6 +89,7 @@ void graphInsertE(Graph *G, Edge *newE)
                 free(newE);
                 return;
             }
+            free(newE);
             return;
         }
         aux = aux->next;
@@ -103,7 +104,19 @@ void graphInsertE(Graph *G, Edge *newE)
 
 void graphDestroy(Graph *myGraph)
 {
-    int v = 0, V = myGraph->V;
+    Room *del = NULL; 
+    Room *aux = NULL;
+    for (int j = 0; j < myGraph->V; j++)
+    {
+        aux = myGraph->adj[j];
+        while (aux != NULL)
+        {
+            del = aux;
+            aux = aux->next;
+            free(del);
+        }
+    }
+
     free(myGraph->adj);
     free(myGraph);
 }

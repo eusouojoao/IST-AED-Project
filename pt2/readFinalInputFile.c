@@ -143,12 +143,12 @@ void readFinalInputFile(FILE *fp, boardRules *brp, char *output)
 
     //board[(brp->key.Line - 1) * brp->board.columns + brp->key.Column - 1] = -1337;
     /* testes (APAGAR depois) */
-    printBoard(board, brp->board.columns, brp->board.lines, (brp->key.Line - 1) * brp->board.columns + brp->key.Column - 1);
+    //printBoard(board, brp->board.columns, brp->board.lines, (brp->key.Line - 1) * brp->board.columns + brp->key.Column - 1);
 
     //---------------------------//
     /* inicializa o jogo */
     n_rooms = divideRooms(board, brp->board.lines, brp->board.columns);
-    printf("\n\nO total de salas é %d\n\n\n", n_rooms);
+    //printf("\n\nO total de salas é %d\n\n\n", n_rooms);
     Graph *myGraph = graphInit(n_rooms);
     fillGraph(myGraph, board, wallVec, brp->n_walls, brp->board.lines, brp->board.columns);
     algoritmo(myGraph);

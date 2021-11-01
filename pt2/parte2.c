@@ -1,12 +1,11 @@
-#include <stdio.h>
+#include <stdlib.h>
 #include "Common.h"
 #include "Pilha.h"
 #include "graph2.h"
 
 void inicializeWallVector(int *walls, int n_walls)
 {
-    int i, j;
-    for (i = 0; i < n_walls; i++)
+    for (int i = 0; i < n_walls; i++)
     {
         walls[i] = 0;
     }
@@ -134,7 +133,7 @@ int findRoom(int *board, int *walls, int n_Lines, int n_Col)
 
 void pushTiles(int *board, int tile, int n_Lines, int n_Col, int room)
 {
-    int aux = tile, i;
+    int aux = tile;
     aux++;
     if (isTileAdjacent(aux, n_Lines, n_Col, 1) == 1) //soma horizontal
     {

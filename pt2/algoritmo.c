@@ -73,6 +73,8 @@ void algoritmo (Graph *G)
                 }
     }
 
+    free(A->acervoArray);
+    free(A);
     return;
 }
 
@@ -154,5 +156,8 @@ void writeSolution (char *output, Graph *G, int tesouroRoom, int colunas)
         fprintf(fp, "-1\n");
     }
 
+    fclose(fp);
+    free(dist);
+    free(parent);
     return;
 }
