@@ -128,7 +128,7 @@ void printRecursivo (FILE *fp, Graph *G, int p, int colunas)
     return;
 }
 
-void writeSolution (char *output, Graph *G, int tesouroRoom, int colunas)
+void writeSolution (char *output, Graph *G, int tesouroRoom, int colunas, bool first)
 {
     int i = tesouroRoom; 
     int distance = dist[ tesouroRoom ];
@@ -137,6 +137,11 @@ void writeSolution (char *output, Graph *G, int tesouroRoom, int colunas)
     FILE *fp = fopen(output, "a+");
     if (fp == NULL)
         return;
+
+    if (!first)
+    {
+        fprintf(fp, "\n\n");
+    }
 
     if (distance != INT_MAX)
     {

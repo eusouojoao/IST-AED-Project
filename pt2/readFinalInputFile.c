@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include "readFinalInputFile.h"
 #include "Common.h"
 #include "graph2.h"
@@ -85,6 +86,7 @@ void printBoard(int *board, int columns, int lines, int tesouro)
 void readFinalInputFile(FILE *fp, boardRules *brp, char *output)
 {
     //---------------------------//
+    static bool first = 1;
     int *board = NULL, *wallVec = NULL;
     int n_rooms = 0, j = 0, counter = 0;
 
@@ -154,8 +156,8 @@ void readFinalInputFile(FILE *fp, boardRules *brp, char *output)
     algoritmo(myGraph);
     
     /* escreve para o ficheiro de saída */
-    writeSolution(output, myGraph, tesouroSala, brp->board.columns);
-
+    writeSolution(output, myGraph, tesouroSala, brp->board.columns, first);
+    first = 0;
     //printGraph(myGraph);
 
     /* garbage collector */
