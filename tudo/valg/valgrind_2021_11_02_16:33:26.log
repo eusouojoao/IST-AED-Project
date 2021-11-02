@@ -1,0 +1,14 @@
+==43007== Memcheck, a memory error detector
+==43007== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==43007== Using Valgrind-3.17.0 and LibVEX; rerun with -h for copyright info
+==43007== Command: ./roap voltas_a_bilhar04.in
+==43007== Parent PID: 42335
+==43007== 
+==43007== 
+==43007== HEAP SUMMARY:
+==43007==     in use at exit: 0 bytes in 0 blocks
+==43007==   total heap usage: 110 allocs, 110 frees, 13,239 bytes allocated
+==43007== 
+==43007== All heap blocks were freed -- no leaks are possible
+==43007== 
+==43007== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

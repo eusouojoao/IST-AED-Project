@@ -87,6 +87,7 @@ void readFinalInputFile(FILE *fp, boardRules *brp, char *output)
 {
     //---------------------------//
     static bool first = 1;
+    bool valido = 1;
     int *board = NULL, *wallVec = NULL;
     int n_rooms = 0, j = 0, counter = 0;
 
@@ -109,6 +110,10 @@ void readFinalInputFile(FILE *fp, boardRules *brp, char *output)
         free(Wall);
         return;
     }
+
+    if (!checkInsideBoard(brp->board.lines, brp->board.columns, brp->key.Line, brp->key.Column))
+        valido = 0;
+
     //---------------------------//
     /* obtem o nº de paredes */
     if (fscanf(fp, "%d", &(brp->n_walls)) != 1)
@@ -143,20 +148,37 @@ void readFinalInputFile(FILE *fp, boardRules *brp, char *output)
         j++;
     }
 
+    if (valido && board[convertTile(brp->key.Line, brp->key.Column,brp->board.columns)] != 0)
+        valido = 0;
+
     //board[(brp->key.Line - 1) * brp->board.columns + brp->key.Column - 1] = -1337;
     /* testes (APAGAR depois) */
     //printBoard(board, brp->board.columns, brp->board.lines, (brp->key.Line - 1) * brp->board.columns + brp->key.Column - 1);
 
     //---------------------------//
     /* inicializa o jogo */
-    n_rooms = divideRooms(board, brp->board.lines, brp->board.columns);
-    //printf("\n\nO total de salas é %d\n\n\n", n_rooms);
-    Graph *myGraph = graphInit(n_rooms);
-    fillGraph(myGraph, board, wallVec, brp->n_walls, brp->board.lines, brp->board.columns);
-    algoritmo(myGraph);
+    if (valido){
+        n_rooms = divideRooms(board, brp->board.lines, brp->board.columns);
+        //printf("\n\nO total de salas é %d\n\n\n", n_rooms);
+        Graph *myGraph = graphInit(n_rooms);
+        fillGraph(myGraph, board, wallVec, brp->n_walls, brp->board.lines, brp->board.columns);
+        algoritmo(myGraph);
     
-    /* escreve para o ficheiro de saída */
-    writeSolution(output, myGraph, tesouroSala, brp->board.columns, first);
+        /* escreve para o ficheiro de saída */
+        writeSolution(output, myGraph, tesouroSala, brp->board.columns, first);
+        graphDestroy(myGraph);
+    } else {
+        FILE *invfp = fopen (output, "a");
+        if (invfp == NULL) 
+            exit(0);
+
+        if (!first)
+            fprintf(invfp,"\n\n");
+
+        fprintf(invfp,"-1\n");
+        fclose(invfp);
+    }
+
     first = 0;
     //printGraph(myGraph);
 
@@ -165,7 +187,6 @@ void readFinalInputFile(FILE *fp, boardRules *brp, char *output)
     free(Wall);
     free(wallVec);
     free(brp);
-    graphDestroy(myGraph);
 
     //---------------------------//
     /* verifica se há outro tabuleiro, se sim, chama readInputFile() recursivamente */

@@ -1,0 +1,14 @@
+==67035== Memcheck, a memory error detector
+==67035== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==67035== Using Valgrind-3.17.0 and LibVEX; rerun with -h for copyright info
+==67035== Command: ./roap chess011.in
+==67035== Parent PID: 66997
+==67035== 
+==67035== 
+==67035== HEAP SUMMARY:
+==67035==     in use at exit: 0 bytes in 0 blocks
+==67035==   total heap usage: 143 allocs, 143 frees, 13,193 bytes allocated
+==67035== 
+==67035== All heap blocks were freed -- no leaks are possible
+==67035== 
+==67035== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

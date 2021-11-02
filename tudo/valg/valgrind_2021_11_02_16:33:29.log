@@ -1,0 +1,14 @@
+==43015== Memcheck, a memory error detector
+==43015== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==43015== Using Valgrind-3.17.0 and LibVEX; rerun with -h for copyright info
+==43015== Command: ./roap voltas_a_bilhar06.in
+==43015== Parent PID: 42335
+==43015== 
+==43015== 
+==43015== HEAP SUMMARY:
+==43015==     in use at exit: 0 bytes in 0 blocks
+==43015==   total heap usage: 122 allocs, 122 frees, 13,555 bytes allocated
+==43015== 
+==43015== All heap blocks were freed -- no leaks are possible
+==43015== 
+==43015== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
