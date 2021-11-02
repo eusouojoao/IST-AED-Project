@@ -1,0 +1,14 @@
+==4160== Memcheck, a memory error detector
+==4160== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==4160== Using Valgrind-3.17.0 and LibVEX; rerun with -h for copyright info
+==4160== Command: ./roap chess016.in
+==4160== Parent PID: 4124
+==4160== 
+==4160== 
+==4160== HEAP SUMMARY:
+==4160==     in use at exit: 0 bytes in 0 blocks
+==4160==   total heap usage: 143 allocs, 143 frees, 13,149 bytes allocated
+==4160== 
+==4160== All heap blocks were freed -- no leaks are possible
+==4160== 
+==4160== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

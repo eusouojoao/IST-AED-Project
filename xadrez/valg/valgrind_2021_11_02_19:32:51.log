@@ -1,0 +1,14 @@
+==5057== Memcheck, a memory error detector
+==5057== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==5057== Using Valgrind-3.17.0 and LibVEX; rerun with -h for copyright info
+==5057== Command: ./roap chess091.in
+==5057== Parent PID: 4124
+==5057== 
+==5057== 
+==5057== HEAP SUMMARY:
+==5057==     in use at exit: 0 bytes in 0 blocks
+==5057==   total heap usage: 10,053,719 allocs, 10,053,719 frees, 298,374,281 bytes allocated
+==5057== 
+==5057== All heap blocks were freed -- no leaks are possible
+==5057== 
+==5057== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

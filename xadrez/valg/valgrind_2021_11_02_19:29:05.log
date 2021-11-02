@@ -1,0 +1,14 @@
+==4207== Memcheck, a memory error detector
+==4207== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==4207== Using Valgrind-3.17.0 and LibVEX; rerun with -h for copyright info
+==4207== Command: ./roap chess026.in
+==4207== Parent PID: 4124
+==4207== 
+==4207== 
+==4207== HEAP SUMMARY:
+==4207==     in use at exit: 0 bytes in 0 blocks
+==4207==   total heap usage: 548 allocs, 548 frees, 25,629 bytes allocated
+==4207== 
+==4207== All heap blocks were freed -- no leaks are possible
+==4207== 
+==4207== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
