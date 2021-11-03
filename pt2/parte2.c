@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h> //REMOVER
 #include "Common.h"
 #include "Pilha.h"
 #include "graph2.h"
@@ -79,10 +80,10 @@ void pushTiles(int *board, int tile, int n_Lines, int n_Col, int room)
  * @param  n_Col: número total de colunas do tabuleiro
  * @retval inteiro correspondente ao número de salas do tabuleiro
  */
-int divideRooms(int *board, int n_Lines, int n_Col)
+int divideRooms(int *board, int n_Lines, int n_Col, int tesouroL, int tesouroC)
 {
     int aux = 0, cursor = 0, room = 1;
-    initPilha(n_Col * n_Lines);                            //ocupação máxima que a pilha poderia ter
+    initPilha(4 * n_Col + 4 * n_Lines);                            //ocupação máxima que a pilha poderia ter
     while (isTileAdjacent(cursor, n_Lines, n_Col, 0) == 1) //enquanto o cursor tiver dentro do tabuleiro
     {
         room++;
@@ -93,12 +94,20 @@ int divideRooms(int *board, int n_Lines, int n_Col)
             aux = pop();
             pushTiles(board, aux, n_Lines, n_Col, room);
         }
+        
+        if (board[cursor] == 0 && cursor == aux)
+                board[cursor] = -(room); //caso o cursor n chegue a avançar (sala com uma unica peça), é necessário atribuir um numero à sala
+
+        if (board[0] == board[convertTile(tesouroL, tesouroC, n_Col)])
+        {
+            freePilha();
+            return 1;
+        }
+
         for (; cursor < n_Lines * n_Col; cursor++) //avançar o cursor até à proxima sala vazia
         {
             if ((board[cursor] == 0 && cursor != aux) || isTileAdjacent(cursor, n_Lines, n_Col, 0) == 0)
                 break;
-            if (board[cursor] == 0 && cursor == aux)
-                board[cursor] = -(room); //caso o cursor n chegue a avançar (sala com uma unica peça), é necessário atribuir um numero à sala
         }
     }
     freePilha();

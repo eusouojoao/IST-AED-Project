@@ -1,0 +1,14 @@
+==104868== Memcheck, a memory error detector
+==104868== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==104868== Using Valgrind-3.17.0 and LibVEX; rerun with -h for copyright info
+==104868== Command: ./roap chess10.in
+==104868== Parent PID: 101453
+==104868== 
+==104868== 
+==104868== HEAP SUMMARY:
+==104868==     in use at exit: 0 bytes in 0 blocks
+==104868==   total heap usage: 13,395,924 allocs, 13,395,924 frees, 375,432,443 bytes allocated
+==104868== 
+==104868== All heap blocks were freed -- no leaks are possible
+==104868== 
+==104868== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

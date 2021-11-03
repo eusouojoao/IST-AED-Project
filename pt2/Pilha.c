@@ -90,7 +90,7 @@ int checkSameRoom(int *board, int n_Lines, int n_Col, int p1, int p2)
     int aux = p1;
     if (board[p1] != 0 || board[p2] != 0) // pelo menos uma das peças não é branca
         return 0;
-    initPilha(n_Lines * n_Col); //inicializa a pilha
+    initPilha(4 * n_Lines + 4 * n_Col); //inicializa a pilha
     push(aux);
     while (!isEmpty())
     {

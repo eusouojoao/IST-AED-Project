@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
+#include "writeOutputFile.h"
 #include "readFinalInputFile.h"
 #include "Common.h"
 #include "graph2.h"
@@ -46,16 +46,11 @@ typedef struct _wall
 void readFinalInputFile(FILE *fp, boardRules *brp, char *output)
 {
     //---------------------------//
-    FILE *invfp = NULL;
     static bool first = 1;
     bool valido = 1;
+    wall *Wall = NULL;
     int *board = NULL, *wallVec = NULL;
     int n_rooms = 0, j = 0, counter = 0;
-
-    //---------------------------//
-    wall *Wall = (wall *)malloc(sizeof(wall));
-    if (Wall == NULL)
-        exit(0);
 
     //---------------------------//
     brp = (boardRules *)malloc(sizeof(boardRules));
@@ -68,7 +63,6 @@ void readFinalInputFile(FILE *fp, boardRules *brp, char *output)
                 &(brp->key.Line), &(brp->key.Column))) != 4)
     {
         free(brp);
-        free(Wall);
         return;
     }
 
@@ -80,70 +74,93 @@ void readFinalInputFile(FILE *fp, boardRules *brp, char *output)
     if (fscanf(fp, "%d", &(brp->n_walls)) != 1)
         exit(0);
 
-    wallVec = (int *)malloc(brp->n_walls * sizeof(int));
-    if (wallVec == NULL)
-        exit(0);
-
-    inicializeWallVector(wallVec, brp->n_walls);
-
     //---------------------------//
-    /* verifica se a alocação foi sucedida */
-    if ((board = (int *)malloc(brp->board.lines * brp->board.columns * sizeof(int))) == NULL)
+    if (valido)
     {
-        exit(0);
-    }
-    inicializeBoard(board, brp->board.lines, brp->board.columns);
-
-    //---------------------------//
-    /* ler paredes do ficheiro de input */
-    counter = brp->n_walls;
-    for (/* stares into the void */; counter > 0; counter--)
-    {
-
-        if (fscanf(fp, "%d %d %d", &(Wall->l1), &(Wall->c1), &(Wall->weight)) != 3)
+        if ((Wall = (wall *)malloc(sizeof(wall))) == NULL)
+        {
             exit(0);
+        }
+        if ((wallVec = (int *)malloc(brp->n_walls * sizeof(int))) == NULL)
+        {
+            exit(0);
+        }
+        inicializeWallVector(wallVec, brp->n_walls);
 
-        /* preencher o tabuleiro com as paredes */
-        board[convertTile(Wall->l1, Wall->c1, brp->board.columns)] = Wall->weight;
-        wallVec[j] = convertTile(Wall->l1, Wall->c1, brp->board.columns);
-        j++;
+        //---------------------------//
+        /* verifica se a alocação foi sucedida */
+        if ((board = (int *)malloc(brp->board.lines * brp->board.columns * sizeof(int))) == NULL)
+        {
+            exit(0);
+        }
+        inicializeBoard(board, brp->board.lines, brp->board.columns);
+
+        //---------------------------//
+        /* ler paredes do ficheiro de input */
+        counter = brp->n_walls;
+        for (/* stares into the void */; counter > 0; counter--)
+        {
+
+            if (fscanf(fp, "%d %d %d", &(Wall->l1), &(Wall->c1), &(Wall->weight)) != 3)
+                exit(0);
+
+            /* preencher o tabuleiro com as paredes */
+            board[convertTile(Wall->l1, Wall->c1, brp->board.columns)] = Wall->weight;
+            wallVec[j] = convertTile(Wall->l1, Wall->c1, brp->board.columns);
+            j++;
+        }
+    }
+    else
+    {
+        for(/* D: */; brp->n_walls > 0 ; brp->n_walls--)
+            if(fscanf(fp,"%*d %*d %*d") != 3)
+                continue;
     }
 
+    //---------------------------//
     if (valido && board[convertTile(brp->key.Line, brp->key.Column, brp->board.columns)] != 0)
+    {
+        free(Wall);
+        free(wallVec);
+        free(board);
         valido = 0;
+    }
 
     //---------------------------//
     /* inicializa o jogo */
     if (valido)
     {
-        n_rooms = divideRooms(board, brp->board.lines, brp->board.columns);
-        Graph *myGraph = graphInit(n_rooms);
-        fillGraph(myGraph, board, wallVec, brp->n_walls, brp->board.lines, brp->board.columns);
-        algoritmo(myGraph);
+        n_rooms = divideRooms(board, brp->board.lines, brp->board.columns, brp->key.Line, brp->key.Column);
+        if (n_rooms == 1)
+        {
+            writeZero(output, first);    
+        } 
+        else
+        {
+            Graph *myGraph = graphInit(n_rooms);
+            fillGraph(myGraph, board, wallVec, brp->n_walls, brp->board.lines, brp->board.columns);
+            algoritmo(myGraph);
 
-        /* escreve para o ficheiro de saída */
-        writeSolution(output, myGraph, tesouroSala, brp->board.columns, first);
-        graphDestroy(myGraph);
+            /* escreve para o ficheiro de saída */
+            writeSolution(output, myGraph, tesouroSala, brp->board.columns, first);
+            graphDestroy(myGraph);
+        }
     }
     else
     {
-        invfp = fopen(output, "a");
-        if (invfp == NULL)
-            exit(0);
-
-        if (!first)
-            fprintf(invfp, "\n\n");
-
-        fprintf(invfp, "-1\n");
-        fclose(invfp);
+        writeInvalid(output, first);
     }
 
+    //---------------------------//
     first = 0;
-
     /* garbage collector */
-    free(board);
-    free(Wall);
-    free(wallVec);
+    if (valido)
+    {
+        free(board);
+        free(Wall);
+        free(wallVec);
+    }
+
     free(brp);
 
     //---------------------------//
