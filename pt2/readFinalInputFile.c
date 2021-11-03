@@ -7,7 +7,7 @@
 #include "algoritmo.h"
 #include "parte2.h"
 
-#define tesouroSala (-board[convertTile(brp->key.Line, brp->key.Column, brp->board.columns)] - 2)
+#define tesouroSala ( -board[convertTile(brp->key.Line, brp->key.Column, brp->board.columns)] - 2 )
 
 /* linhas e colunas do tabuleiro */
 struct board
@@ -46,6 +46,7 @@ typedef struct _wall
 void readFinalInputFile(FILE *fp, boardRules *brp, char *output)
 {
     //---------------------------//
+    FILE *invfp = NULL;
     static bool first = 1;
     bool valido = 1;
     int *board = NULL, *wallVec = NULL;
@@ -126,7 +127,7 @@ void readFinalInputFile(FILE *fp, boardRules *brp, char *output)
     }
     else
     {
-        FILE *invfp = fopen(output, "a");
+        invfp = fopen(output, "a");
         if (invfp == NULL)
             exit(0);
 

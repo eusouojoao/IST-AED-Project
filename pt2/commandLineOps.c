@@ -19,8 +19,7 @@ void freeOps(cLineOps *CLOps)
 
 /**
 * @brief recebe o nome do ficheiro de input e retorna o nome do ficheiro de output 
-* SEM O NULL CARACTER que termina a string!!!
-* @note 
+* @note sem o NULL caracter '\0' que termina a string! 
 * @param *CLOps: estrutura do tipo _commandLineOptions 
 * @retval None
 */

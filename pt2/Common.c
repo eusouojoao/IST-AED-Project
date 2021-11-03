@@ -1,31 +1,37 @@
 #include "Pilha.h"
 
-int checkA5(int **A5, int n_adj, int n_Lines, int n_Col, int l1, int c1)
+int checkA5(int **A5, int n_adj, int n_Lines, int n_Col, int l1, int c1, int tesouro)
 {
     int i, auxC, auxL, up = 0, down = 0, right = 0, left = 0;
-    if (n_adj == 2)
+    
+    if (tesouro <= 0)
         return -1;
+
+    if (n_adj == 2)
+        return 0;
+
     if (n_adj == 3)
     {
         if (n_Col == c1)
             right = -1;
-        if (l1 == 0)
+        if (c1 == 1)
             left = -1;
         if (n_Lines == l1)
             down = -1;
-        if (c1 == 0)
+        if (l1 == 1)
             up = -1;
+
         for (i = 0; i < n_adj; i++)
         {
             auxL = A5[i][0];
             auxC = A5[i][1];
-            if (auxL == l1 + 1)
+            if (auxL == l1 + 1 && auxC == c1)
                 up = A5[i][2];
-            if (auxL == l1 - 1)
+            if (auxL == l1 - 1 && auxC == c1)
                 down = A5[i][2];
-            if (auxC == c1 + 1)
+            if (auxC == c1 + 1 && auxL == l1)
                 right = A5[i][2];
-            if (auxL == l1 + 1)
+            if (auxL == l1 + 1 && auxL == l1)
                 left = A5[i][2];
         }
         if (right == 0 && left == 0)
@@ -41,13 +47,13 @@ int checkA5(int **A5, int n_adj, int n_Lines, int n_Col, int l1, int c1)
         {
             auxL = A5[i][0];
             auxC = A5[i][1];
-            if (auxL == l1 + 1)
+            if (auxL == l1 + 1 && auxC == c1)
                 up = A5[i][2];
-            if (auxL == l1 - 1)
+            if (auxL == l1 - 1 && auxC == c1)
                 down = A5[i][2];
-            if (auxC == c1 + 1)
+            if (auxC == c1 + 1 && auxL == l1)
                 right = A5[i][2];
-            if (auxL == l1 + 1)
+            if (auxC == c1 - 1 && auxL == l1)
                 left = A5[i][2];
         }
         if (right == 0 && left == 0)
@@ -56,6 +62,8 @@ int checkA5(int **A5, int n_adj, int n_Lines, int n_Col, int l1, int c1)
             return 1;
         return 0;
     }
+
+    return -5;
 }
 
 /**

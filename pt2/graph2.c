@@ -16,7 +16,7 @@ struct room
 struct graph
 {
     int V; //nº total de salas
-    int E; //nº total de arestas //É PRECISO DO EDGE??
+    int E; //nº total de arestas
     Room **adj;
 };
 

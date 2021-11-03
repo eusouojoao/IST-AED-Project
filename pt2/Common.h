@@ -11,6 +11,6 @@ int convertTile(int l, int c, int n_Col);
 void pushAdjacent(int *board, int tile, int n_Lines, int n_Col);
 int adjacentTile(int l, int c, int p2L, int p2C);
 int checkAA(int *AA, int mode, int n_adj);
-int checkA5(int **A5, int n_adj, int n_Lines, int n_Col, int l1, int c1);
+int checkA5(int **A5, int n_adj, int n_Lines, int n_Col, int l1, int c1, int tesouro);
 
 #endif

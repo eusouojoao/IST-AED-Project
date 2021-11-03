@@ -64,7 +64,7 @@ int checkVariante(char *var)
  * @param  *output: nome do ficheiro de output
  * @retval None
  */
-void initGameMode(boardRules *brp, int *board, char *output, int A1, int *AA, int **A5, int n_adj)
+void initGameMode(boardRules *brp, int *board, char *output, int A1, int *AA, int **A5, int n_adj, int tesouro)
 {
     /* !ATENÇÃO! apenas declaradas pra teste! */
     int A = -1337;
@@ -98,7 +98,7 @@ void initGameMode(boardRules *brp, int *board, char *output, int A1, int *AA, in
             A = -2;
         }
         else
-            A = checkA5(A5, n_adj, brp->board.lines, brp->board.columns, brp->key.Line, brp->key.Column);
+            A = checkA5(A5, n_adj, brp->board.lines, brp->board.columns, brp->key.Line, brp->key.Column, tesouro);
 
         write2outputFile(output, A);
     }
@@ -148,7 +148,7 @@ void readInputFile(FILE *fp, boardRules *brp, char *output)
 {
     //---------------------------//
     int *board = NULL, *A = NULL, **A5 = NULL;
-    int i = 0, j = 0, k = 0;
+    int i = 0, j = 0, k = 0, tesouro = 0;
     int n_adj = 4, A1 = -1337;
 
     //---------------------------//
@@ -224,9 +224,18 @@ void readInputFile(FILE *fp, boardRules *brp, char *output)
                  (brp->key.Line == brp->board.lines && brp->key.Column == 1) ||
                  (brp->key.Line == brp->board.lines && brp->key.Column == brp->board.columns))
             n_adj = 2;
-        A5 = (int **)malloc(n_adj * sizeof(int));
+
+        A5 = (int **)malloc(n_adj * sizeof(int *));
+        if( A5 == NULL)
+           exit(0);
+
         for (k = 0; k < n_adj; k++)
+        {
             A5[k] = (int *)malloc(3 * sizeof(int));
+            if ( A5[k] == NULL )
+                exit(0);
+        }
+
         for (k = 0; k < n_adj; k++)
             for (j = 0; j < 2; j++)
                 A5[k][j] = 0;
@@ -280,6 +289,9 @@ void readInputFile(FILE *fp, boardRules *brp, char *output)
             if (fscanf(fp, "%d %d %d", &(Wall->l1), &(Wall->c1), &(Wall->weight)) != 3)
                 exit(0);
 
+            if (Wall->l1 == brp->key.Line && Wall->c1 == brp->key.Column)
+                tesouro = Wall->weight;
+
             if (adjacentTile(brp->key.Line, brp->key.Column, Wall->l1, Wall->c1) == 1)
             {
                 A5[j][0] = Wall->l1;
@@ -305,12 +317,16 @@ void readInputFile(FILE *fp, boardRules *brp, char *output)
 
     //---------------------------//
     /* inicializa o modo de jogo */
-    initGameMode(brp, board, output, A1, A, A5, n_adj);
+    initGameMode(brp, board, output, A1, A, A5, n_adj, tesouro);
 
     if (i == 6)
         free(board);
     if (i == 5)
+    {
+        for (j = n_adj-1 ; j >= 0; j--)
+            free(A5[j]);
         free(A5);
+    }
     if (i >= 2 && i <= 4)
         free(A);
 
