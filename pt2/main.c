@@ -4,8 +4,8 @@
 #include "readFinalInputFile.h"
 #include "commandLineOps.h"
 
-#define _FILE_READER ( (CLOps->fase == 1) ? (readInputFile(fp, brp, CLOps->output)) : (readFinalInputFile(fp, brp, CLOps->output)) )
-    
+// MUDAR ISTO OU EXPLICAR COM COMENTARIOS
+#define _FILE_READER ((CLOps->fase == 1) ? (readInputFile(fp, brp, CLOps->output)) : (readFinalInputFile(fp, brp, CLOps->output)))
 
 int main(int argc, char *argv[])
 {

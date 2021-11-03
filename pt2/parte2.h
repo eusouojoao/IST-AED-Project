@@ -2,8 +2,6 @@
 #define __parte2__
 
 void inicializeWallVector(int *, int);
-void pushAdjacentTiles(int *, int *, int, int, int, int);
-int findRoom(int *, int *, int, int);
 void pushTiles(int *, int, int, int, int);
 int divideRooms(int *, int, int);
 void insertInGraph(Graph *, int, int, int, int);

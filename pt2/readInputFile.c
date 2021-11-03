@@ -64,25 +64,25 @@ int checkVariante(char *var)
  * @param  *output: nome do ficheiro de output
  * @retval None
  */
-void initGameMode(boardRules *brp, int *board, char *output, int A1, int *AA, int n_adj)
+void initGameMode(boardRules *brp, int *board, char *output, int A1, int *AA, int **A5, int n_adj)
 {
     /* !ATENÇÃO! apenas declaradas pra teste! */
     int A = -1337;
 
     if (brp->gameMode[1] == '1')
     {
-        if ((checkInsideBoard(brp->board.lines, brp->board.columns, brp->key.Line, brp->key.Column)) == 0) 
+        if ((checkInsideBoard(brp->board.lines, brp->board.columns, brp->key.Line, brp->key.Column)) == 0)
         {
             A = -2;
         }
-        else 
+        else
             A = A1;
 
         write2outputFile(output, A);
     }
     else if ((brp->gameMode[1] == '2') || (brp->gameMode[1] == '3') || (brp->gameMode[1] == '4'))
     {
-        if ((checkInsideBoard(brp->board.lines, brp->board.columns, brp->key.Line, brp->key.Column)) == 0) 
+        if ((checkInsideBoard(brp->board.lines, brp->board.columns, brp->key.Line, brp->key.Column)) == 0)
         {
             A = -2;
         }
@@ -93,12 +93,12 @@ void initGameMode(boardRules *brp, int *board, char *output, int A1, int *AA, in
     }
     else if (brp->gameMode[1] == '5')
     {
-        if ((checkInsideBoard(brp->board.lines, brp->board.columns, brp->key.Line, brp->key.Column)) == 0) 
+        if ((checkInsideBoard(brp->board.lines, brp->board.columns, brp->key.Line, brp->key.Column)) == 0)
         {
             A = -2;
         }
         else
-            A = checkBreakable(board, brp->board.lines, brp->board.columns, brp->key.Line, brp->key.Column);
+            A = checkA5(A5, n_adj, brp->board.lines, brp->board.columns, brp->key.Line, brp->key.Column);
 
         write2outputFile(output, A);
     }
@@ -147,7 +147,7 @@ void initGameMode(boardRules *brp, int *board, char *output, int A1, int *AA, in
 void readInputFile(FILE *fp, boardRules *brp, char *output)
 {
     //---------------------------//
-    int *board = NULL, *A = NULL;
+    int *board = NULL, *A = NULL, **A5 = NULL;
     int i = 0, j = 0, k = 0;
     int n_adj = 4, A1 = -1337;
 
@@ -172,7 +172,7 @@ void readInputFile(FILE *fp, boardRules *brp, char *output)
     }
 
     //---------------------------//
-     if ((i = checkVariante(brp->gameMode)) == 6)
+    if ((i = checkVariante(brp->gameMode)) == 6)
     {
         /* segunda coordenada (l2, c2), sendo que (l1, c2) são brp->key.Line e brp->key.Column */
         if (fscanf(fp, "%d %d", &(brp->A6.l2), &(brp->A6.c2)) != 2)
@@ -186,18 +186,22 @@ void readInputFile(FILE *fp, boardRules *brp, char *output)
 
     //---------------------------//
     /* inicializa o «tabuleiro» com o tamanho especificado/necessário */
-    if (i == 1) A1 = 0;
-    else if (i >= 2 && i <= 4) {
-         /* verificar se tile é uma peça lateral */
-        if ((brp->key.Line == brp->board.lines) ||\
-                (brp->key.Column == brp->board.columns) ||\
-                (brp->key.Line == 1) || (brp->key.Column == 1)) n_adj = 3;
+    if (i == 1)
+        A1 = 0;
+    else if (i >= 2 && i <= 4)
+    {
+        /* verificar se tile é uma peça lateral */
+        if ((brp->key.Line == brp->board.lines) ||
+            (brp->key.Column == brp->board.columns) ||
+            (brp->key.Line == 1) || (brp->key.Column == 1))
+            n_adj = 3;
 
-       /* verificar se é uma peça de canto */
-        else if ((brp->key.Line == 1 && brp->key.Column == 1) ||\
-            (brp->key.Line == 1 && brp->key.Column == brp->board.columns) ||\
-            (brp->key.Line == brp->board.lines && brp->key.Column == 1) ||\
-            (brp->key.Line == brp->board.lines && brp->key.Column == brp->board.columns)) n_adj = 2;
+        /* verificar se é uma peça de canto */
+        else if ((brp->key.Line == 1 && brp->key.Column == 1) ||
+                 (brp->key.Line == 1 && brp->key.Column == brp->board.columns) ||
+                 (brp->key.Line == brp->board.lines && brp->key.Column == 1) ||
+                 (brp->key.Line == brp->board.lines && brp->key.Column == brp->board.columns))
+            n_adj = 2;
 
         A = (int *)malloc(n_adj * sizeof(int));
         if (A == NULL)
@@ -205,8 +209,30 @@ void readInputFile(FILE *fp, boardRules *brp, char *output)
 
         for (k = 0; k < n_adj; k++)
             A[k] = 0;
+    }
+    else if (i == 5)
+    {
+        /* verificar se tile é uma peça lateral */
+        if ((brp->key.Line == brp->board.lines) ||
+            (brp->key.Column == brp->board.columns) ||
+            (brp->key.Line == 1) || (brp->key.Column == 1))
+            n_adj = 3;
 
-    } else {
+        /* verificar se é uma peça de canto */
+        else if ((brp->key.Line == 1 && brp->key.Column == 1) ||
+                 (brp->key.Line == 1 && brp->key.Column == brp->board.columns) ||
+                 (brp->key.Line == brp->board.lines && brp->key.Column == 1) ||
+                 (brp->key.Line == brp->board.lines && brp->key.Column == brp->board.columns))
+            n_adj = 2;
+        A5 = (int **)malloc(n_adj * sizeof(int));
+        for (k = 0; k < n_adj; k++)
+            A5[k] = (int *)malloc(3 * sizeof(int));
+        for (k = 0; k < n_adj; k++)
+            for (j = 0; j < 2; j++)
+                A5[k][j] = 0;
+    }
+    else
+    {
         /* verifica se a alocação foi sucedida */
         if ((board = (int *)malloc(brp->board.lines * brp->board.columns * sizeof(int))) == NULL)
         {
@@ -217,50 +243,74 @@ void readInputFile(FILE *fp, boardRules *brp, char *output)
 
     //---------------------------//
     /* ler paredes do ficheiro de input */
-    if (i == 1) {
+    if (i == 1)
+    {
 
-        for (/* stares into the void */; brp->n_walls > 0; brp->n_walls--) {
+        for (/* stares into the void */; brp->n_walls > 0; brp->n_walls--)
+        {
 
             if (fscanf(fp, "%d %d %d", &(Wall->l1), &(Wall->c1), &(Wall->weight)) != 3)
                 exit(0);
 
-            if ( (Wall->l1 == brp->key.Line) && (Wall->c1 == brp->key.Column) )
+            if ((Wall->l1 == brp->key.Line) && (Wall->c1 == brp->key.Column))
                 A1 = Wall->weight;
         }
+    }
+    else if (i >= 2 && i <= 4)
+    {
 
-    } else if (i >= 2 && i <= 4) {
-
-        for (j = 0; brp->n_walls > 0; brp->n_walls--) {
+        for (j = 0; brp->n_walls > 0; brp->n_walls--)
+        {
 
             if (fscanf(fp, "%d %d %d", &(Wall->l1), &(Wall->c1), &(Wall->weight)) != 3)
                 exit(0);
 
-            if (adjacentTile(brp->key.Line, brp->key.Column, Wall->l1, Wall->c1) == 1) {
+            if (adjacentTile(brp->key.Line, brp->key.Column, Wall->l1, Wall->c1) == 1)
+            {
                 A[j] = Wall->weight;
                 j++;
             }
         }
+    }
+    else if (i == 5)
+    {
+        for (j = 0; brp->n_walls > 0; brp->n_walls--)
+        {
 
-    } else {
+            if (fscanf(fp, "%d %d %d", &(Wall->l1), &(Wall->c1), &(Wall->weight)) != 3)
+                exit(0);
 
-        for (/* stares into the void */; brp->n_walls > 0; brp->n_walls--) {
+            if (adjacentTile(brp->key.Line, brp->key.Column, Wall->l1, Wall->c1) == 1)
+            {
+                A5[j][0] = Wall->l1;
+                A5[j][1] = Wall->c1;
+                A5[j][2] = Wall->weight;
+                j++;
+            }
+        }
+    }
+    else
+    {
+
+        for (/* stares into the void */; brp->n_walls > 0; brp->n_walls--)
+        {
 
             if (fscanf(fp, "%d %d %d", &(Wall->l1), &(Wall->c1), &(Wall->weight)) != 3)
                 exit(0);
 
             /* preencher o tabuleiro com as paredes */
-            board[(Wall->l1 - 1) * brp->board.columns + Wall->c1 - 1] = Wall->weight;
-
+            board[convertTile(Wall->l1, Wall->c1, brp->board.columns)] = Wall->weight;
         }
     }
-    
+
     //---------------------------//
     /* inicializa o modo de jogo */
-    initGameMode(brp, board, output, A1, A, n_adj);
+    initGameMode(brp, board, output, A1, A, A5, n_adj);
 
-    if (i >= 5 && i <= 6)
+    if (i == 6)
         free(board);
-
+    if (i == 5)
+        free(A5);
     if (i >= 2 && i <= 4)
         free(A);
 

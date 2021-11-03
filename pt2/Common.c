@@ -1,5 +1,63 @@
 #include "Pilha.h"
 
+int checkA5(int **A5, int n_adj, int n_Lines, int n_Col, int l1, int c1)
+{
+    int i, auxC, auxL, up = 0, down = 0, right = 0, left = 0;
+    if (n_adj == 2)
+        return -1;
+    if (n_adj == 3)
+    {
+        if (n_Col == c1)
+            right = -1;
+        if (l1 == 0)
+            left = -1;
+        if (n_Lines == l1)
+            down = -1;
+        if (c1 == 0)
+            up = -1;
+        for (i = 0; i < n_adj; i++)
+        {
+            auxL = A5[i][0];
+            auxC = A5[i][1];
+            if (auxL == l1 + 1)
+                up = A5[i][2];
+            if (auxL == l1 - 1)
+                down = A5[i][2];
+            if (auxC == c1 + 1)
+                right = A5[i][2];
+            if (auxL == l1 + 1)
+                left = A5[i][2];
+        }
+        if (right == 0 && left == 0)
+            return 1;
+        if (up == 0 && down == 0)
+            return 1;
+
+        return 0;
+    }
+    if (n_adj == 4)
+    {
+        for (i = 0; i < n_adj; i++)
+        {
+            auxL = A5[i][0];
+            auxC = A5[i][1];
+            if (auxL == l1 + 1)
+                up = A5[i][2];
+            if (auxL == l1 - 1)
+                down = A5[i][2];
+            if (auxC == c1 + 1)
+                right = A5[i][2];
+            if (auxL == l1 + 1)
+                left = A5[i][2];
+        }
+        if (right == 0 && left == 0)
+            return 1;
+        if (up == 0 && down == 0)
+            return 1;
+        return 0;
+    }
+}
+
 /**
  * @brief  Verifica se 2 peças são adjacentes
  * @note   
@@ -152,95 +210,6 @@ int checkBreakable(int *board, int n_Lines, int n_Col, int l, int c)
         return 1; //peça cinzenta quebrável
     return 0;     //peça cinzenta não quebrável
 }
-
-/**
- * @brief  Verifica se uma peça tem alguma adjacente (branca, cinzenta ou preta)
- *         tem em conta se é o mode (2, 3 ou 4 respetivamente)
- * @note   Tabuleiro é um vetor unidimensional cujo elemento (l,c) é acedido
- *         através da função convertTile() 
- * @param  *board: tabuleiro (vetor unidimensional)
- * @param  n_Lines: número total de linhas do tabuleiro 
- * @param  n_Col: número total de colunas do tabuleiro
- * @param  l: linha em que está a peça
- * @param  c: coluna em que está a peça
- * @param  mode: define se procura-se uma peça adjacente branca, cinzenta ou
- *         preta (mode 2, 3 e 4 respetivamente)
- * @retval -2 se a peça estiver fora do tabuleiro
- *         0 se não houver peça adjacente da "cor" requerida
- *         1 se houver peça adjacente da "cor" requerida
- *         -5 erro
- */
-/*
-int checkAdjacencia(int *board, int n_Lines, int n_Col, int l, int c, int mode)
-{
-    int auxC = c, auxL = l;
-    if (checkInsideBoard(n_Lines, n_Col, l, c) == 0)
-        return -2; //fora do tabuleiro
-    if (mode == 2) //procurar peça adjacente branca
-    {
-        auxC++; //verificar a peça adjacente à direita
-        if (checkInsideBoard(n_Lines, n_Col, auxL, auxC) == 1)
-            if (board[convertTile(auxL, auxC, n_Col)] == 0)
-                return 1; //encontramos peça branca
-        auxC = auxC - 2;  //verificar a peça adjacente à esquerda
-        if (checkInsideBoard(n_Lines, n_Col, auxL, auxC) == 1)
-            if (board[convertTile(auxL, auxC, n_Col)] == 0)
-                return 1;
-        auxC++;
-        auxL++; //verificar a peça adjacente de cima
-        if (checkInsideBoard(n_Lines, n_Col, auxL, auxC) == 1)
-            if (board[convertTile(auxL, auxC, n_Col)] == 0)
-                return 1;
-        auxL = auxL - 2; //verificar a peça adjacente de baixo
-        if (checkInsideBoard(n_Lines, n_Col, auxL, auxC) == 1)
-            if (board[convertTile(auxL, auxC, n_Col)] == 0)
-                return 1;
-        return 0;
-    }
-    if (mode == 3) //procurar peça adjacente cinzenta
-    {
-        auxC++; //verificar a peça adjacente à direita
-        if (checkInsideBoard(n_Lines, n_Col, auxL, auxC) == 1)
-            if (board[convertTile(auxL, auxC, n_Col)] > 0)
-                return 1; //encontramos peça cinzenta
-        auxC = auxC - 2;  //verificar a peça adjacente à esquerda
-        if (checkInsideBoard(n_Lines, n_Col, auxL, auxC) == 1)
-            if (board[convertTile(auxL, auxC, n_Col)] > 0)
-                return 1;
-        auxC++;
-        auxL++; //verificar a peça adjacente de cima
-        if (checkInsideBoard(n_Lines, n_Col, auxL, auxC) == 1)
-            if (board[convertTile(auxL, auxC, n_Col)] > 0)
-                return 1;
-        auxL = auxL - 2; //verificar a peça adjacente de baixo
-        if (checkInsideBoard(n_Lines, n_Col, auxL, auxC) == 1)
-            if (board[convertTile(auxL, auxC, n_Col)] > 0)
-                return 1;
-        return 0;
-    }
-    if (mode == 4) //procurar peça adjacente preta
-    {
-        auxC++; //verificar a peça adjacente à direita
-        if (checkInsideBoard(n_Lines, n_Col, auxL, auxC) == 1)
-            if (board[convertTile(auxL, auxC, n_Col)] == -1)
-                return 1; //encontramos peça preta
-        auxC = auxC - 2;  //verificar a peça adjacente à esquerda
-        if (checkInsideBoard(n_Lines, n_Col, auxL, auxC) == 1)
-            if (board[convertTile(auxL, auxC, n_Col)] == -1)
-                return 1;
-        auxC++;
-        auxL++; //verificar a peça adjacente de cima
-        if (checkInsideBoard(n_Lines, n_Col, auxL, auxC) == 1)
-            if (board[convertTile(auxL, auxC, n_Col)] == -1)
-                return 1;
-        auxL = auxL - 2; //verificar a peça adjacente de baixo
-        if (checkInsideBoard(n_Lines, n_Col, auxL, auxC) == 1)
-            if (board[convertTile(auxL, auxC, n_Col)] == -1)
-                return 1;
-        return 0;
-    }
-    return -5; //erro
-} */
 
 /**
  * @brief  Verifica se após uma soma/subtração horizontal ou vertical (adicionar

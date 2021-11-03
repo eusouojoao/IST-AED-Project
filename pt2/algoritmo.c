@@ -26,31 +26,47 @@ struct graph
     Room **adj;
 };
 
-int comparaRooms (int a, int b)
+/**
+ * @brief  
+ * @note   
+ * @param  a: 
+ * @param  b: 
+ * @retval 
+ */
+int comparaRooms(int a, int b)
 {
-    if ( dist[a] > dist[b] ) 
+    if (dist[a] > dist[b])
         return 1;
-    if ( dist[a] < dist[b] ) 
+    if (dist[a] < dist[b])
         return -1;
-    else 
+    else
         return 0;
 }
 
-void algoritmo (Graph *G)
-{  
+/**
+ * @brief  
+ * @note   
+ * @param  *G: 
+ * @retval None
+ */
+void algoritmo(Graph *G)
+{
     int v, w;
     Room *t;
     acervo *A = (acervo *)malloc(sizeof(acervo));
-    if (A == NULL) exit(0);
+    if (A == NULL)
+        exit(0);
 
     dist = (int *)malloc(G->V * sizeof(int));
-    if (dist == NULL) exit(0);
+    if (dist == NULL)
+        exit(0);
 
     parent = (int *)malloc(G->V * sizeof(int));
-    if (parent == NULL) exit(0);
+    if (parent == NULL)
+        exit(0);
 
     acervoInit(A, comparaRooms, G->V);
-     
+
     for (v = 0; v < G->V; v++)
     {
         dist[v] = INT_MAX;
@@ -60,14 +76,14 @@ void algoritmo (Graph *G)
     acervoAdd(A, 0);
     dist[0] = 0;
 
-    while( !acervoEmpty(A) )
+    while (!acervoEmpty(A))
     {
-        if (dist[ ( v = acervoGet(A) ) ] != INT_MAX)
+        if (dist[(v = acervoGet(A))] != INT_MAX)
             for (t = G->adj[v]; t != NULL; t = t->next)
-                if (dist[ (w = t->n) ] > P )
+                if (dist[(w = t->n)] > P)
                 {
                     dist[w] = P;
-                    //if (parent[w] == -1) 
+                    //if (parent[w] == -1)
                     acervoAdd(A, w);
                     parent[w] = v;
                 }
@@ -78,23 +94,48 @@ void algoritmo (Graph *G)
     return;
 }
 
-int Linha (int coord, int colunas)
+/**
+ * @brief  
+ * @note   
+ * @param  coord: 
+ * @param  colunas: 
+ * @retval 
+ */
+int Linha(int coord, int colunas)
 {
-    return ( (int) ceil( (float)(coord + 1)/ (float)colunas ) );
+    return ((int)ceil((float)(coord + 1) / (float)colunas));
 }
 
-int Coluna (int coord, int Linha, int colunas)
+/**
+ * @brief  
+ * @note   
+ * @param  coord: 
+ * @param  Linha: 
+ * @param  colunas: 
+ * @retval 
+ */
+int Coluna(int coord, int Linha, int colunas)
 {
     return (coord + 1 - ((Linha - 1) * colunas));
 }
 
-void getParede (Room *list, int p, int *wall, int *weight)
+/**
+ * @brief  
+ * @note   
+ * @param  *list: 
+ * @param  p: 
+ * @param  *wall: 
+ * @param  *weight: 
+ * @retval None
+ */
+void getParede(Room *list, int p, int *wall, int *weight)
 {
     Room *aux = list;
     while (aux != NULL && aux->n != p)
         aux = aux->next;
 
-    if (aux == NULL) exit(0);
+    if (aux == NULL)
+        exit(0);
 
     *wall = aux->p;
     *weight = aux->weight;
@@ -102,36 +143,55 @@ void getParede (Room *list, int p, int *wall, int *weight)
     return;
 }
 
-void printRecursivo (FILE *fp, Graph *G, int p, int colunas)
+/**
+ * @brief  
+ * @note   
+ * @param  *fp: 
+ * @param  *G: 
+ * @param  p: 
+ * @param  colunas: 
+ * @retval None
+ */
+void printRecursivo(FILE *fp, Graph *G, int p, int colunas)
 {
     int wall, weight;
     int linha, coluna;
 
-    if (parent[ p ] == 0)
+    if (parent[p] == 0)
     {
 
-        getParede (G->adj[0], p, &wall, &weight);
-        linha = Linha (wall, colunas);
+        getParede(G->adj[0], p, &wall, &weight);
+        linha = Linha(wall, colunas);
         coluna = Coluna(wall, linha, colunas);
-        fprintf (fp, "%d %d %d\n", linha, coluna, weight);
+        fprintf(fp, "%d %d %d\n", linha, coluna, weight);
 
         return;
     }
 
     printRecursivo(fp, G, parent[p], colunas);
 
-    getParede (G->adj[ parent[p] ], p, &wall, &weight);
-    linha = Linha (wall, colunas);
+    getParede(G->adj[parent[p]], p, &wall, &weight);
+    linha = Linha(wall, colunas);
     coluna = Coluna(wall, linha, colunas);
-    fprintf (fp, "%d %d %d\n", linha, coluna, weight);
+    fprintf(fp, "%d %d %d\n", linha, coluna, weight);
 
     return;
 }
 
-void writeSolution (char *output, Graph *G, int tesouroRoom, int colunas, bool first)
+/**
+ * @brief  
+ * @note   
+ * @param  *output: 
+ * @param  *G: 
+ * @param  tesouroRoom: 
+ * @param  colunas: 
+ * @param  first: 
+ * @retval None
+ */
+void writeSolution(char *output, Graph *G, int tesouroRoom, int colunas, bool first)
 {
-    int i = tesouroRoom; 
-    int distance = dist[ tesouroRoom ];
+    int i = tesouroRoom;
+    int distance = dist[tesouroRoom];
     int cnt = 0;
 
     FILE *fp = fopen(output, "a+");
@@ -147,7 +207,8 @@ void writeSolution (char *output, Graph *G, int tesouroRoom, int colunas, bool f
     {
         fprintf(fp, "%d\n", distance);
 
-        for (cnt = 0; parent[i] != -1; i = parent[i], cnt++);
+        for (cnt = 0; parent[i] != -1; i = parent[i], cnt++)
+            ;
 
         if (cnt == 0)
         {
@@ -155,12 +216,13 @@ void writeSolution (char *output, Graph *G, int tesouroRoom, int colunas, bool f
             free(dist);
             free(parent);
             return;
-        } 
+        }
 
         fprintf(fp, "%d\n", cnt);
         printRecursivo(fp, G, tesouroRoom, colunas);
-
-    } else {
+    }
+    else
+    {
         fprintf(fp, "-1\n");
     }
 

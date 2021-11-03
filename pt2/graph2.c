@@ -1,5 +1,4 @@
 #include <stdlib.h>
-#include <stdio.h>
 #include "graph2.h"
 #include "Item.h"
 
@@ -7,16 +6,17 @@ typedef struct room Room;
 
 struct room
 {
-    int n;      //numero da sala
+    int n;      //número da sala
     int weight; //peso associado
-    int p;      //posição da parede (que tem o peso w)
+    int p;      //posição da parede (que tem o peso "weight")
     Room *next;
 };
 
+/* estrutura principal do grafo */
 struct graph
 {
     int V; //nº total de salas
-    int E; //nº total de arestas
+    int E; //nº total de arestas //É PRECISO DO EDGE??
     Room **adj;
 };
 
@@ -28,16 +28,34 @@ struct edge
     int weight; //peso da aresta
 };
 
+/**
+ * @brief Função que queria uma nova sala na lista de adjacencias
+ * @note   
+ * @param  n: número da sala adjacente
+ * @param  *next: apontador para o primeiro elemento da lista de adjacencias
+ * @param  weight: peso da parede a transpôr para entrar na sala referida
+ * @param  p: posição da parede a transpôr para entrar na sala referida
+ * @retval apontador para a sala criada
+ */
 Room *newRoom(int n, Room *next, int weight, int p)
 {
     Room *newR = (Room *)malloc(sizeof(struct room));
     newR->n = n;
     newR->p = p;
     newR->weight = weight;
-    newR->next = next;
+    newR->next = next; //a nova sala criada passa a ser a primeira da lista de adjacências
     return newR;
 }
 
+/**
+ * @brief  Função que queria uma aresta entre duas salas
+ * @note   
+ * @param  v: numero da sala 1
+ * @param  w: numero da sala 2
+ * @param  p: posição da parede a partir para transpôr da sala e para a sala 2
+ * @param  weight: peso da parede a partir para transpôr da sala e para a sala 2
+ * @retval apontador para a aresta criada
+ */
 Edge *newEdge(int v, int w, int p, int weight)
 {
     Edge *newE = (Edge *)malloc(sizeof(struct edge));
@@ -49,6 +67,12 @@ Edge *newEdge(int v, int w, int p, int weight)
     return newE;
 }
 
+/**
+ * @brief  Funçaõ que inicializa a lista de adjancências com uma certa dimensão
+ * @note   
+ * @param  V: dimensão da lista de adjacencias
+ * @retval apontador para o grafo criado
+ */
 Graph *graphInit(int V)
 {
     int v;
@@ -61,6 +85,13 @@ Graph *graphInit(int V)
     return newG;
 }
 
+/**
+ * @brief  Função que recebe uma aresta e insere-a no grafo
+ * @note   a função, não insere a aresta no grafo, caso já exista alguma aresta de menor peso no grafo
+ * @param  *G: apontador para o grafo
+ * @param  *newE: aresta que contem a informação a ser inserida no grafo
+ * @retval None
+ */
 void graphInsertE(Graph *G, Edge *newE)
 {
     int v = newE->v;
@@ -97,14 +128,20 @@ void graphInsertE(Graph *G, Edge *newE)
     //caso a aresta não exista, criar uma nova
     G->adj[v] = newRoom(w, G->adj[v], weight, p);
     G->adj[w] = newRoom(v, G->adj[w], weight, p);
-    G->E++; //Confirmar isto
+    G->E++;
     free(newE);
     return;
 }
 
+/**
+ * @brief  Função que apaga o grafo
+ * @note   
+ * @param  *myGraph: apontador para o grafo
+ * @retval None
+ */
 void graphDestroy(Graph *myGraph)
 {
-    Room *del = NULL; 
+    Room *del = NULL;
     Room *aux = NULL;
     for (int j = 0; j < myGraph->V; j++)
     {
@@ -119,18 +156,4 @@ void graphDestroy(Graph *myGraph)
 
     free(myGraph->adj);
     free(myGraph);
-}
-
-void printGraph(Graph *G)
-{
-    int i, n_rooms = G->V;
-    for (i = 0; i < n_rooms; i++)
-    {
-        //  if (G->adj[i] != NULL)
-        while (G->adj[i] != NULL)
-        {
-            printf("A sala %d está unida à sala %d com o custo %d na posição %d\n", i, G->adj[i]->n, G->adj[i]->weight, G->adj[i]->p);
-            G->adj[i] = G->adj[i]->next;
-        }
-    }
 }

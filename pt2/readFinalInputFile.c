@@ -7,7 +7,7 @@
 #include "algoritmo.h"
 #include "parte2.h"
 
-#define tesouroSala (-board[ convertTile(brp->key.Line, brp->key.Column, brp->board.columns) ] - 2)
+#define tesouroSala (-board[convertTile(brp->key.Line, brp->key.Column, brp->board.columns)] - 2)
 
 /* linhas e colunas do tabuleiro */
 struct board
@@ -35,54 +35,14 @@ typedef struct _wall
     int l1, c1, weight;
 } wall;
 
-/* APAGAR DEPOIS */
-
-void printBoard(int *board, int columns, int lines, int tesouro)
-{
-    printf("lines:\t\t%d\n", lines);
-    printf("columns:\t%d\n\n", columns);
-    for (int j = 1; j <= lines; j++)
-        for (int i = 1; i <= columns; i++)
-        {
-            if (i == (columns)){
-
-                if ( tesouro == ((j - 1) * columns + i - 1)){
-                    printf("\033[0;35m😀 \033[0m\n");
-                    continue;
-                }
-
-                if (board[((j - 1) * columns + i - 1)] == -1 )
-                    printf("\033[0;31m█ \033[0m\n");
-                else if (board[((j - 1) * columns + i - 1)] > 0)
-                    printf("\033[0;37m█ \033[0m\n");
-                else
-                    printf("0 \n");
-            } else {
-
-                if ( tesouro == ((j - 1) * columns + i - 1)){
-                    printf("\033[0;35m😀 \033[0m");
-                    continue;
-                }
-
-                if (board[((j - 1) * columns + i - 1)] == -1)
-                    printf("\033[0;31m█ \033[0m");
-                else if (board[((j - 1) * columns + i - 1)] > 0)
-                    printf("\033[0;37m█ \033[0m");
-                else
-                    printf("0 ");
-            }
-        }
-
-    return;
-}
-
-/* APAGAR DEPOIS */
-
-/* adicionar comentarios lol */
-/*
- * ¯\_(ツ)_/¯
- *
- * */
+/**
+ * @brief  
+ * @note   
+ * @param  *fp: 
+ * @param  *brp: 
+ * @param  *output: 
+ * @retval None
+ */
 void readFinalInputFile(FILE *fp, boardRules *brp, char *output)
 {
     //---------------------------//
@@ -143,44 +103,41 @@ void readFinalInputFile(FILE *fp, boardRules *brp, char *output)
             exit(0);
 
         /* preencher o tabuleiro com as paredes */
-        board[(Wall->l1 - 1) * brp->board.columns + Wall->c1 - 1] = Wall->weight;
-        wallVec[j] = (Wall->l1 - 1) * brp->board.columns + Wall->c1 - 1;
+        board[convertTile(Wall->l1, Wall->c1, brp->board.columns)] = Wall->weight;
+        wallVec[j] = convertTile(Wall->l1, Wall->c1, brp->board.columns);
         j++;
     }
 
-    if (valido && board[convertTile(brp->key.Line, brp->key.Column,brp->board.columns)] != 0)
+    if (valido && board[convertTile(brp->key.Line, brp->key.Column, brp->board.columns)] != 0)
         valido = 0;
-
-    //board[(brp->key.Line - 1) * brp->board.columns + brp->key.Column - 1] = -1337;
-    /* testes (APAGAR depois) */
-    //printBoard(board, brp->board.columns, brp->board.lines, (brp->key.Line - 1) * brp->board.columns + brp->key.Column - 1);
 
     //---------------------------//
     /* inicializa o jogo */
-    if (valido){
+    if (valido)
+    {
         n_rooms = divideRooms(board, brp->board.lines, brp->board.columns);
-        //printf("\n\nO total de salas é %d\n\n\n", n_rooms);
         Graph *myGraph = graphInit(n_rooms);
         fillGraph(myGraph, board, wallVec, brp->n_walls, brp->board.lines, brp->board.columns);
         algoritmo(myGraph);
-    
+
         /* escreve para o ficheiro de saída */
         writeSolution(output, myGraph, tesouroSala, brp->board.columns, first);
         graphDestroy(myGraph);
-    } else {
-        FILE *invfp = fopen (output, "a");
-        if (invfp == NULL) 
+    }
+    else
+    {
+        FILE *invfp = fopen(output, "a");
+        if (invfp == NULL)
             exit(0);
 
         if (!first)
-            fprintf(invfp,"\n\n");
+            fprintf(invfp, "\n\n");
 
-        fprintf(invfp,"-1\n");
+        fprintf(invfp, "-1\n");
         fclose(invfp);
     }
 
     first = 0;
-    //printGraph(myGraph);
 
     /* garbage collector */
     free(board);
