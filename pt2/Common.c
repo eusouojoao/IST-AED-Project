@@ -1,25 +1,39 @@
 #include "Pilha.h"
 
+/**
+ * @brief  Verifica se uma determinada peça (l1, c1) é quebrável
+ * @note   
+ * @param  **A5: vetor bidimensional com a linha, a coluna e o custo de todas as peças adjacentes
+ * @param  n_adj: numero de peças adjacentes a (l1, c1)
+ * @param  n_Lines: número total de linhas do tabuleiro 
+ * @param  n_Col: número total de colunas do tabuleiro
+ * @param  l1: linha em que está a peça
+ * @param  c1: coluna em que está a peça
+ * @param  tesouro: custo da peça a ser verificada
+ * @retval -1 se a peça não for cinzenta
+ *         0 se a peça não for quebrável
+ *         1 se a peça for quebrável
+ */
 int checkA5(int **A5, int n_adj, int n_Lines, int n_Col, int l1, int c1, int tesouro)
 {
     int i, auxC, auxL, up = 0, down = 0, right = 0, left = 0;
-    
+
     if (tesouro <= 0)
-        return -1;
+        return -1; //caso a peça não for cinzenta
 
     if (n_adj == 2)
-        return 0;
+        return 0; // peça de canto nunca é quebrável
 
     if (n_adj == 3)
     {
         if (n_Col == c1)
-            right = -1;
+            right = -1; //caso seja uma peça lateral à direita, a peça "right" estaria fora do tabuleiro
         if (c1 == 1)
-            left = -1;
+            left = -1; //caso seja uma peça lateral à esquerda, a peça "left" estaria fora do tabuleiro
         if (n_Lines == l1)
-            down = -1;
+            down = -1; //caso seja uma peça lateral inferior, a peça "down" estaria fora do tabuleiro
         if (l1 == 1)
-            up = -1;
+            up = -1; //caso seja uma peça lateral superior, a peça "up" estaria fora do tabuleiro
 
         for (i = 0; i < n_adj; i++)
         {
@@ -34,9 +48,9 @@ int checkA5(int **A5, int n_adj, int n_Lines, int n_Col, int l1, int c1, int tes
             if (auxL == l1 + 1 && auxL == l1)
                 left = A5[i][2];
         }
-        if (right == 0 && left == 0)
+        if (right == 0 && left == 0) //se a peça de cima e de baixo forem brancas, é quebrável
             return 1;
-        if (up == 0 && down == 0)
+        if (up == 0 && down == 0) //se a peça à direita e à esquerda forem brancas, é quebrável
             return 1;
 
         return 0;
@@ -176,47 +190,6 @@ int checkPeca(int *board, int n_Lines, int n_Col, int l, int c)
     if (checkInsideBoard(n_Lines, n_Col, l, c) == 0)
         return -2; //fora do tabuleiro
     return board[convertTile(l, c, n_Col)];
-}
-
-/**
- * @brief  Verifica se uma peça é cinzenta, e caso seja verifica se é quebrável ou não
- * @note   Tabuleiro é um vetor unidimensional cujo elemento (l,c) é acedido
- *         através da função convertTile() 
- * @param  *board: tabuleiro (vetor unidimensional)
- * @param  n_Lines: número total de linhas do tabuleiro 
- * @param  n_Col: número total de colunas do tabuleiro
- * @param  l: linha em que está a peça
- * @param  c: coluna em que está a peça
- * @retval -2 se a peça estiver fora do tabuleiro
- *         -1 se a peça não for cinzenta
- *         1 se a peça for cinzenta quebrável
- *         0 se a peça for cinzenta não quebrável
- */
-int checkBreakable(int *board, int n_Lines, int n_Col, int l, int c)
-{
-    int up = -2, down = -2, right = -2, left = -2; //inicializar as peças adjacentes como peças não brancas
-    int auxC = c, auxL = l;
-    if (checkInsideBoard(n_Lines, n_Col, l, c) == 0)
-        return -2; //peça fora do tabuleiro
-    if (checkPeca(board, n_Lines, n_Col, l, c) < 1)
-        return -1; //peça não é cinzenta
-    auxC++;        //peça da direita (right)
-    if (checkInsideBoard(n_Lines, n_Col, auxL, auxC) == 1)
-        right = board[convertTile(auxL, auxC, n_Col)];
-    auxC = auxC - 2; //peça da esquerda (left)
-    if (checkInsideBoard(n_Lines, n_Col, auxL, auxC) == 1)
-        left = board[convertTile(auxL, auxC, n_Col)];
-    auxC++;
-    auxL++; //peça de cima (up)
-    if (checkInsideBoard(n_Lines, n_Col, auxL, auxC) == 1)
-        up = board[convertTile(auxL, auxC, n_Col)];
-    auxL = auxL - 2; //peça de baixo (down)
-    if (checkInsideBoard(n_Lines, n_Col, auxL, auxC) == 1)
-        down = board[convertTile(auxL, auxC, n_Col)];
-    //peça da direita e a da esquerda brancas ou peça de cima e de baixo brancas => peça é quebrável
-    if ((right == 0 && left == 0) || (up == 0 && down == 0))
-        return 1; //peça cinzenta quebrável
-    return 0;     //peça cinzenta não quebrável
 }
 
 /**

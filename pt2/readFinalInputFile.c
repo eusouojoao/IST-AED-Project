@@ -35,6 +35,16 @@ typedef struct _wall
     int l1, c1, weight;
 } wall;
 
+bool casosEspecificos (boardRules *brp)
+{
+    if ( brp->key.Line == 1 && brp->key.Column == 1 ) 
+        return 1;
+    else if ( brp->n_walls == 0 ) 
+        return 1;
+
+    return 0;
+}
+
 /**
  * @brief  
  * @note   
@@ -47,10 +57,10 @@ void readFinalInputFile(FILE *fp, boardRules *brp, char *output)
 {
     //---------------------------//
     static bool first = 1;
-    bool valido = 1;
+    bool valido = 1, especifico = 0;
     wall *Wall = NULL;
     int *board = NULL, *wallVec = NULL;
-    int n_rooms = 0, j = 0, counter = 0;
+    int n_rooms = 0, j = 0, counter = 0, tesouro = 0;
 
     //---------------------------//
     brp = (boardRules *)malloc(sizeof(boardRules));
@@ -74,8 +84,10 @@ void readFinalInputFile(FILE *fp, boardRules *brp, char *output)
     if (fscanf(fp, "%d", &(brp->n_walls)) != 1)
         exit(0);
 
+    especifico = casosEspecificos(brp);
+
     //---------------------------//
-    if (valido)
+    if (valido && !especifico)
     {
         if ((Wall = (wall *)malloc(sizeof(wall))) == NULL)
         {
@@ -112,14 +124,29 @@ void readFinalInputFile(FILE *fp, boardRules *brp, char *output)
     }
     else
     {
+        if ((Wall = (wall *)malloc(sizeof(wall))) == NULL)
+        {
+            exit(0);
+        }
         for(/* D: */; brp->n_walls > 0 ; brp->n_walls--)
-            if(fscanf(fp,"%*d %*d %*d") != 3)
-                continue;
+        {
+            if (fscanf(fp, "%d %d %d", &(Wall->l1), &(Wall->c1), &(Wall->weight)) != 3)
+            {
+                exit(0);
+            }
+            if ( Wall->l1 == brp->key.Line && Wall->c1 == brp->key.Column )
+            {
+                valido = 0;
+                especifico = 0;
+            }
+        }
+        free(Wall);
     }
 
     //---------------------------//
-    if (valido && board[convertTile(brp->key.Line, brp->key.Column, brp->board.columns)] != 0)
+    if (valido && !especifico && board[convertTile(brp->key.Line, brp->key.Column, brp->board.columns)] != 0)
     {
+        /* garbage collector */
         free(Wall);
         free(wallVec);
         free(board);
@@ -128,39 +155,45 @@ void readFinalInputFile(FILE *fp, boardRules *brp, char *output)
 
     //---------------------------//
     /* inicializa o jogo */
-    if (valido)
+    if (valido && !especifico)
     {
         n_rooms = divideRooms(board, brp->board.lines, brp->board.columns, brp->key.Line, brp->key.Column);
         if (n_rooms == 1)
         {
+            free(board);
+            free(Wall);
+            free(wallVec);
             writeZero(output, first);    
         } 
         else
         {
             Graph *myGraph = graphInit(n_rooms);
             fillGraph(myGraph, board, wallVec, brp->n_walls, brp->board.lines, brp->board.columns);
+            tesouro = tesouroSala;
+            /* garbage collector */
+            free(board);
+            free(Wall);
+            free(wallVec);
+
+            //---------------------------//
             algoritmo(myGraph);
 
             /* escreve para o ficheiro de saída */
-            writeSolution(output, myGraph, tesouroSala, brp->board.columns, first);
+            writeSolution(output, myGraph, tesouro, brp->board.columns, first);
             graphDestroy(myGraph);
         }
     }
     else
     {
-        writeInvalid(output, first);
+        if (especifico)
+            writeZero(output,first);
+        else
+            writeInvalid(output, first);
     }
 
     //---------------------------//
     first = 0;
     /* garbage collector */
-    if (valido)
-    {
-        free(board);
-        free(Wall);
-        free(wallVec);
-    }
-
     free(brp);
 
     //---------------------------//

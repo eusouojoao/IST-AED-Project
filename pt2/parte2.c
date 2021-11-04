@@ -83,7 +83,7 @@ void pushTiles(int *board, int tile, int n_Lines, int n_Col, int room)
 int divideRooms(int *board, int n_Lines, int n_Col, int tesouroL, int tesouroC)
 {
     int aux = 0, cursor = 0, room = 1;
-    initPilha(4 * n_Col + 4 * n_Lines);                            //ocupação máxima que a pilha poderia ter
+    initPilha(n_Col * n_Lines);                            //ocupação máxima que a pilha poderia ter
     while (isTileAdjacent(cursor, n_Lines, n_Col, 0) == 1) //enquanto o cursor tiver dentro do tabuleiro
     {
         room++;
