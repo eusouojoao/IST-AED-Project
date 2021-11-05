@@ -1,11 +1,7 @@
 #include <stdio.h>
-#include <math.h>
 #include <stdlib.h>
-#include <limits.h>
 #include <stdbool.h>
-#include "grafo.h"
 #include "writeOutputFile.h"
-#include "algoritmo.h"
 
 /**
 * @brief Função que faz a escrita para o ficheiro de output no formato pedido 

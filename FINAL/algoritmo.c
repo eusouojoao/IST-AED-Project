@@ -43,6 +43,7 @@ void algoritmo(Graph *G)
     int Vmax = getVertices(G);
     acervo *A = NULL; 
 
+    //---------------------------//
     dist = (int *)malloc(Vmax * sizeof(int));
     if (dist == NULL)
         exit(0);
@@ -51,8 +52,10 @@ void algoritmo(Graph *G)
     if (parent == NULL)
         exit(0);
 
+    //---------------------------//
     acervoInit(&A, comparaRooms, Vmax);
 
+    //---------------------------//
     /* inicializar vetor de distancias e vetor das salas "parentes" */
     for (v = 0; v < Vmax; v++)
     {
@@ -60,10 +63,12 @@ void algoritmo(Graph *G)
         parent[v] = -1;
     }
 
+    //---------------------------//
     /* iniciar com a sala inicial */
     acervoAdd(A, 0);
     dist[0] = 0;
 
+    //---------------------------//
     while (!acervoEmpty(A))
     {
         if (dist[(v = acervoGet(A))] != INT_MAX)
@@ -76,6 +81,7 @@ void algoritmo(Graph *G)
                 }
     }
 
+    //---------------------------//
     freeAcervo(A);
     return;
 }
@@ -141,10 +147,11 @@ void getParede(void *list, int p, int *wall, int *weight)
  */
 void printRecursivo(FILE *fp, Graph *G, int p, int colunas)
 {
-    int wall, weight;
-    int linha, coluna;
-    void *t;
+    int wall, weight;   /* parede em coordenadas unidimensionais e peso associado   */
+    int linha, coluna;  /* coordenadas bidimensionais da parede                     */
+    void *t;            /* apontador para uma lista generica                        */
 
+    //---------------------------//
     /* só para a chamada recursiva quando chegarmos à sala cujo parente é a sala inicial */
     if (parent[p] == 0)
     {
@@ -158,14 +165,18 @@ void printRecursivo(FILE *fp, Graph *G, int p, int colunas)
         return;
     }
 
+    //---------------------------//
     /* continuar a aventura recursiva */
     printRecursivo(fp, G, parent[p], colunas);
 
+    //---------------------------//
     /* converter coordenada unidimensional em bidimensional, e obter o custo da parede */
     assignLista(G, &t, parent[p]);
     getParede(t, p, &wall, &weight);
     linha = Linha(wall, colunas);
     coluna = Coluna(wall, linha, colunas);
+
+    //---------------------------//
     /* imprimir o resultado no formato especificado (l, c, w) */
     fprintf(fp, "%d %d %d\n", linha, coluna, weight);
 
@@ -186,20 +197,23 @@ void printRecursivo(FILE *fp, Graph *G, int p, int colunas)
  */
 void writeSolution(char *output, Graph *G, int tesouroRoom, int colunas, bool first)
 {
-    int i = tesouroRoom;
-    int distance = dist[i];
-    int cnt = 0;
+    int i = tesouroRoom;        /* sala do tesouro                              */
+    int distance = dist[i];     /* distancia da sala do tesouro à sala inicial  */
+    int cnt = 0;                /* salas percorridas até à sala inicial         */
 
+    //---------------------------//
     FILE *fp = fopen(output, "a+");
     if (fp == NULL)
         return;
 
+    //---------------------------//
     /* se não for o primeiro tabuleiro a ser escrito no ficheiro é necessária uma gap */
     if (!first)
     {
         fprintf(fp, "\n\n");
     }
 
+    //---------------------------//
     /* verificar se há caminho da sala do tesouro até à sala inicial */
     if (distance != INT_MAX)
     {
@@ -225,6 +239,7 @@ void writeSolution(char *output, Graph *G, int tesouroRoom, int colunas, bool fi
         fprintf(fp, "-1\n");
     }
 
+    //---------------------------//
     fclose(fp);
     free(dist);
     free(parent);

@@ -76,8 +76,9 @@ int checkA5(int **A5, int n_adj, int n_Lines, int n_Col, int l1, int c1, int tes
             return 1;
         return 0;
     }
-
-    return -5;
+    
+    /* não deve chegar aqui */
+    return -1;
 }
 
 /**
