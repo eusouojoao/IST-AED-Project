@@ -10,6 +10,8 @@
 #define FINAL
 #include "writeOutputFile.h"
 
+#define EXPERIMENTAL 1
+
 /* linhas e colunas do tabuleiro */
 struct board
 {
@@ -182,8 +184,8 @@ void readFinalInputFile(FILE *fp, boardRules *brp, char *output)
     //---------------------------//
     static bool first = 1;
     bool valido = 1, especifico = 0;
-    wall *Wall = NULL;
-    int *board = NULL, *wallVec = NULL;
+    //wall *Wall = NULL;
+    //int *board = NULL, *wallVec = NULL;
 
     //---------------------------//
     brp = (boardRules *)malloc(sizeof(boardRules));
@@ -232,7 +234,17 @@ void readFinalInputFile(FILE *fp, boardRules *brp, char *output)
     /*§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§*/
     /*                          EXPERIMENTAL                         */
     
+    if (valido && !especifico)
+    {
 
+    }
+    else
+    {
+        if (especifico)
+            writeZero(output,first);
+        else
+            writeInvalid(output, first);
+    }
 
     /*§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§*/
 
