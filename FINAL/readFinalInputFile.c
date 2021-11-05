@@ -143,7 +143,7 @@ void init (boardRules *brp, int *board, int *wallVec, wall *Wall,
             fillGraph(myGraph, board, wallVec, brp->n_walls, brp->board.lines, brp->board.columns);
 
             /* obtem a sala do tesouro */
-            tesouro = -board[convertTile(brp->key.Line, brp->key.Column, brp->board.columns)] - 2;
+            tesouro = ( -board[convertTile(brp->key.Line, brp->key.Column, brp->board.columns)] - 2 );
 
             /* garbage collector */
             free(board);
@@ -209,6 +209,7 @@ void readFinalInputFile(FILE *fp, boardRules *brp, char *output)
 
     especifico = casosEspecificos(brp);
 
+#if !EXPERIMENTAL
     //---------------------------//
     /* alocação da memória necessária */
     allocs(fp, brp, &Wall, &wallVec, &board, &valido, &especifico); 
@@ -226,6 +227,15 @@ void readFinalInputFile(FILE *fp, boardRules *brp, char *output)
     //---------------------------//
     /* inicializa o jogo */
     init(brp, board, wallVec, Wall, valido, especifico, first, output);
+#endif
+
+    /*§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§*/
+    /*                          EXPERIMENTAL                         */
+    
+
+
+    /*§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§*/
+
     first = 0; /* já não é o primeiro */
 
     //---------------------------//
