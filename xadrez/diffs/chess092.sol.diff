@@ -1,1 +1,8 @@
-Files chess092.sol and chess092.sol.original are identical
+1,2c1,4
+< 80
+< 1
+---
+> 255
+> 2
+> 1 2 223
+> 2 3 32

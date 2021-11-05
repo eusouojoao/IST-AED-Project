@@ -33,13 +33,25 @@ for F in ${FILES}; do
 done;
 
 pDIFFS () {
-    cat diffs/*
+    cat diffs/* | less -R --use-color -Dd+r -Du+b 
 }
 
 echo "Imprimir as diffs no terminal?"
 select yn in "Yes" "No"; do
     case $yn in
         Yes ) clear; pDIFFS; break;;
+        No ) break;;
+    esac
+done
+
+pVALG () {
+    cat valg/* | less -R --use-color -Dd+r -Du+b
+}
+
+echo "Ver os logs do valgrind?"
+select yn in "Yes" "No"; do
+    case $yn in
+        Yes ) pVALG; break;;
         No ) break;;
     esac
 done
