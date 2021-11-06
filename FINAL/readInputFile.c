@@ -112,14 +112,14 @@ void initGameMode(boardRules *brp, int *board, char *output, int A1, int *AA, in
         else
         {
             /* quando o tamanho do tabuleiro é superior a  */
-            if (brp->board.lines * brp->board.columns < 2000 * 1000 )
+            if (brp->board.lines * brp->board.columns < 2000 * 3500)
             {
                 //conetividade WQU
                 A = sameRoomWQU(board, brp->board.lines, brp->board.columns, convertTile(brp->key.Line, brp->key.Column, brp->board.columns), convertTile(brp->A6.l2, brp->A6.c2, brp->board.columns));
             }
             else
             {
-                //pilha
+                //utilizar pilha (), pois ocupa menos memória
                 A = checkA6(board, brp->board.lines, brp->board.columns, convertTile(brp->key.Line, brp->key.Column, brp->board.columns), convertTile(brp->A6.l2, brp->A6.c2, brp->board.columns));
             }
         }
@@ -176,7 +176,7 @@ void readInputFile(FILE *fp, boardRules *brp, char *output)
     }
 
     //---------------------------//
-    /* obtem o nº de paredes */
+    /* obtém o nº de paredes */
     if (fscanf(fp, "%d", &(brp->n_walls)) != 1)
         exit(0);
 
@@ -222,13 +222,13 @@ void readInputFile(FILE *fp, boardRules *brp, char *output)
             n_adj = 2;
 
         A5 = (int **)malloc(n_adj * sizeof(int *));
-        if( A5 == NULL)
-           exit(0);
+        if (A5 == NULL)
+            exit(0);
 
         for (k = 0; k < n_adj; k++)
         {
             A5[k] = (int *)malloc(3 * sizeof(int));
-            if ( A5[k] == NULL )
+            if (A5[k] == NULL)
                 exit(0);
         }
 
@@ -319,7 +319,7 @@ void readInputFile(FILE *fp, boardRules *brp, char *output)
         free(board);
     if (i == 5)
     {
-        for (j = n_adj-1 ; j >= 0; j--)
+        for (j = n_adj - 1; j >= 0; j--)
             free(A5[j]);
         free(A5);
     }
