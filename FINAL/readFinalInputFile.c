@@ -43,41 +43,41 @@ typedef struct _wall
  * @param  *brp: boardRules pointer, contem toda a informação relevante sobre as regras do tabuleiro
  * @retval  1 se for caso especifico, 0 caso contrário
  * */
-bool casosEspecificos (boardRules *brp)
+bool casosEspecificos(boardRules *brp)
 {
-    if ( brp->key.Line == 1 && brp->key.Column == 1 ) 
+    if (brp->key.Line == 1 && brp->key.Column == 1)
         return 1;
-    else if ( brp->n_walls == 0 ) 
+    else if (brp->n_walls == 0)
         return 1;
 
     return 0;
 }
 
-void allocs (FILE *fp, boardRules *brp, wall **Wall, int **wallVec,
-             int **board, bool *valido, bool *especifico)
+void allocs(FILE *fp, boardRules *brp, wall **Wall, int **wallVec,
+            int **board, bool *valido, bool *especifico)
 {
     int counter = 0, j = 0;
 
     //---------------------------//
-    if ( (*valido) && !(*especifico) )
+    if ((*valido) && !(*especifico))
     {
-        if ( ( (*Wall) = (wall *)malloc( sizeof(wall) ) ) == NULL)
+        if (((*Wall) = (wall *)malloc(sizeof(wall))) == NULL)
         {
             exit(0);
         }
-        if ( ( (*wallVec) = (int *)malloc( brp->n_walls * sizeof(int) ) ) == NULL )
+        if (((*wallVec) = (int *)malloc(brp->n_walls * sizeof(int))) == NULL)
         {
             exit(0);
         }
-        inicializeWallVector( (*wallVec), brp->n_walls);
+        inicializeWallVector((*wallVec), brp->n_walls);
 
         //---------------------------//
         /* verifica se a alocação foi sucedida */
-        if ( ((*board) = (int *)malloc(brp->board.lines * brp->board.columns * sizeof(int))) == NULL )
+        if (((*board) = (int *)malloc(brp->board.lines * brp->board.columns * sizeof(int))) == NULL)
         {
             exit(0);
         }
-        inicializeBoard( (*board), brp->board.lines, brp->board.columns);
+        inicializeBoard((*board), brp->board.lines, brp->board.columns);
 
         //---------------------------//
         /* ler paredes do ficheiro de input */
@@ -85,47 +85,47 @@ void allocs (FILE *fp, boardRules *brp, wall **Wall, int **wallVec,
         for (/* stares into the void */; counter > 0; counter--)
         {
 
-            if (fscanf(fp, "%d %d %d", &( (*Wall)->l1), &( (*Wall)->c1), &( (*Wall)->weight)) != 3)
+            if (fscanf(fp, "%d %d %d", &((*Wall)->l1), &((*Wall)->c1), &((*Wall)->weight)) != 3)
                 exit(0);
 
             /* preencher o tabuleiro com as paredes */
-            (*board)[convertTile( (*Wall)->l1, (*Wall)->c1, brp->board.columns)] = (*Wall)->weight;
-            (*wallVec)[j] = convertTile( (*Wall)->l1, (*Wall)->c1, brp->board.columns);
+            (*board)[convertTile((*Wall)->l1, (*Wall)->c1, brp->board.columns)] = (*Wall)->weight;
+            (*wallVec)[j] = convertTile((*Wall)->l1, (*Wall)->c1, brp->board.columns);
             j++;
         }
     }
     //---------------------------//
     /* caso não seja valido, ou seja um caso especifico,
-     * precisamos de ler apenas as paredes para que o file pointer
-     * avance...
-     * */
+      precisamos de ler apenas as paredes para que o file pointer
+      avance
+    */
     else
     {
-        if (( (*Wall) = (wall *)malloc(sizeof(wall))) == NULL)
+        if (((*Wall) = (wall *)malloc(sizeof(wall))) == NULL)
         {
             exit(0);
         }
-        for(/* D: */; brp->n_walls > 0 ; brp->n_walls--)
+        for (/* D: */; brp->n_walls > 0; brp->n_walls--)
         {
-            if (fscanf(fp, "%d %d %d", &( (*Wall)->l1), &( (*Wall)->c1), &( (*Wall)->weight)) != 3)
+            if (fscanf(fp, "%d %d %d", &((*Wall)->l1), &((*Wall)->c1), &((*Wall)->weight)) != 3)
             {
                 exit(0);
             }
-            if ( (*Wall)->l1 == brp->key.Line && (*Wall)->c1 == brp->key.Column )
+            if ((*Wall)->l1 == brp->key.Line && (*Wall)->c1 == brp->key.Column)
             {
                 (*valido) = 0;
                 (*especifico) = 0;
             }
         }
-        free( (*Wall) );
+        free((*Wall));
     }
 
     //---------------------------//
     return;
 }
 
-void init (boardRules *brp, int *board, int *wallVec, wall *Wall,
-            bool valido, bool especifico, bool first, char *output)
+void init(boardRules *brp, int *board, int *wallVec, wall *Wall,
+          bool valido, bool especifico, bool first, char *output)
 {
     int tesouro, n_rooms = 0;
     if (valido && !especifico)
@@ -136,8 +136,8 @@ void init (boardRules *brp, int *board, int *wallVec, wall *Wall,
             free(board);
             free(Wall);
             free(wallVec);
-            writeZero(output, first);    
-        } 
+            writeZero(output, first);
+        }
         else
         {
             Graph *myGraph = graphInit(n_rooms);
@@ -162,7 +162,7 @@ void init (boardRules *brp, int *board, int *wallVec, wall *Wall,
     else
     {
         if (especifico)
-            writeZero(output,first);
+            writeZero(output, first);
         else
             writeInvalid(output, first);
     }
@@ -212,7 +212,7 @@ void readFinalInputFile(FILE *fp, boardRules *brp, char *output)
 
     //---------------------------//
     /* alocação da memória necessária */
-    allocs(fp, brp, &Wall, &wallVec, &board, &valido, &especifico); 
+    allocs(fp, brp, &Wall, &wallVec, &board, &valido, &especifico);
 
     //---------------------------//
     if (valido && !especifico && board[convertTile(brp->key.Line, brp->key.Column, brp->board.columns)] != 0)

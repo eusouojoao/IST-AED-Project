@@ -7,10 +7,10 @@
 /* acervo */
 struct _acervo
 {
-    int *acervoArray;               /* vai conter os vértices                       */
-    int max_size;                   /* tamanho máximo do acervo (nº de vértices)    */
-    int current_size;               /* posição livre no acervo                      */
-    int (*comparador)(int, int);    /* função de comparação (portabilidade)         */
+    int *acervoArray;            /* vai conter os vértices                       */
+    int max_size;                /* tamanho máximo do acervo (nº de vértices)    */
+    int current_size;            /* posição livre no acervo                      */
+    int (*comparador)(int, int); /* função de comparação (portabilidade)         */
 };
 
 /**
@@ -46,9 +46,9 @@ void acervoInit(acervo **A, int (*comparador)(int, int), int size)
  */
 void acervoInserirTopo(acervo *A, int cnt)
 {
-    int temp;                   /* auxiliar para armazenar o valor do parente   */
-    int child;                  /* armazena as coords dos filhos                */
-    bool left = 0, right = 0;   /* flags filho à esquerda e filho à direita     */
+    int temp;                 /* auxiliar para armazenar o valor do parente   */
+    int child;                /* armazena as coords dos filhos                */
+    bool left = 0, right = 0; /* flags filho à esquerda e filho à direita     */
 
     /* filho à esquerda */
     if ((2 * cnt + 1) < A->current_size)
@@ -97,7 +97,7 @@ void acervoInserirTopo(acervo *A, int cnt)
 
 /**
  * @brief Insere o vértice na posição de menor prioridade e recursivamente acha a sua posição
- *          no acervo
+ *        no acervo
  * @note   Ordena de baixo para cima
  * @param  *A: apontador para o acervo
  * @param  cnt: posição atual no acervo
@@ -146,7 +146,7 @@ void acervoAdd(acervo *A, int it)
  */
 int acervoGet(acervo *A)
 {
-    int min; /* elemento de maior prioridade (no projeto, é a dist/peso minim@) */
+    int min; /* elemento de maior prioridade (no projeto, é a dist/peso minimo) */
 
     if (A->current_size == 0)
     {
@@ -163,8 +163,8 @@ int acervoGet(acervo *A)
     if (A->current_size != 1)
     {
         /* encontra a posição do elemento que estava no fim do acervo,
-         * pois passou para a posição de maior prioridade 
-         * */
+          pois passou para a posição de maior prioridade 
+          */
         acervoInserirTopo(A, 0);
     }
 
@@ -177,7 +177,7 @@ int acervoGet(acervo *A)
  * @param  *A: apontador para o acervo
  * @retval 1 se estiver, 0 se não estiver
  */
-int acervoEmpty (acervo *A)
+int acervoEmpty(acervo *A)
 {
     if (A->current_size != 0)
         return 0;
@@ -190,7 +190,7 @@ int acervoEmpty (acervo *A)
  * @param  *A: apontador para o acervo
  * @retval None
  */
-void freeAcervo (acervo *A)
+void freeAcervo(acervo *A)
 {
     free(A->acervoArray);
     free(A);

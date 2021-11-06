@@ -64,19 +64,19 @@ int checkInsideBoard(int n_Lines, int n_Col, int l, int c)
  * @retval 0 se a peça estiver fora do tabuleiro, ou não fôr adjacente
  *         1 se a peça for adjacente e pertencer ao tabuleiro
  */
-int adjacentTileP (int tileP, int n_Lines, int n_Col, int HouV)
+int adjacentTileP(int tileP, int n_Lines, int n_Col, int HouV)
 {
     if (tileP < 0 || tileP > (n_Lines * n_Col - 1)) //fora das dimensões do tabuleiro
-        return 0;                                 //não é adjacente
-    if (HouV == 1)                                //HouV==1 soma horizontal
+        return 0;                                   //não é adjacente
+    if (HouV == 1)                                  //HouV==1 soma horizontal
     {
         if ((tileP % n_Col) == 0) //após a soma horizontal a peça "saltou" para a outra ponta do tabuleiro
-            return 0;            //não é adjacente
+            return 0;             //não é adjacente
     }
     if (HouV == 2) //HouV==2 subtração horizontal
     {
         if ((tileP % n_Col) == (n_Col - 1)) //após a subtração horizontal a peça "saltou" para a outra ponta do tabuleiro
-            return 0;                      //não é adjacente
+            return 0;                       //não é adjacente
     }
     return 1; //é adjacente
 }

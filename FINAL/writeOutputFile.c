@@ -9,8 +9,8 @@
 * @param *output: nome do ficheiro de output
 * @param to_print: valor a ser escrito no ficheiro 
 * @retval None
-*/ 
-void write2outputFile (char *output, int to_print)
+*/
+void write2outputFile(char *output, int to_print)
 {
     FILE *fp = fopen(output, "a");
     if (fp == NULL)
@@ -22,7 +22,14 @@ void write2outputFile (char *output, int to_print)
     return;
 }
 
-void writeZero (char *output, bool first)
+/**
+ * @brief  
+ * @note   
+ * @param  *output: 
+ * @param  first: 
+ * @retval None
+ */
+void writeZero(char *output, bool first)
 {
     FILE *fp = fopen(output, "a");
     if (fp == NULL)
@@ -31,13 +38,20 @@ void writeZero (char *output, bool first)
     if (!first)
         fprintf(fp, "\n\n");
 
-    fprintf(fp,"0\n");
+    fprintf(fp, "0\n");
     fclose(fp);
 
     return;
 }
 
-void writeInvalid (char *output, bool first)
+/**
+ * @brief  
+ * @note   
+ * @param  *output: 
+ * @param  first: 
+ * @retval None
+ */
+void writeInvalid(char *output, bool first)
 {
     FILE *invfp = fopen(output, "a");
     if (invfp == NULL)

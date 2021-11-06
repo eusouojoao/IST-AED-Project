@@ -8,8 +8,8 @@
 #include "algoritmo.h"
 
 /* vetores distancia e parentes alocados globalmente porque são necessários 
- * noutros ficheiros (para simplificar return values e passagens a funções)
- * */
+  noutros ficheiros (para simplificar return values e passagens a funções)
+  */
 static int *dist;
 static int *parent;
 
@@ -41,7 +41,7 @@ void algoritmo(Graph *G)
     int v, w, Dt;
     void *t;
     int Vmax = getVertices(G);
-    acervo *A = NULL; 
+    acervo *A = NULL;
 
     //---------------------------//
     dist = (int *)malloc(Vmax * sizeof(int));
@@ -72,8 +72,8 @@ void algoritmo(Graph *G)
     while (!acervoEmpty(A))
     {
         if (dist[(v = acervoGet(A))] != INT_MAX)
-            for ( assignLista(G, &t, v) ; t != NULL; ListaNext(&t) )
-                if ( dist[(w = getSala(t))] > (Dt = (dist[v] + getDist(t))) )
+            for (assignLista(G, &t, v); t != NULL; listaNext(&t))
+                if (dist[(w = getSala(t))] > (Dt = (dist[v] + getDist(t))))
                 {
                     dist[w] = Dt;
                     acervoAdd(A, w);
@@ -90,25 +90,25 @@ void algoritmo(Graph *G)
  * @brief Retorna a linha da peça que foi transformada numa coordenada unidimensional 
  * @note   
  * @param  coord: coordenada unidimensional
- * @param  colunas: número de colunas do tabuleiro
+ * @param  n_Col: número de colunas do tabuleiro
  * @retval linha (int)
  */
-int Linha(int coord, int colunas)
+int Linha(int coord, int n_Col)
 {
-    return ((int)ceil((float)(coord + 1) / (float)colunas));
+    return ((int)ceil((float)(coord + 1) / (float)n_Col));
 }
 
 /**
  * @brief  Retorna a coluna da peça que foi transformada numa coordenada unidimensional
  * @note   
  * @param  coord: coordenada unidimensional
- * @param  Linha: linha correspondente da peça
- * @param  colunas: número de colunas do tabuleiro
+ * @param  n_Lines: linha correspondente da peça
+ * @param  n_Col: número de colunas do tabuleiro
  * @retval coluna (int)
  */
-int Coluna(int coord, int Linha, int colunas)
+int Coluna(int coord, int n_Lines, int n_Col)
 {
-    return (coord + 1 - ((Linha - 1) * colunas));
+    return (coord + 1 - ((n_Lines - 1) * n_Col));
 }
 
 /**
@@ -124,13 +124,13 @@ void getParede(void *list, int p, int *wall, int *weight)
 {
     void *aux = list;
     while (aux != NULL && getSala(aux) != p)
-        ListaNext(&aux);
+        listaNext(&aux);
 
     if (aux == NULL)
         exit(0);
 
-    *wall = getWall( aux );
-    *weight = getDist( aux );
+    *wall = getWall(aux);
+    *weight = getDist(aux);
 
     return;
 }
@@ -142,14 +142,14 @@ void getParede(void *list, int p, int *wall, int *weight)
  * @param  *fp: apontador para o ficheiro aberto, onde se vai escrever no modo "append"
  * @param  *G: grafo que contem toda a informação relativa ao problema
  * @param  p: número da sala atual
- * @param  colunas: número de colunas do tabuleiro
+ * @param  n_Col: número de colunas do tabuleiro
  * @retval None
  */
-void printRecursivo(FILE *fp, Graph *G, int p, int colunas)
+void printRecursivo(FILE *fp, Graph *G, int p, int n_Col)
 {
-    int wall, weight;   /* parede em coordenadas unidimensionais e peso associado   */
-    int linha, coluna;  /* coordenadas bidimensionais da parede                     */
-    void *t;            /* apontador para uma lista generica                        */
+    int wall, weight;  /* parede em coordenadas unidimensionais e peso associado   */
+    int linha, coluna; /* coordenadas bidimensionais da parede                     */
+    void *t;           /* apontador para uma lista generica                        */
 
     //---------------------------//
     /* só para a chamada recursiva quando chegarmos à sala cujo parente é a sala inicial */
@@ -158,8 +158,8 @@ void printRecursivo(FILE *fp, Graph *G, int p, int colunas)
 
         assignLista(G, &t, 0);
         getParede(t, p, &wall, &weight);
-        linha = Linha(wall, colunas);
-        coluna = Coluna(wall, linha, colunas);
+        linha = Linha(wall, n_Col);
+        coluna = Coluna(wall, linha, n_Col);
         fprintf(fp, "%d %d %d\n", linha, coluna, weight);
 
         return;
@@ -167,14 +167,14 @@ void printRecursivo(FILE *fp, Graph *G, int p, int colunas)
 
     //---------------------------//
     /* continuar a aventura recursiva */
-    printRecursivo(fp, G, parent[p], colunas);
+    printRecursivo(fp, G, parent[p], n_Col);
 
     //---------------------------//
     /* converter coordenada unidimensional em bidimensional, e obter o custo da parede */
     assignLista(G, &t, parent[p]);
     getParede(t, p, &wall, &weight);
-    linha = Linha(wall, colunas);
-    coluna = Coluna(wall, linha, colunas);
+    linha = Linha(wall, n_Col);
+    coluna = Coluna(wall, linha, n_Col);
 
     //---------------------------//
     /* imprimir o resultado no formato especificado (l, c, w) */
@@ -190,16 +190,16 @@ void printRecursivo(FILE *fp, Graph *G, int p, int colunas)
  * @param  *output: nome do ficheiro de output (ficheiro_de_entrada.sol)
  * @param  *G: grafo com toda a informação necessária sobre o tabuleiro
  * @param  tesouroRoom: sala em que o tesouro se encontra (ou seja, um vertice no grafo)
- * @param  colunas: número de colunas do tabuleiro
+ * @param  n_Col: número de colunas do tabuleiro
  * @param  first: flag que indica se é o primeiro tabuleiro a ser escrito no ficheiro de
  *                  output
  * @retval None
  */
-void writeSolution(char *output, Graph *G, int tesouroRoom, int colunas, bool first)
+void writeSolution(char *output, Graph *G, int tesouroRoom, int n_Col, bool first)
 {
-    int i = tesouroRoom;        /* sala do tesouro                              */
-    int distance = dist[i];     /* distancia da sala do tesouro à sala inicial  */
-    int cnt = 0;                /* salas percorridas até à sala inicial         */
+    int i = tesouroRoom;    /* sala do tesouro                              */
+    int distance = dist[i]; /* distancia da sala do tesouro à sala inicial  */
+    int cnt = 0;            /* salas percorridas até à sala inicial         */
 
     //---------------------------//
     FILE *fp = fopen(output, "a+");
@@ -231,7 +231,7 @@ void writeSolution(char *output, Graph *G, int tesouroRoom, int colunas, bool fi
         }
 
         fprintf(fp, "%d\n", cnt);
-        printRecursivo(fp, G, tesouroRoom, colunas);
+        printRecursivo(fp, G, tesouroRoom, n_Col);
     }
     else
     {

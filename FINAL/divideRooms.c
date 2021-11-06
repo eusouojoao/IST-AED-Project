@@ -27,7 +27,7 @@ void inicializeWallVector(int *wallVec, int n_walls)
 void pushTiles(int *board, int tile, int n_Lines, int n_Col, int room)
 {
     int aux = tile;
-    aux++;                                           //verificar a peça adjacente à direita
+    aux++;                                          //verificar a peça adjacente à direita
     if (adjacentTileP(aux, n_Lines, n_Col, 1) == 1) //1-soma horizontal
     {
         if (board[aux] == 0)
@@ -36,7 +36,7 @@ void pushTiles(int *board, int tile, int n_Lines, int n_Col, int room)
             push(aux);
         }
     }
-    aux = aux - 2;                                   //verificar a peça adjacente à esquerda
+    aux = aux - 2;                                  //verificar a peça adjacente à esquerda
     if (adjacentTileP(aux, n_Lines, n_Col, 2) == 1) //2-subtração horizontal
     {
         if (board[aux] == 0)
@@ -46,7 +46,7 @@ void pushTiles(int *board, int tile, int n_Lines, int n_Col, int room)
         }
     }
     aux++;
-    aux = aux + n_Col;                               //verificar a peça adjacente em cima
+    aux = aux + n_Col;                              //verificar a peça adjacente em cima
     if (adjacentTileP(aux, n_Lines, n_Col, 0) == 1) //0-soma vertical
     {
         if (board[aux] == 0)
@@ -55,7 +55,7 @@ void pushTiles(int *board, int tile, int n_Lines, int n_Col, int room)
             push(aux);
         }
     }
-    aux = aux - 2 * n_Col;                           //verificar a peça adjacente em baixo
+    aux = aux - 2 * n_Col;                          //verificar a peça adjacente em baixo
     if (adjacentTileP(aux, n_Lines, n_Col, 0) == 1) //0-subtração vertical
     {
         if (board[aux] == 0)
@@ -80,7 +80,7 @@ void pushTiles(int *board, int tile, int n_Lines, int n_Col, int room)
 int divideRooms(int *board, int n_Lines, int n_Col, int tesouroL, int tesouroC)
 {
     int aux = 0, cursor = 0, room = 1;
-    initPilha(n_Col * n_Lines);                            //ocupação máxima que a pilha poderia ter
+    initPilha(n_Col * n_Lines);                           //ocupação máxima que a pilha poderia ter
     while (adjacentTileP(cursor, n_Lines, n_Col, 0) == 1) //enquanto o cursor tiver dentro do tabuleiro
     {
         room++;
@@ -91,10 +91,10 @@ int divideRooms(int *board, int n_Lines, int n_Col, int tesouroL, int tesouroC)
             aux = pop();
             pushTiles(board, aux, n_Lines, n_Col, room);
         }
-        
+        /* caso o cursor n chegue a avançar (sala com uma unica peça), é necessário atribuir um numero à sala */
         if (board[cursor] == 0 && cursor == aux)
-                board[cursor] = -(room); //caso o cursor n chegue a avançar (sala com uma unica peça), é necessário atribuir um numero à sala
-
+            board[cursor] = -(room);
+        /* caso o tesouro esteja na mesma sala da posição inicial, não é necessário partir paredes */
         if (board[0] == board[convertTile(tesouroL, tesouroC, n_Col)])
         {
             freePilha();

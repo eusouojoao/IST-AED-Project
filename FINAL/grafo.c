@@ -7,7 +7,7 @@ typedef struct room Room;
 struct room
 {
     int n;      //número da sala
-    int weight; //peso associado
+    int weight; //peso da parede a "partir"
     int p;      //posição da parede (que tem o peso "weight")
     Room *next;
 };
@@ -87,7 +87,8 @@ Graph *graphInit(int V)
 
 /**
  * @brief  Função que recebe uma aresta e insere-a no grafo
- * @note   a função, não insere a aresta no grafo, caso já exista alguma aresta de menor peso no grafo
+ * @note   a função, não insere a aresta no grafo, caso já exista alguma aresta
+ *         no grafo, entre essas salas, com menor peso
  * @param  *G: apontador para o grafo
  * @param  *newE: aresta que contem a informação a ser inserida no grafo
  * @retval None
@@ -107,7 +108,7 @@ void graphInsertE(Graph *G, Edge *newE)
             {
                 aux->p = p;
                 aux->weight = weight;
-                while (aux2 != NULL)
+                while (aux2 != NULL) //é necessário substituir a aresta também na outra sala
                 {
                     if (aux2->n == v)
                     {
@@ -166,9 +167,9 @@ void graphDestroy(Graph *myGraph)
  * @param  v: vertice para o qual queremos a lista 
  * @retval None
  */
-void assignLista( Graph *G, void **t, int v )
+void assignLista(Graph *G, void **t, int v)
 {
-    (*t) =  (void *) G->adj[v];
+    (*t) = (void *)G->adj[v];
     return;
 }
 
@@ -178,52 +179,52 @@ void assignLista( Graph *G, void **t, int v )
  * @param  **t: apontador para o apontador da sala atual
  * @retval None
  */
-void ListaNext ( void **t )
+void listaNext(void **t)
 {
-    (*t) = (void *) ((Room *)(*t))->next;
+    (*t) = (void *)((Room *)(*t))->next;
     return;
 }
 
 /**
- * @brief  Retorna a sala
+ * @brief  Função que retorna o numero da sala
  * @note   
  * @param  *t: apontador para a sala atual na lista de adjacencias
  * @retval número da sala atual na lista de adjacencias
  */
-int getSala ( void *t )
+int getSala(void *t)
 {
     return ((Room *)t)->n;
 }
 
 /**
- * @brief  Retorna o peso/distancia para a sala 
+ * @brief  Função que retorna o peso/distancia para a sala 
  * @note   
  * @param  *t: apontador para a sala atual na lista de adjacencias
  * @retval distancia/peso para a sala
  */
-int getDist ( void *t )
+int getDist(void *t)
 {
     return ((Room *)t)->weight;
 }
 
 /**
- * @brief  Retorna o número de vertices no grafo
+ * @brief  Função que retorna o número de vertices no grafo
  * @note   
  * @param  *G: apontador para o grafo
  * @retval numero de vertices (int)
  */
-int getVertices ( Graph *G )
+int getVertices(Graph *G)
 {
     return G->V;
 }
 
 /**
- * @brief  Retorna a parede
+ * @brief  Função que retorna a parede
  * @note   
  * @param  *t: apontador para a sala atual na lista de adjacencias
  * @retval coordenada unidimensional da parede
  */
-int getWall ( void *t )
+int getWall(void *t)
 {
     return ((Room *)t)->p;
 }
