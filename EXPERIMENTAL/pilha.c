@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "Item.h"
-#include "Common.h"
-#include "Pilha.h"
+#include "item.h"
+#include "common.h"
+#include "pilha.h"
 
 static Item *gP = NULL; //stack em si
 static int gN;          //assianala a primeira posição desocupada da pilha
@@ -74,34 +74,3 @@ void freePilha()
     return;
 }
 
-/**
- * @brief  Verifica se 2 peças estão na mesma sala com auxilio da pilha
- * @note   
- * @param  *board: tabuleiro (vetor unidimensional)
- * @param  n_Lines: número total de linhas do tabuleiro 
- * @param  n_Col: número total de colunas do tabuleiro
- * @param  p1: peça a verificar se está na mesma sala de p2
- * @param  p2: peça a verificar se está na mesma sala de p1
- * @retval 0 se as peças não estiverem na mesma sala
- *         1 se as peças estiverem na mesma sala
- */
-int checkSameRoom(int *board, int n_Lines, int n_Col, int p1, int p2)
-{
-    int aux = p1;
-    if (board[p1] != 0 || board[p2] != 0) // pelo menos uma das peças não é branca
-        return 0;
-    initPilha(n_Lines *  n_Col); //inicializa a pilha
-    push(aux);
-    while (!isEmpty())
-    {
-        aux = pop();
-        if (aux == p2)
-        {
-            freePilha();
-            return 1; //encontrou a peça 2 na mesma sala
-        }
-        pushAdjacent(board, aux, n_Lines, n_Col);
-    }
-    freePilha();
-    return 0; //não encontrou a peça 2 na mesma sala
-}

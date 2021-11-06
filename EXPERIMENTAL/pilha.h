@@ -1,6 +1,6 @@
 #ifndef pilha
 #define pilha
-#include "Item.h"
+#include "item.h"
 
 void initPilha(unsigned pNumb);
 void push(Item pI);
