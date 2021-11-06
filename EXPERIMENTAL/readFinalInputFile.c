@@ -11,6 +11,8 @@
 #define FINAL
 #include "writeOutputFile.h"
 
+#define EXPERIMENTAL 1
+
 /* linhas e colunas do tabuleiro */
 struct board
 {
@@ -210,6 +212,7 @@ void readFinalInputFile(FILE *fp, boardRules *brp, char *output)
 
     especifico = casosEspecificos(brp);
 
+#if !EXPERIMENTAL
     //---------------------------//
     /* alocação da memória necessária */
     allocs(fp, brp, &Wall, &wallVec, &board, &valido, &especifico); 
@@ -227,6 +230,14 @@ void readFinalInputFile(FILE *fp, boardRules *brp, char *output)
     //---------------------------//
     /* inicializa o jogo */
     init(brp, board, wallVec, Wall, valido, especifico, first, output);
+#endif
+
+    /*§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§*/
+    /*                                EXPERIMENTAL                                */
+
+
+
+    /*§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§*/
     first = 0; /* já não é o primeiro */
 
     //---------------------------//
