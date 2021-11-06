@@ -1,0 +1,14 @@
+==40125== Memcheck, a memory error detector
+==40125== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==40125== Using Valgrind-3.17.0 and LibVEX; rerun with -h for copyright info
+==40125== Command: ./roap chess11.in
+==40125== Parent PID: 36065
+==40125== 
+==40125== 
+==40125== HEAP SUMMARY:
+==40125==     in use at exit: 0 bytes in 0 blocks
+==40125==   total heap usage: 13,395,924 allocs, 13,395,924 frees, 397,671,163 bytes allocated
+==40125== 
+==40125== All heap blocks were freed -- no leaks are possible
+==40125== 
+==40125== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

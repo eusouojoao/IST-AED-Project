@@ -1,0 +1,14 @@
+==37790== Memcheck, a memory error detector
+==37790== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==37790== Using Valgrind-3.17.0 and LibVEX; rerun with -h for copyright info
+==37790== Command: ./roap chess094.in
+==37790== Parent PID: 36065
+==37790== 
+==37790== 
+==37790== HEAP SUMMARY:
+==37790==     in use at exit: 0 bytes in 0 blocks
+==37790==   total heap usage: 10,053,718 allocs, 10,053,718 frees, 298,374,269 bytes allocated
+==37790== 
+==37790== All heap blocks were freed -- no leaks are possible
+==37790== 
+==37790== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

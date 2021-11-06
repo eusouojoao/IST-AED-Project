@@ -12,6 +12,8 @@
 #include "writeOutputFile.h"
 
 #define EXPERIMENTAL 1
+void experimental (FILE *fp, boardRules *brp, bool *valido, bool *especifico, bool first);
+void experimentalPrint (Graph *G, bool *valido, bool *especifico, bool first);
 
 /* linhas e colunas do tabuleiro */
 struct board
@@ -234,8 +236,9 @@ void readFinalInputFile(FILE *fp, boardRules *brp, char *output)
 
     /*§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§*/
     /*                                EXPERIMENTAL                                */
+    /*§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§*/
 
-
+    experimental(fp, brp, &valido, &especifico, first);
 
     /*§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§*/
     first = 0; /* já não é o primeiro */
@@ -251,5 +254,178 @@ void readFinalInputFile(FILE *fp, boardRules *brp, char *output)
         readFinalInputFile(fp, brp, output);
     }
 
+    return;
+}
+
+int getRooms (FILE *fp, bool *valido, bool *especifico, boardRules *brp )
+{
+    wall *Wall = (wall *)malloc( sizeof(wall) );
+    if ( Wall == NULL )
+        exit(0);
+
+    int size = brp->board.columns, n_walls = brp->n_walls;
+    bool old = 0; /* abstração, não importa se é 0 ou 1, o novo é sempre o complementar do old */
+    int linha = 1, SALA = -2, x = 0;
+
+    //---------------------------//
+    int **arr = (int **)malloc( 2 * sizeof(int *) );
+    if (arr == NULL)
+    {
+        exit(0);
+    }
+
+    arr[0] = (int *)calloc( size , sizeof(int) );
+    arr[1] = (int *)calloc( size , sizeof(int) );
+    if (arr[0] == NULL || arr[1] == NULL)
+    {
+        free(arr);
+        exit(0);
+    }
+
+    //---------------------------//
+    //---------------------------//
+    if (fscanf(fp, "%d %d %d", &( (Wall)->l1), &( (Wall)->c1), &( (Wall)->weight)) != 3) { exit(0); }
+    n_walls--;
+
+    if ( (Wall->l1 == 1 && Wall->c1 == 1) || (Wall->l1 == brp->key.Line && Wall->c1 == brp->key.Column) )
+        *valido = 0;
+
+    if ( Wall->l1 != linha )
+    {
+        for (int i = 0; i < size; i++)
+        {
+            arr[ old ][i] = SALA;
+        }
+
+        linha = Wall->l1;
+        SALA--;
+    }
+    arr[ !old ][ Wall->c1 - 1 ] = Wall->weight;
+
+    while( n_walls > 0 )
+    {
+        while ( linha == Wall->l1 && n_walls > 0 )
+        {
+            if (fscanf(fp, "%d %d %d", &( (Wall)->l1), &( (Wall)->c1), &( (Wall)->weight)) != 3) { exit(0); }
+
+            n_walls--;
+
+            if ( (Wall->l1 == 1 && Wall->c1 == 1) || (Wall->l1 == brp->key.Line && Wall->c1 == brp->key.Column) )
+                *valido = 0;
+
+            if ( Wall->l1 == linha )
+                arr[ !old ][ Wall->c1 - 1 ] = Wall->weight;
+        }
+        
+        if ( (Wall->l1 - linha > 1) )
+        {
+            if ( linha == 1 )
+            {
+                for (int i = 0; i < size; i++)
+                {
+                    arr[ !old ][i] = 0;
+                    arr[ old ][i] = SALA;
+                }
+                arr[ !old ][ Wall->c1 - 1 ] = Wall->weight;
+            }
+            else
+            {
+                for(int i = 0; i < size; i++)
+                {
+                    if ( ( arr[ !old ][i] == 0 ) && ( (x = arr[ old ][i]) < -1 ) )
+                        arr[ !old ][i] = x;
+                    else if ( (i > 0) && ( arr[ !old ][i] == 0 ) && ( (x = arr[ !old ][i-1]) < -1 ))
+                        arr[ !old ][i] = x;
+                    else if ( arr[ !old ][i] == 0 )
+                        arr[ !old ][i] = SALA--;
+                }
+                /* a nova linha passa a antiga */
+                old = !old;
+
+                for (int i = 0; i < size; i++)
+                {
+                    arr[ !old ][i] = 0;
+                }
+
+                /* a nova linha passa a antiga */
+                old = !old;
+
+                for(int i = 0; i < size; i++)
+                {
+                    if ( ( arr[ !old ][i] == 0 ) && ( (x = arr[ old ][i]) < -1 ) )
+                        arr[ !old ][i] = x;
+                    else if ( (i > 0) && ( arr[ !old ][i] == 0 ) && ( (x = arr[ !old ][i-1]) < -1 ))
+                        arr[ !old ][i] = x;
+                    else
+                        arr[ !old ][i] = SALA--;
+                }
+
+                arr[ !old ][ Wall->c1 - 1 ] = Wall->weight;
+            }
+        }
+        else 
+        {
+            for(int i = 0; i < size; i++)
+            {
+                if ( ( arr[ !old ][i] == 0 ) && ( (x = arr[ old ][i]) < -1 ) )
+                    arr[ !old ][i] = x;
+                else if ( (i > 0) && ( arr[ !old ][i] == 0 ) && ( (x = arr[ !old ][i-1]) < -1 ))
+                    arr[ !old ][i] = x;
+                else if ( arr[ !old ][i] == 0 )
+                    arr[ !old ][i] = SALA--;
+            }
+            /* a nova linha passa a antiga */
+            old = !old;
+
+            for (int i = 0; i < size; i++)
+            {
+                arr[ !old ][i] = 0;
+            }
+        }
+
+        linha = Wall->l1;
+    }
+
+    if (linha != brp->board.lines)
+        SALA--; /* há mais uma sala */
+    //---------------------------//
+    //---------------------------//
+
+    free(Wall);
+    free(arr[0]); free(arr[1]);
+    free(arr);
+
+    return (-SALA - 1);
+}
+
+void experimental (FILE *fp, boardRules *brp, bool *valido, bool *especifico, bool first)
+{
+    Graph *G = NULL;
+
+    //---------------------------//
+    int offset = ftell(fp);                                             /* já lemos as boardRules, marcar posição de leitura das paredes */
+    int maxRooms = getRooms( fp, valido, especifico, brp );             /* obter numero majorado de salas (vértices) do grafo            */
+    printf("%d\n", maxRooms);
+
+    exit(1); // <- está a sair aqui para testes!!! comentar para prosseguir
+
+    offset -= ftell(fp);                                                /* marcar deslocamento do fp, após ter lido as paredes           */
+    
+    if( fseek(fp, offset, SEEK_CUR) != 0 )                              /* rewind ao fp o deslocamento, para ler as paredes denovo       */
+    {
+        exit(0);
+    }
+    //---------------------------//
+    /* -> criar o grafo e chamar o algoritmo (se necessário) <-*/
+
+    //---------------------------//
+    experimentalPrint ( G, valido, especifico, first );
+
+    //---------------------------//
+    return; 
+}
+
+void experimentalPrint (Graph *G, bool *valido, bool *especifico, bool first)
+{
     return;
 }
