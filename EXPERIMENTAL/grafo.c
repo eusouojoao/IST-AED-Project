@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include "grafo.h"
 #include "item.h"
 
@@ -166,9 +167,9 @@ void graphDestroy(Graph *myGraph)
  * @param  v: vertice para o qual queremos a lista 
  * @retval None
  */
-void assignLista( Graph *G, void **t, int v )
+void assignLista(Graph *G, void **t, int v)
 {
-    (*t) =  (void *) G->adj[v];
+    (*t) = (void *)G->adj[v];
     return;
 }
 
@@ -178,9 +179,9 @@ void assignLista( Graph *G, void **t, int v )
  * @param  **t: apontador para o apontador da sala atual
  * @retval None
  */
-void ListaNext ( void **t )
+void ListaNext(void **t)
 {
-    (*t) = (void *) ((Room *)(*t))->next;
+    (*t) = (void *)((Room *)(*t))->next;
     return;
 }
 
@@ -190,7 +191,7 @@ void ListaNext ( void **t )
  * @param  *t: apontador para a sala atual na lista de adjacencias
  * @retval número da sala atual na lista de adjacencias
  */
-int getSala ( void *t )
+int getSala(void *t)
 {
     return ((Room *)t)->n;
 }
@@ -201,7 +202,7 @@ int getSala ( void *t )
  * @param  *t: apontador para a sala atual na lista de adjacencias
  * @retval distancia/peso para a sala
  */
-int getDist ( void *t )
+int getDist(void *t)
 {
     return ((Room *)t)->weight;
 }
@@ -212,7 +213,7 @@ int getDist ( void *t )
  * @param  *G: apontador para o grafo
  * @retval numero de vertices (int)
  */
-int getVertices ( Graph *G )
+int getVertices(Graph *G)
 {
     return G->V;
 }
@@ -223,7 +224,139 @@ int getVertices ( Graph *G )
  * @param  *t: apontador para a sala atual na lista de adjacencias
  * @retval coordenada unidimensional da parede
  */
-int getWall ( void *t )
+int getWall(void *t)
 {
     return ((Room *)t)->p;
+}
+
+/**
+ * @brief  Função que junta 2 salas
+ * @note   É necessário copiar todas as ligações da sala 2 e depois eleminá-las 
+ * @param  *G: apontador para o grafo
+ * @param  room1: sala 1
+ * @param  room2: sala 2 (sala a sere eliminada)
+ * @retval None
+ */
+void mergeRooms(Graph *G, int room1, int room2)
+{
+    int adjRoom, adjP, adjWeight;
+    Room *aux = G->adj[room2], *auxPrev = G->adj[room2], *aux2 = NULL, *aux2Prev = NULL;
+    /* percorrer todas as salas (nós) adjacentes à sala 2 */
+    while (aux != NULL)
+    {
+        adjRoom = aux->n;
+        adjP = aux->p;
+        adjWeight = aux->weight;
+        /* percorrer todas as salas (nós) adjacentes à sala adjacente à sala 2 (adjRoom), até encontrar a sala 2 ou a sala 1 */
+        aux2 = G->adj[adjRoom];
+        aux2Prev = G->adj[adjRoom];
+        while (aux2->n != room2 && aux2->n != room1)
+        {
+            aux2Prev = aux2;
+            aux2 = aux2->next;
+        }
+        /* caso se encontre primeiro a sala 1 como adjacente */
+        if (aux2->n == room1)
+        {
+            /* Caso o custo da adjacencia, sala "adjRoom" - sala 1, seja maior
+            que o custo da adjacencia, sala 2 - sala "adjRoom", trocar o peso e
+            posição da parede. 
+            É necessário efetuar esta troca pois todas as adjacencias da sala 2
+            vão desaparecer*/
+            if (aux2->weight > adjWeight)
+            {
+                aux2->weight = adjWeight;
+                aux2->p = adjP;
+            }
+            /* procurar a sala 2 (ainda no conjunto de adjacencias da sala "adjRoom") e eliminar essa adjacencia*/
+            while (aux2->n != room2)
+            {
+                aux2Prev = aux2;
+                aux2 = aux2->next;
+            }
+            aux2Prev->next = aux2->next;
+            free(aux2);
+        }
+        /* caso se encontre primeiro a sala 2 como adjacente */
+        else if (aux2->n == room2)
+        {
+            /* eliminar a adjacencia, sala "adjRoom" - sala 2 */
+            aux2Prev->next = aux2->next;
+            free(aux2);
+            aux2 = aux2Prev->next;
+            /* procurar a sala 1 (ainda no conjunto de adjacencias da sala "adjRoom") */
+            if (aux2 != NULL)
+                while (aux2->n != room1)
+                {
+                    aux2 = aux2->next;
+                    if (aux2 == NULL)
+                        break;
+                }
+            if (adjRoom == room1) // Ignorar caso a sala 1 e a sala adjacente à 2 forem a mesma
+                ;
+            /* caso não exista adjacencia entre a, sala "adjRoom" - sala 2,
+               criar uma nova sala entre a sala "adjRoom" e sala 1. 
+               É necessário fazer isto pois a sala 2 vai ser eliminada e as
+               adjacencias da sala 2 devem passar para a sala 1*/
+            else if (aux2 == NULL)
+            {
+                aux2 = newRoom(room1, aux2, adjWeight, adjP);
+            }
+            /* Caso o custo da adjacencia, sala "adjRoom" - sala 1, seja maior que
+            o custo da adjacencia, sala 2 - sala "adjRoom", trocar o peso e
+            posição da parede. */
+            else if (aux2->weight > adjWeight)
+            {
+                aux2->weight = adjWeight;
+                aux2->p = adjP;
+            }
+        }
+
+        /* percorrer todas as salas (nós) adjacentes à sala 1, até encontrar a sala adjacente à sala 2 (adjRoom) */
+        aux2 = G->adj[room1];
+        while (aux2->n != adjRoom)
+        {
+            aux2 = aux2->next;
+            if (aux2 == NULL)
+                break;
+        }
+        if (adjRoom == room1) // Ignorar caso a sala 1 e a sala adjacente à 2 forem a mesma
+            ;
+        /*  caso não exista adjacencia entre a, sala 1 - sala "adjRoom", criar
+            uma nova sala entre a sala 1 e sala "adjRoom". É necessário fazer
+            isto pois a sala 2 vai ser eliminada e as adjacencias da sala 2
+            devem passar para a sala 1*/
+        else if (aux2 == NULL)
+        {
+            aux2 = newRoom(adjRoom, aux2, adjWeight, adjP);
+        }
+        /*  Caso o custo da adjacencia, sala 1 - sala "adjRoom", seja maior que
+            o custo da adjacencia, sala 2 - sala "adjRoom", trocar o peso e
+            posição da parede. */
+        else if (aux2->weight > adjWeight)
+        {
+            aux2->weight = adjWeight;
+            aux2->p = adjP;
+        }
+
+        /* eliminar a adjacencia, sala 2 - sala "adjRoom" */
+        auxPrev->next = aux->next;
+        free(aux);
+        aux = auxPrev->next;
+    }
+    return;
+}
+
+void printGraph(Graph *G)
+{
+    int i, n_rooms = G->V;
+    for (i = 0; i < n_rooms; i++)
+    {
+        //  if (G->adj[i] != NULL)
+        while (G->adj[i] != NULL)
+        {
+            printf("A sala %d está unida à sala %d com o custo %d na posição %d\n", i, G->adj[i]->n, G->adj[i]->weight, G->adj[i]->p);
+            G->adj[i] = G->adj[i]->next;
+        }
+    }
 }
