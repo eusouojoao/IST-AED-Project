@@ -1,12 +1,13 @@
 TARGET=roap
 CC=gcc
-CFLAGS=-std=c99 -Wall -O3
+CFLAGS=-std=c99 -Wall
 LDFLAGS=-lm
 SRCS=$(wildcard *.c)
 OBJS=$(patsubst %.c, %.o, $(SRCS))
 HEADERS=$(wildcard *.h)
 
 # -> opção geral, i.e., quando se executa 'make' no terminal
+all: CFLAGS+= -O3
 all: $(TARGET)
 
 $(TARGET): $(OBJS) Makefile
@@ -19,31 +20,6 @@ $(TARGET): $(OBJS) Makefile
 clean:
 	rm -f *.sol1 *.sol *.o log* val* $(TARGET)
 
-FILES1 = $(shell ls ../testes/*.in1)
-VALG = valgrind --leak-check=full --track-origins=yes --show-leak-kinds=all -s --log-file="valgrind_$$(date +"%Y_%m_%d_%T").log" 
-testes1:
-	rm -f ../testes/*.sol1
-	for F in ${FILES1}; do sleep 1 ; ${VALG} ./roap -s $${F} ; done;
-
-FILES2 = $(shell ls ../testes/*.sol1)
-DIFF = diff -s
-diff1:
-	mkdir -p diffs
-	for F in ${FILES2} ; do ${DIFF} $${F} $$(echo $${F} | sed 's/testes/sol/g') > diffs/$$(echo $${F} | sed "s/\.\.\/testes\/*/DIFF_/g") ; done ;
-
-FILES2 = $(shell ls ../testesF/*.in)
-VALG = valgrind --leak-check=full --track-origins=yes --show-leak-kinds=all -s --log-file="valgrind_$$(date +"%Y_%m_%d_%T").log" 
-testesfinais:
-	rm -f ../testesF/*.sol1
-	for F in ${FILES2}; do sleep 1 ; ${VALG} ./roap -s $${F} ; done;
-
-FILES4 = $(shell ls ../testesF/*.sol)
-DIFF = diff -s
-diffsfinais:
-	mkdir -p diffs
-	for F in ${FILES4} ; do ${DIFF} $${F} $$(echo $${F} | sed 's/testesF/finais/g') > diffs/$$(echo $${F} | sed "s/\.\.\/testesF\/*/DIFF_/g") ; done ;
-
-
 # -> opção DEBUG, acrescenta a flag -g ao compilador para ajudar a usar no gdb e valgrind; uso -> 'make debug'
-debug: CFLAGS+= -g -Wextra
+debug: CFLAGS+= -ggdb -Wextra
 debug: $(TARGET)

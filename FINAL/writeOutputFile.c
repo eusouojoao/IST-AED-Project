@@ -23,10 +23,10 @@ void write2outputFile(char *output, int to_print)
 }
 
 /**
- * @brief  
+ * @brief  Imprime 0 no ficheiro caso seja um caso de custo 0
  * @note   
- * @param  *output: 
- * @param  first: 
+ * @param  *output: nome do ficheiro de output
+ * @param  first: flag que indica se é a primeira escrita no ficheiro
  * @retval None
  */
 void writeZero(char *output, bool first)
@@ -45,10 +45,10 @@ void writeZero(char *output, bool first)
 }
 
 /**
- * @brief  
+ * @brief  Imprime -1 no ficheiro caso seja um caso invalido
  * @note   
- * @param  *output: 
- * @param  first: 
+ * @param  *output: nome do ficheiro de output
+ * @param  first: flag que indica se é a primeira escrita no ficheiro
  * @retval None
  */
 void writeInvalid(char *output, bool first)

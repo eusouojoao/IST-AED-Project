@@ -66,8 +66,7 @@ int checkVariante(char *var)
  */
 void initGameMode(boardRules *brp, int *board, char *output, int A1, int *AA, int **A5, int n_adj, int tesouro)
 {
-    /* !ATENÇÃO! apenas declaradas pra teste! */
-    int A = -1337;
+    int A = -3; /* inicializar com valor fora da gama (erro) */
 
     if (brp->gameMode[1] == '1')
     {
@@ -111,7 +110,7 @@ void initGameMode(boardRules *brp, int *board, char *output, int A1, int *AA, in
         }
         else
         {
-            /* quando o tamanho do tabuleiro é superior a  */
+            /* quando memória utilizada pela conectividade é inferior a cerca de 84MB */
             if (brp->board.lines * brp->board.columns < 2000 * 3500)
             {
                 //conetividade WQU
@@ -250,7 +249,7 @@ void readInputFile(FILE *fp, boardRules *brp, char *output)
     /* ler paredes do ficheiro de input */
     if (i == 1)
     {
-
+        /* procurar a peça especifica, se for parede */
         for (/* stares into the void */; brp->n_walls > 0; brp->n_walls--)
         {
 
@@ -263,7 +262,7 @@ void readInputFile(FILE *fp, boardRules *brp, char *output)
     }
     else if (i >= 2 && i <= 4)
     {
-
+        /* apenas procurar pelas adjacentes */
         for (j = 0; brp->n_walls > 0; brp->n_walls--)
         {
 
@@ -281,13 +280,14 @@ void readInputFile(FILE *fp, boardRules *brp, char *output)
     {
         for (j = 0; brp->n_walls > 0; brp->n_walls--)
         {
-
+            /* procurar as paredes adjacentes para verificar se é quebravel */
             if (fscanf(fp, "%d %d %d", &(Wall->l1), &(Wall->c1), &(Wall->weight)) != 3)
                 exit(0);
 
             if (Wall->l1 == brp->key.Line && Wall->c1 == brp->key.Column)
                 tesouro = Wall->weight;
 
+            /* necessária informação das coordenadas das paredes para saber a posição relativa */
             if (adjacentTileLC(brp->key.Line, brp->key.Column, Wall->l1, Wall->c1) == 1)
             {
                 A5[j][0] = Wall->l1;
