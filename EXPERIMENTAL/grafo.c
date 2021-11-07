@@ -250,7 +250,7 @@ void mergeRooms(Graph *G, int room1, int room2)
         /* percorrer todas as salas (nós) adjacentes à sala adjacente à sala 2 (adjRoom), até encontrar a sala 2 ou a sala 1 */
         aux2 = G->adj[adjRoom];
         aux2Prev = G->adj[adjRoom];
-        while (aux2->n != room2 && aux2->n != room1)
+        while ((aux2->n != room2) && (aux2->n != room1))
         {
             aux2Prev = aux2;
             aux2 = aux2->next;
@@ -276,6 +276,8 @@ void mergeRooms(Graph *G, int room1, int room2)
             }
             aux2Prev->next = aux2->next;
             free(aux2);
+            if (aux2 == NULL)
+                G->adj[adjRoom] = NULL;
         }
         /* caso se encontre primeiro a sala 2 como adjacente */
         else if (aux2->n == room2)
@@ -284,6 +286,8 @@ void mergeRooms(Graph *G, int room1, int room2)
             aux2Prev->next = aux2->next;
             free(aux2);
             aux2 = aux2Prev->next;
+            if (aux2 == NULL)
+                G->adj[adjRoom] = NULL;
             /* procurar a sala 1 (ainda no conjunto de adjacencias da sala "adjRoom") */
             if (aux2 != NULL)
                 while (aux2->n != room1)
@@ -314,12 +318,13 @@ void mergeRooms(Graph *G, int room1, int room2)
 
         /* percorrer todas as salas (nós) adjacentes à sala 1, até encontrar a sala adjacente à sala 2 (adjRoom) */
         aux2 = G->adj[room1];
-        while (aux2->n != adjRoom)
-        {
-            aux2 = aux2->next;
-            if (aux2 == NULL)
-                break;
-        }
+        if (aux2 != NULL)
+            while (aux2->n != adjRoom)
+            {
+                aux2 = aux2->next;
+                if (aux2 == NULL)
+                    break;
+            }
         if (adjRoom == room1) // Ignorar caso a sala 1 e a sala adjacente à 2 forem a mesma
             ;
         /*  caso não exista adjacencia entre a, sala 1 - sala "adjRoom", criar
@@ -343,6 +348,8 @@ void mergeRooms(Graph *G, int room1, int room2)
         auxPrev->next = aux->next;
         free(aux);
         aux = auxPrev->next;
+        if (aux == NULL)
+            G->adj[room2] = NULL;
     }
     return;
 }
@@ -352,7 +359,6 @@ void printGraph(Graph *G)
     int i, n_rooms = G->V;
     for (i = 0; i < n_rooms; i++)
     {
-        //  if (G->adj[i] != NULL)
         while (G->adj[i] != NULL)
         {
             printf("A sala %d está unida à sala %d com o custo %d na posição %d\n", i, G->adj[i]->n, G->adj[i]->weight, G->adj[i]->p);
