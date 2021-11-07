@@ -12,8 +12,8 @@
 #include "writeOutputFile.h"
 
 #define EXPERIMENTAL 1
-void experimental (FILE *fp, boardRules *brp, bool *valido, bool *especifico, bool first);
-void experimentalPrint (Graph *G, bool *valido, bool *especifico, bool first);
+void experimental(FILE *fp, boardRules *brp, bool *valido, bool *especifico, bool first);
+void experimentalPrint(Graph *G, bool *valido, bool *especifico, bool first);
 
 /* linhas e colunas do tabuleiro */
 struct board
@@ -47,41 +47,41 @@ typedef struct _wall
  * @param  *brp: boardRules pointer, contem toda a informação relevante sobre as regras do tabuleiro
  * @retval  1 se for caso especifico, 0 caso contrário
  * */
-bool casosEspecificos (boardRules *brp)
+bool casosEspecificos(boardRules *brp)
 {
-    if ( brp->key.Line == 1 && brp->key.Column == 1 ) 
+    if (brp->key.Line == 1 && brp->key.Column == 1)
         return 1;
-    else if ( brp->n_walls == 0 ) 
+    else if (brp->n_walls == 0)
         return 1;
 
     return 0;
 }
 
-void allocs (FILE *fp, boardRules *brp, wall **Wall, int **wallVec,
-             int **board, bool *valido, bool *especifico)
+void allocs(FILE *fp, boardRules *brp, wall **Wall, int **wallVec,
+            int **board, bool *valido, bool *especifico)
 {
     int counter = 0, j = 0;
 
     //---------------------------//
-    if ( (*valido) && !(*especifico) )
+    if ((*valido) && !(*especifico))
     {
-        if ( ( (*Wall) = (wall *)malloc( sizeof(wall) ) ) == NULL)
+        if (((*Wall) = (wall *)malloc(sizeof(wall))) == NULL)
         {
             exit(0);
         }
-        if ( ( (*wallVec) = (int *)malloc( brp->n_walls * sizeof(int) ) ) == NULL )
+        if (((*wallVec) = (int *)malloc(brp->n_walls * sizeof(int))) == NULL)
         {
             exit(0);
         }
-        inicializeWallVector( (*wallVec), brp->n_walls);
+        inicializeWallVector((*wallVec), brp->n_walls);
 
         //---------------------------//
         /* verifica se a alocação foi sucedida */
-        if ( ((*board) = (int *)malloc(brp->board.lines * brp->board.columns * sizeof(int))) == NULL )
+        if (((*board) = (int *)malloc(brp->board.lines * brp->board.columns * sizeof(int))) == NULL)
         {
             exit(0);
         }
-        inicializeBoard( (*board), brp->board.lines, brp->board.columns);
+        inicializeBoard((*board), brp->board.lines, brp->board.columns);
 
         //---------------------------//
         /* ler paredes do ficheiro de input */
@@ -89,12 +89,12 @@ void allocs (FILE *fp, boardRules *brp, wall **Wall, int **wallVec,
         for (/* stares into the void */; counter > 0; counter--)
         {
 
-            if (fscanf(fp, "%d %d %d", &( (*Wall)->l1), &( (*Wall)->c1), &( (*Wall)->weight)) != 3)
+            if (fscanf(fp, "%d %d %d", &((*Wall)->l1), &((*Wall)->c1), &((*Wall)->weight)) != 3)
                 exit(0);
 
             /* preencher o tabuleiro com as paredes */
-            (*board)[convertTile( (*Wall)->l1, (*Wall)->c1, brp->board.columns)] = (*Wall)->weight;
-            (*wallVec)[j] = convertTile( (*Wall)->l1, (*Wall)->c1, brp->board.columns);
+            (*board)[convertTile((*Wall)->l1, (*Wall)->c1, brp->board.columns)] = (*Wall)->weight;
+            (*wallVec)[j] = convertTile((*Wall)->l1, (*Wall)->c1, brp->board.columns);
             j++;
         }
     }
@@ -105,31 +105,31 @@ void allocs (FILE *fp, boardRules *brp, wall **Wall, int **wallVec,
      * */
     else
     {
-        if (( (*Wall) = (wall *)malloc(sizeof(wall))) == NULL)
+        if (((*Wall) = (wall *)malloc(sizeof(wall))) == NULL)
         {
             exit(0);
         }
-        for(/* D: */; brp->n_walls > 0 ; brp->n_walls--)
+        for (/* D: */; brp->n_walls > 0; brp->n_walls--)
         {
-            if (fscanf(fp, "%d %d %d", &( (*Wall)->l1), &( (*Wall)->c1), &( (*Wall)->weight)) != 3)
+            if (fscanf(fp, "%d %d %d", &((*Wall)->l1), &((*Wall)->c1), &((*Wall)->weight)) != 3)
             {
                 exit(0);
             }
-            if ( (*Wall)->l1 == brp->key.Line && (*Wall)->c1 == brp->key.Column )
+            if ((*Wall)->l1 == brp->key.Line && (*Wall)->c1 == brp->key.Column)
             {
                 (*valido) = 0;
                 (*especifico) = 0;
             }
         }
-        free( (*Wall) );
+        free((*Wall));
     }
 
     //---------------------------//
     return;
 }
 
-void init (boardRules *brp, int *board, int *wallVec, wall *Wall,
-            bool valido, bool especifico, bool first, char *output)
+void init(boardRules *brp, int *board, int *wallVec, wall *Wall,
+          bool valido, bool especifico, bool first, char *output)
 {
     int tesouro, n_rooms = 0;
     if (valido && !especifico)
@@ -140,8 +140,8 @@ void init (boardRules *brp, int *board, int *wallVec, wall *Wall,
             free(board);
             free(Wall);
             free(wallVec);
-            writeZero(output, first);    
-        } 
+            writeZero(output, first);
+        }
         else
         {
             Graph *myGraph = graphInit(n_rooms);
@@ -166,7 +166,7 @@ void init (boardRules *brp, int *board, int *wallVec, wall *Wall,
     else
     {
         if (especifico)
-            writeZero(output,first);
+            writeZero(output, first);
         else
             writeInvalid(output, first);
     }
@@ -217,7 +217,7 @@ void readFinalInputFile(FILE *fp, boardRules *brp, char *output)
 #if !EXPERIMENTAL
     //---------------------------//
     /* alocação da memória necessária */
-    allocs(fp, brp, &Wall, &wallVec, &board, &valido, &especifico); 
+    allocs(fp, brp, &Wall, &wallVec, &board, &valido, &especifico);
 
     //---------------------------//
     if (valido && !especifico && board[convertTile(brp->key.Line, brp->key.Column, brp->board.columns)] != 0)
@@ -257,10 +257,10 @@ void readFinalInputFile(FILE *fp, boardRules *brp, char *output)
     return;
 }
 
-int getRooms (FILE *fp, bool *valido, bool *especifico, boardRules *brp )
+int getRooms(FILE *fp, bool *valido, bool *especifico, boardRules *brp)
 {
-    wall *Wall = (wall *)malloc( sizeof(wall) );
-    if ( Wall == NULL )
+    wall *Wall = (wall *)malloc(sizeof(wall));
+    if (Wall == NULL)
         exit(0);
 
     int size = brp->board.columns, n_walls = brp->n_walls;
@@ -268,14 +268,14 @@ int getRooms (FILE *fp, bool *valido, bool *especifico, boardRules *brp )
     int linha = 1, SALA = -2, x = 0;
 
     //---------------------------//
-    int **arr = (int **)malloc( 2 * sizeof(int *) );
+    int **arr = (int **)malloc(2 * sizeof(int *));
     if (arr == NULL)
     {
         exit(0);
     }
 
-    arr[0] = (int *)calloc( size , sizeof(int) );
-    arr[1] = (int *)calloc( size , sizeof(int) );
+    arr[0] = (int *)calloc(size, sizeof(int));
+    arr[1] = (int *)calloc(size, sizeof(int));
     if (arr[0] == NULL || arr[1] == NULL)
     {
         free(arr);
@@ -284,90 +284,96 @@ int getRooms (FILE *fp, bool *valido, bool *especifico, boardRules *brp )
 
     //---------------------------//
     //---------------------------//
-    if (fscanf(fp, "%d %d %d", &( (Wall)->l1), &( (Wall)->c1), &( (Wall)->weight)) != 3) { exit(0); }
+    if (fscanf(fp, "%d %d %d", &((Wall)->l1), &((Wall)->c1), &((Wall)->weight)) != 3)
+    {
+        exit(0);
+    }
     n_walls--;
 
-    if ( (Wall->l1 == 1 && Wall->c1 == 1) || (Wall->l1 == brp->key.Line && Wall->c1 == brp->key.Column) )
+    if ((Wall->l1 == 1 && Wall->c1 == 1) || (Wall->l1 == brp->key.Line && Wall->c1 == brp->key.Column))
         *valido = 0;
 
-    if ( Wall->l1 != linha )
+    if (Wall->l1 != linha)
     {
         for (int i = 0; i < size; i++)
         {
-            arr[ old ][i] = SALA;
+            arr[old][i] = SALA;
         }
 
         linha = Wall->l1;
         SALA--;
     }
-    arr[ !old ][ Wall->c1 - 1 ] = Wall->weight;
+    arr[!old][Wall->c1 - 1] = Wall->weight;
 
-    while( n_walls > 0 )
+    while (n_walls > 0)
     {
-        while ( linha == Wall->l1 && n_walls > 0 )
+        while (linha == Wall->l1 && n_walls > 0)
         {
-            if (fscanf(fp, "%d %d %d", &( (Wall)->l1), &( (Wall)->c1), &( (Wall)->weight)) != 3) { exit(0); }
+            if (fscanf(fp, "%d %d %d", &((Wall)->l1), &((Wall)->c1), &((Wall)->weight)) != 3)
+            {
+                exit(0);
+            }
 
             n_walls--;
 
-            if ( (Wall->l1 == 1 && Wall->c1 == 1) || (Wall->l1 == brp->key.Line && Wall->c1 == brp->key.Column) )
+            if ((Wall->l1 == 1 && Wall->c1 == 1) || (Wall->l1 == brp->key.Line && Wall->c1 == brp->key.Column))
                 *valido = 0;
 
-            if ( Wall->l1 == linha )
-                arr[ !old ][ Wall->c1 - 1 ] = Wall->weight;
+            if (Wall->l1 == linha)
+                arr[!old][Wall->c1 - 1] = Wall->weight;
         }
-        
-        if ( (Wall->l1 - linha > 1) )
+
+        if ((Wall->l1 - linha > 1))
         {
-            for(int i = 0; i < size; i++)
+            for (int i = 0; i < size; i++)
             {
-                if ( ( arr[ !old ][i] == 0 ) && ( (x = arr[ old ][i]) < -1 ) )
-                    arr[ !old ][i] = x;
-                else if ( (i > 0) && ( arr[ !old ][i] == 0 ) && ( (x = arr[ !old ][i-1]) < -1 ))
-                    arr[ !old ][i] = x;
-                else if ( arr[ !old ][i] == 0 )
-                    arr[ !old ][i] = SALA--;
+                if ((arr[!old][i] == 0) && ((x = arr[old][i]) < -1))
+                    arr[!old][i] = x;
+                else if ((i > 0) && (arr[!old][i] == 0) && ((x = arr[!old][i - 1]) < -1))
+                    arr[!old][i] = x;
+                else if (arr[!old][i] == 0)
+                    arr[!old][i] = SALA--;
             }
             /* a nova linha passa a antiga */
             old = !old;
 
             for (int i = 0; i < size; i++)
             {
-                arr[ !old ][i] = 0;
+                arr[!old][i] = 0;
             }
 
-            for(int i = 0; i < size; i++)
+            for (int i = 0; i < size; i++)
             {
-                if ( ( arr[ !old ][i] == 0 ) && ( (x = arr[ old ][i]) < -1 ) )
-                    arr[ !old ][i] = x;
-                else if ( (i > 0) && ( arr[ !old ][i] == 0 ) && ( (x = arr[ !old ][i-1]) < -1 ))
-                    arr[ !old ][i] = x;
+                if ((arr[!old][i] == 0) && ((x = arr[old][i]) < -1))
+                    arr[!old][i] = x;
+                else if ((i > 0) && (arr[!old][i] == 0) && ((x = arr[!old][i - 1]) < -1))
+                    arr[!old][i] = x;
                 else
-                    arr[ !old ][i] = SALA--;
+                    arr[!old][i] = SALA--;
             }
 
-            arr[ !old ][ Wall->c1 - 1 ] = Wall->weight;
+            arr[!old][Wall->c1 - 1] = Wall->weight;
         }
-        else 
+        else
         {
-            for(int i = 0; i < size; i++)
+            for (int i = 0; i < size; i++)
             {
-                if ( ( arr[ !old ][i] == 0 ) && ( (x = arr[ old ][i]) < -1 ) )
-                    arr[ !old ][i] = x;
-                else if ( (i > 0) && ( arr[ !old ][i] == 0 ) && ( (x = arr[ !old ][i-1]) < -1 ))
-                    arr[ !old ][i] = x;
-                else if ( arr[ !old ][i] == 0 )
-                    arr[ !old ][i] = SALA--;
+                if ((arr[!old][i] == 0) && ((x = arr[old][i]) < -1))
+                    arr[!old][i] = x;
+                else if ((i > 0) && (arr[!old][i] == 0) && ((x = arr[!old][i - 1]) < -1))
+                    arr[!old][i] = x;
+                else if (arr[!old][i] == 0)
+                    arr[!old][i] = SALA--;
             }
             /* a nova linha passa a antiga */
             old = !old;
 
             for (int i = 0; i < size; i++)
             {
-                arr[ !old ][i] = 0;
+                arr[!old][i] = 0;
             }
 
-            arr[ !old ][ Wall->c1 - 1 ] = Wall->weight;
+            arr[!old][Wall->c1 - 1] = Wall->weight;
         }
 
         linha = Wall->l1;
@@ -375,66 +381,139 @@ int getRooms (FILE *fp, bool *valido, bool *especifico, boardRules *brp )
 
     if (linha != brp->board.lines)
     {
-        for(int i = 0; i < size; i++)
+        for (int i = 0; i < size; i++)
         {
-            if ( ( arr[ !old ][i] == 0 ) && ( (x = arr[ old ][i]) < -1 ) )
-                arr[ !old ][i] = x;
-            else if ( (i > 0) && ( arr[ !old ][i] == 0 ) && ( (x = arr[ !old ][i-1]) < -1 ))
-                arr[ !old ][i] = x;
-            else if ( arr[ !old ][i] == 0 )
-                arr[ !old ][i] = SALA--;
+            if ((arr[!old][i] == 0) && ((x = arr[old][i]) < -1))
+                arr[!old][i] = x;
+            else if ((i > 0) && (arr[!old][i] == 0) && ((x = arr[!old][i - 1]) < -1))
+                arr[!old][i] = x;
+            else if (arr[!old][i] == 0)
+                arr[!old][i] = SALA--;
         }
 
         free(Wall);
-        free(arr[0]); free(arr[1]);
+        free(arr[0]);
+        free(arr[1]);
         free(arr);
 
         return (-x - 1);
     }
     //---------------------------//
     //---------------------------//
-    x = 0;
+    x = 0; //PK não só x=SALA, acho que se n pode ficar mal
     for (int i = 0; i < size; i++)
     {
-        if ( arr[ old ][i] < x )
-            x = arr[ old ][i]; 
+        if (arr[old][i] < x)
+            x = arr[old][i];
     }
 
     free(Wall);
-    free(arr[0]); free(arr[1]);
+    free(arr[0]);
+    free(arr[1]);
     free(arr);
 
     return (-x - 1);
 }
 
-void experimental (FILE *fp, boardRules *brp, bool *valido, bool *especifico, bool first)
+void getGraph(Graph *myGraph, FILE *fp, bool *valido, bool *especifico, boardRules *brp)
 {
-    Graph *G = NULL;
+    wall *Wall = (wall *)malloc(sizeof(wall));
+    if (Wall == NULL)
+        exit(0);
+
+    int size = brp->board.columns, n_walls = brp->n_walls;
+    int linha = 1, SALA = -2, x = 0;
+    short new = 0, teen = 0, old = 0;
+
+    int **arr = (int **)malloc(3 * sizeof(int *));
+    if (arr == NULL)
+    {
+        exit(0);
+    }
+
+    arr[0] = (int *)calloc(size, sizeof(int));
+    arr[1] = (int *)calloc(size, sizeof(int));
+    arr[2] = (int *)calloc(size, sizeof(int));
+    if (arr[0] == NULL || arr[1] == NULL || arr[2] == NULL)
+    {
+        free(arr);
+        exit(0);
+    }
 
     //---------------------------//
-    int offset = ftell(fp);                                             /* já lemos as boardRules, marcar posição de leitura das paredes */
-    int maxRooms = getRooms( fp, valido, especifico, brp );             /* obter numero majorado de salas (vértices) do grafo            */
+    //---------------------------//
+
+    if (fscanf(fp, "%d %d %d", &((Wall)->l1), &((Wall)->c1), &((Wall)->weight)) != 3)
+    {
+        exit(0);
+    }
+    n_walls--;
+
+    if ((Wall->l1 == 1 && Wall->c1 == 1) || (Wall->l1 == brp->key.Line && Wall->c1 == brp->key.Column))
+        *valido = 0;
+
+    if (Wall->l1 != linha) //se o ficheiro não começar pela 1ºlinha
+    {
+        if (Wall->l1 < 3)
+        {
+            for (int i = 0; i < size; i++)
+            {
+                arr[0][i] = SALA;
+                arr[1][i] = SALA;
+            }
+            teen = 0;
+            new = 1;
+        }
+        else
+        {
+            for (int i = 0; i < size; i++)
+            {
+                arr[0][i] = SALA;
+                arr[1][i] = SALA;
+                arr[2][i] = SALA;
+            }
+            old = 0;
+            teen = 1;
+            new = 2;
+        }
+        linha = Wall->l1;
+        SALA--;
+    }
+
+    arr[new][Wall->c1 - 1] = Wall->weight;
+}
+
+void experimental(FILE *fp, boardRules *brp, bool *valido, bool *especifico, bool first)
+{
+    Graph *myGraph = NULL;
+
+    //---------------------------//
+    int offset = ftell(fp);                               /* já lemos as boardRules, marcar posição de leitura das paredes */
+    int maxRooms = getRooms(fp, valido, especifico, brp); /* obter numero majorado de salas (vértices) do grafo            */
     printf("%d\n", maxRooms);
 
-    exit(1); // <- está a sair aqui para testes!!! comentar para prosseguir
+    //exit(1); // <- está a sair aqui para testes!!! comentar para prosseguir
 
-    offset -= ftell(fp);                                                /* marcar deslocamento do fp, após ter lido as paredes           */
-    
-    if( fseek(fp, offset, SEEK_CUR) != 0 )                              /* rewind ao fp o deslocamento, para ler as paredes denovo       */
+    offset -= ftell(fp); /* marcar deslocamento do fp, após ter lido as paredes           */
+
+    if (fseek(fp, offset, SEEK_CUR) != 0) /* rewind ao fp o deslocamento, para ler as paredes denovo       */
     {
         exit(0);
     }
     //---------------------------//
     /* -> criar o grafo e chamar o algoritmo (se necessário) <-*/
+    myGraph = graphInit(maxRooms);
+
+    getGraph(myGraph, fp, valido, especifico, brp);
 
     //---------------------------//
-    experimentalPrint ( G, valido, especifico, first );
+    experimentalPrint(myGraph, valido, especifico, first);
 
     //---------------------------//
-    return; 
+    return;
 }
 
-void experimentalPrint (Graph *G, bool *valido, bool *especifico, bool first)
+void experimentalPrint(Graph *G, bool *valido, bool *especifico, bool first)
 {
     return;
 }
