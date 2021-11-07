@@ -319,49 +319,34 @@ int getRooms (FILE *fp, bool *valido, bool *especifico, boardRules *brp )
         
         if ( (Wall->l1 - linha > 1) )
         {
-            if ( linha == 1 )
+            for(int i = 0; i < size; i++)
             {
-                for (int i = 0; i < size; i++)
-                {
-                    arr[ !old ][i] = 0;
-                    arr[ old ][i] = SALA;
-                }
-                arr[ !old ][ Wall->c1 - 1 ] = Wall->weight;
+                if ( ( arr[ !old ][i] == 0 ) && ( (x = arr[ old ][i]) < -1 ) )
+                    arr[ !old ][i] = x;
+                else if ( (i > 0) && ( arr[ !old ][i] == 0 ) && ( (x = arr[ !old ][i-1]) < -1 ))
+                    arr[ !old ][i] = x;
+                else if ( arr[ !old ][i] == 0 )
+                    arr[ !old ][i] = SALA--;
             }
-            else
+            /* a nova linha passa a antiga */
+            old = !old;
+
+            for (int i = 0; i < size; i++)
             {
-                for(int i = 0; i < size; i++)
-                {
-                    if ( ( arr[ !old ][i] == 0 ) && ( (x = arr[ old ][i]) < -1 ) )
-                        arr[ !old ][i] = x;
-                    else if ( (i > 0) && ( arr[ !old ][i] == 0 ) && ( (x = arr[ !old ][i-1]) < -1 ))
-                        arr[ !old ][i] = x;
-                    else if ( arr[ !old ][i] == 0 )
-                        arr[ !old ][i] = SALA--;
-                }
-                /* a nova linha passa a antiga */
-                old = !old;
-
-                for (int i = 0; i < size; i++)
-                {
-                    arr[ !old ][i] = 0;
-                }
-
-                /* a nova linha passa a antiga */
-                old = !old;
-
-                for(int i = 0; i < size; i++)
-                {
-                    if ( ( arr[ !old ][i] == 0 ) && ( (x = arr[ old ][i]) < -1 ) )
-                        arr[ !old ][i] = x;
-                    else if ( (i > 0) && ( arr[ !old ][i] == 0 ) && ( (x = arr[ !old ][i-1]) < -1 ))
-                        arr[ !old ][i] = x;
-                    else
-                        arr[ !old ][i] = SALA--;
-                }
-
-                arr[ !old ][ Wall->c1 - 1 ] = Wall->weight;
+                arr[ !old ][i] = 0;
             }
+
+            for(int i = 0; i < size; i++)
+            {
+                if ( ( arr[ !old ][i] == 0 ) && ( (x = arr[ old ][i]) < -1 ) )
+                    arr[ !old ][i] = x;
+                else if ( (i > 0) && ( arr[ !old ][i] == 0 ) && ( (x = arr[ !old ][i-1]) < -1 ))
+                    arr[ !old ][i] = x;
+                else
+                    arr[ !old ][i] = SALA--;
+            }
+
+            arr[ !old ][ Wall->c1 - 1 ] = Wall->weight;
         }
         else 
         {
@@ -381,21 +366,45 @@ int getRooms (FILE *fp, bool *valido, bool *especifico, boardRules *brp )
             {
                 arr[ !old ][i] = 0;
             }
+
+            arr[ !old ][ Wall->c1 - 1 ] = Wall->weight;
         }
 
         linha = Wall->l1;
     }
 
     if (linha != brp->board.lines)
-        SALA--; /* há mais uma sala */
+    {
+        for(int i = 0; i < size; i++)
+        {
+            if ( ( arr[ !old ][i] == 0 ) && ( (x = arr[ old ][i]) < -1 ) )
+                arr[ !old ][i] = x;
+            else if ( (i > 0) && ( arr[ !old ][i] == 0 ) && ( (x = arr[ !old ][i-1]) < -1 ))
+                arr[ !old ][i] = x;
+            else if ( arr[ !old ][i] == 0 )
+                arr[ !old ][i] = SALA--;
+        }
+
+        free(Wall);
+        free(arr[0]); free(arr[1]);
+        free(arr);
+
+        return (-x - 1);
+    }
     //---------------------------//
     //---------------------------//
+    x = 0;
+    for (int i = 0; i < size; i++)
+    {
+        if ( arr[ old ][i] < x )
+            x = arr[ old ][i]; 
+    }
 
     free(Wall);
     free(arr[0]); free(arr[1]);
     free(arr);
 
-    return (-SALA - 1);
+    return (-x - 1);
 }
 
 void experimental (FILE *fp, boardRules *brp, bool *valido, bool *especifico, bool first)
