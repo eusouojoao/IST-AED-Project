@@ -394,6 +394,7 @@ void pensar ( Graph *G, int *backup, int *old , int *new, int size, int linha )
 {
     for ( int i = 0, a = 0, b = 0 ; i < size ; i++ )
     {
+        printf("i = %d\t", i);
         if ( old[i] != -1 )
         {
             /* nos cantos só podemos verificar em cima e em baixo... */
@@ -404,13 +405,15 @@ void pensar ( Graph *G, int *backup, int *old , int *new, int size, int linha )
                     if ( ( (a = backup[i]) < -1) && ( (b = new[i]) < -1 ) && (a != b) )
                     {
                         insertInGraph (G, a, b, 0, 0);
+                        printf ("\na = %d\nmeio = %d\nb = %d\n\n", a, old[i], b);
                     }
                 }
                 else if ( old[i] > 0 )
                 {
                     if ( ( (a = backup[i]) < -1) && ( (b = new[i]) < -1 ) && (a != b) )
                     {
-                        insertInGraph (G, a, b, convertTile(linha-1, i+1, size), old[i]);
+                        insertInGraph (G, a, b, convertTile(linha-2, i+1, size), old[i]);
+                        printf ("\na = %d\nmeio = %d\nb = %d\n\n", a, old[i], b);
                     }                   
                 }
             }
@@ -421,26 +424,31 @@ void pensar ( Graph *G, int *backup, int *old , int *new, int size, int linha )
                     if ( ( (a = backup[i]) < -1) && ( (b = new[i]) < -1 ) && (a != b) )
                     {
                         insertInGraph (G, a, b, 0, 0);
+                        printf ("\na = %d\nmeio = %d\nb = %d\n\n", a, old[i], b);
                     }
                     else if ( ( (a = old[i-1]) < -1) && ( (b = old[i+1]) < -1 ) && (a != b) )
                     {
                         insertInGraph (G, a, b, 0, 0);
+                        printf ("\na = %d\nmeio = %d\nb = %d\n\n", a, old[i], b);
                     }
                 }
                 else if ( old[i] > 0 )
                 {
                     if ( ( (a = backup[i]) < -1) && ( (b = new[i]) < -1 ) && (a != b) )
                     {
-                        insertInGraph (G, a, b, convertTile(linha-1, i+1, size), old[i]);
+                        insertInGraph (G, a, b, convertTile(linha-2, i+1, size), old[i]);
+                        printf ("\na = %d\nmeio = %d\nb = %d\n\n", a, old[i], b);
                     } 
                     else if ( ( (a = old[i-1]) < -1) && ( (b = old[i+1]) < -1 ) && (a != b) )
                     {
-                        insertInGraph (G, a, b, convertTile(linha-1, i+1, size), old[i]);
+                        insertInGraph (G, a, b, convertTile(linha-2, i+1, size), old[i]);
+                        printf ("\na = %d\nmeio = %d\nb = %d\n\n", a, old[i], b);
                     }
                 }
             }
         }
     }
+    printf("\n");
 
     return;
 }
