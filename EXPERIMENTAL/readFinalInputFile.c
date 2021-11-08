@@ -767,16 +767,16 @@ void experimental(FILE *fp, boardRules *brp, bool *valido, bool *especifico, boo
     printGraph(myGraph);
 
     /* descobrir caminho */
-    //algoritmo(myGraph);
+    algoritmo(myGraph);
     }
     //---------------------------//
     //---------------------------//
 
     /* escreve para o ficheiro de saída */
-    //writeSolution(output, myGraph, 0, brp->board.columns, first);
+    writeSolution(output, myGraph, 1, brp->board.columns, first);
     graphDestroy(myGraph);
 
-    //experimentalPrint(myGraph, valido, especifico, first);
+    experimentalPrint(myGraph, valido, especifico, first);
 
     //---------------------------//
     return;
