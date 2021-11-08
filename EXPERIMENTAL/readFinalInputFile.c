@@ -572,6 +572,8 @@ void getGraph(Graph *myGraph, FILE *fp, bool *valido, bool *especifico, boardRul
                 } 
             }
 
+            pensar( myGraph, backup, arr[old], arr[!old], size, linha);
+
             for (int i = 0; i < size; i++ )
                 backup[i] = arr[old][i];
 
@@ -712,6 +714,8 @@ void getGraph(Graph *myGraph, FILE *fp, bool *valido, bool *especifico, boardRul
                 }
                 if (salaNova) SALA--;
             } 
+
+            pensar( myGraph, backup, arr[old], arr[!old], size, linha);
         }
 
         /* garbage collector */
@@ -748,7 +752,8 @@ void experimental(FILE *fp, boardRules *brp, bool *valido, bool *especifico, boo
     /* marcar deslocamento do fp, após ter lido as paredes */
     offset -= ftell(fp);
 
-    if (valido && !especifico)
+    printf("valido = %d\nespecifico = %d\n", *valido, *especifico);
+    if ( (*valido) && !(*especifico) )
     {
         /* rewind ao fp o deslocamento, para ler as paredes denovo */
         if (fseek(fp, offset, SEEK_CUR) != 0)   
@@ -759,13 +764,16 @@ void experimental(FILE *fp, boardRules *brp, bool *valido, bool *especifico, boo
     /* -> criar o grafo e chamar o algoritmo (se necessário) <-*/
     myGraph = graphInit(maxRooms);
     getGraph(myGraph, fp, valido, especifico, brp);
+    printGraph(myGraph);
+
+    /* descobrir caminho */
+    //algoritmo(myGraph);
     }
     //---------------------------//
     //---------------------------//
-    algoritmo(myGraph);
 
     /* escreve para o ficheiro de saída */
-    writeSolution(output, myGraph, 0, brp->board.columns, first);
+    //writeSolution(output, myGraph, 0, brp->board.columns, first);
     graphDestroy(myGraph);
 
     //experimentalPrint(myGraph, valido, especifico, first);
