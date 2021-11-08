@@ -208,7 +208,7 @@ int getRooms(FILE *fp, bool *valido, bool *especifico, boardRules *brp)
         {
             for( a = b = 0 ; (a < size) && (b < size) ; /* * */ )
             {
-                for ( a = b; a < size && arr[!old][a] != 0 ; a++);
+                for ( a = b; a < size && arr[!old][a] != 0 ; a++ );
                 for ( b = a; b < size && arr[!old][b] == 0 ; b++ );
                 x = 0;
                 for (int i = a ; i < b ; i++)
@@ -247,7 +247,7 @@ int getRooms(FILE *fp, bool *valido, bool *especifico, boardRules *brp)
 
             for( a = b = 0 ; (a < size) && (b < size) ; /* * */ )
             {
-                for ( a = b; a < size && arr[!old][a] != 0 ; a++);
+                for ( a = b; a < size && arr[!old][a] != 0 ; a++ );
                 for ( b = a; b < size && arr[!old][b] == 0 ; b++ );
                 x = 0;
                 for (int i = a; i < b ; i++)
@@ -394,7 +394,6 @@ void pensar ( Graph *G, int *backup, int *old , int *new, int size, int linha )
 {
     for ( int i = 0, a = 0, b = 0 ; i < size ; i++ )
     {
-        printf("i = %d\t", i);
         if ( old[i] != -1 )
         {
             /* nos cantos só podemos verificar em cima e em baixo... */
@@ -405,15 +404,14 @@ void pensar ( Graph *G, int *backup, int *old , int *new, int size, int linha )
                     if ( ( (a = backup[i]) < -1) && ( (b = new[i]) < -1 ) && (a != b) )
                     {
                         insertInGraph (G, a, b, 0, 0);
-                        printf ("\na = %d\nmeio = %d\nb = %d\n\n", a, old[i], b);
+                        mergeRooms(G,a,b);
                     }
                 }
                 else if ( old[i] > 0 )
                 {
                     if ( ( (a = backup[i]) < -1) && ( (b = new[i]) < -1 ) && (a != b) )
                     {
-                        insertInGraph (G, a, b, convertTile(linha-2, i+1, size), old[i]);
-                        printf ("\na = %d\nmeio = %d\nb = %d\n\n", a, old[i], b);
+                        insertInGraph (G, a, b, convertTile(linha, i+1, size), old[i]);
                     }                   
                 }
             }
@@ -424,25 +422,23 @@ void pensar ( Graph *G, int *backup, int *old , int *new, int size, int linha )
                     if ( ( (a = backup[i]) < -1) && ( (b = new[i]) < -1 ) && (a != b) )
                     {
                         insertInGraph (G, a, b, 0, 0);
-                        printf ("\na = %d\nmeio = %d\nb = %d\n\n", a, old[i], b);
+                        mergeRooms(G,a,b);
                     }
                     else if ( ( (a = old[i-1]) < -1) && ( (b = old[i+1]) < -1 ) && (a != b) )
                     {
                         insertInGraph (G, a, b, 0, 0);
-                        printf ("\na = %d\nmeio = %d\nb = %d\n\n", a, old[i], b);
+                        mergeRooms(G,a,b);
                     }
                 }
                 else if ( old[i] > 0 )
                 {
                     if ( ( (a = backup[i]) < -1) && ( (b = new[i]) < -1 ) && (a != b) )
                     {
-                        insertInGraph (G, a, b, convertTile(linha-2, i+1, size), old[i]);
-                        printf ("\na = %d\nmeio = %d\nb = %d\n\n", a, old[i], b);
+                        insertInGraph (G, a, b, convertTile(linha, i+1, size), old[i]);
                     } 
                     else if ( ( (a = old[i-1]) < -1) && ( (b = old[i+1]) < -1 ) && (a != b) )
                     {
-                        insertInGraph (G, a, b, convertTile(linha-2, i+1, size), old[i]);
-                        printf ("\na = %d\nmeio = %d\nb = %d\n\n", a, old[i], b);
+                        insertInGraph (G, a, b, convertTile(linha, i+1, size), old[i]);
                     }
                 }
             }
@@ -524,24 +520,6 @@ void getGraph(Graph *myGraph, FILE *fp, bool *valido, bool *especifico, boardRul
 
             n_walls--;
 
-            if ((Wall->l1 == 1 && Wall->c1 == 1) || (Wall->l1 == brp->key.Line && Wall->c1 == brp->key.Column))
-            {
-                /* descartar as paredes deste tabuleiro invalido */
-                while (n_walls > 0)
-                    if (fscanf(fp, "%d %d %d", &((Wall)->l1), &((Wall)->c1), &((Wall)->weight)) != 3)
-                        exit(0);
-
-                /* garbage collector */
-                free(Wall);
-                free(arr[0]);
-                free(arr[1]);
-                free(arr);
-
-                /* marcar como invalido e retornar para imprimir -1 como solução deste tabuleiro */
-                *valido = 0;
-                return ;
-            }
-
             if (Wall->l1 == linha)
                 arr[!old][Wall->c1 - 1] = Wall->weight;
         }
@@ -551,7 +529,7 @@ void getGraph(Graph *myGraph, FILE *fp, bool *valido, bool *especifico, boardRul
         {
             for( a = b = 0 ; (a < size) && (b < size) ; /* * */ )
             {
-                for ( a = b; a < size && arr[!old][a] != 0 ; a++);
+                for ( a = b; a < size && arr[!old][a] != 0 ; a++ );
                 for ( b = a; b < size && arr[!old][b] == 0 ; b++ );
                 x = 0;
                 for (int i = a ; i < b ; i++)
@@ -568,7 +546,7 @@ void getGraph(Graph *myGraph, FILE *fp, bool *valido, bool *especifico, boardRul
                     salaNova = false;
                     for (/* * */; a < b ; a++) 
                     {
-                        if ( (arr[!old][a]) == 0 && x < -1)
+                        if ( (arr[!old][a]) == 0 && x < -1 )
                             arr[!old][a] = x;
                         else if ( (arr[!old][a]) == 0 && x >= -1 )
                         {
@@ -580,10 +558,8 @@ void getGraph(Graph *myGraph, FILE *fp, bool *valido, bool *especifico, boardRul
                 } 
             }
 
-            pensar( myGraph, backup, arr[old], arr[!old], size, linha);
-
             for (int i = 0; i < size; i++ )
-                backup[i] = arr[old][i];
+                backup[i] = arr[!old][i];
 
             /* a nova linha passa a antiga */
             old = !old;
@@ -591,18 +567,19 @@ void getGraph(Graph *myGraph, FILE *fp, bool *valido, bool *especifico, boardRul
             for (int i = 0; i < size; i++)
             {
                 arr[!old][i] = 0;
+                arr[old][i] = 0;
             }
 
             for( a = b = 0 ; (a < size) && (b < size) ; /* * */ )
             {
-                for ( a = b; a < size && arr[!old][a] != 0 ; a++);
-                for ( b = a; b < size && arr[!old][b] == 0 ; b++ );
+                for ( a = b; a < size && arr[old][a] != 0 ; a++ );
+                for ( b = a; b < size && arr[old][b] == 0 ; b++ );
                 x = 0;
                 for (int i = a; i < b ; i++)
                 {
-                    if ( (arr[old][i]) < -1 )
+                    if ( (backup[i]) < -1 )
                     {
-                        x = arr[old][i];
+                        x = backup[i];
                         break; 
                     }
                 }
@@ -611,11 +588,11 @@ void getGraph(Graph *myGraph, FILE *fp, bool *valido, bool *especifico, boardRul
                     salaNova = false;
                     for (/* * */; a < b ; a++) 
                     {
-                        if ( (arr[!old][a]) == 0 && x < -1)
-                            arr[!old][a] = x;
-                        else if ( (arr[!old][a]) == 0 && x >= -1 )
+                        if ( (arr[old][a]) == 0 && x < -1 )
+                            arr[old][a] = x;
+                        else if ( (arr[old][a]) == 0 && x >= -1 )
                         {
-                            arr[!old][a] = SALA;
+                            arr[old][a] = SALA;
                             salaNova = true;
                         }
                     }
@@ -623,10 +600,10 @@ void getGraph(Graph *myGraph, FILE *fp, bool *valido, bool *especifico, boardRul
                 } 
                 else  
                 {
-                    if( ((arr[!old][a - 1]) == 0) && ((x = arr[old][a - 1]) < -1) )
-                        arr[!old][a - 1] = x;
-                    else if( ((arr[!old][a - 1]) == 0) && (x >= -1) )
-                        arr[!old][a - 1] = SALA--;
+                    if( ((arr[old][a - 1]) == 0) && ((x = backup[a - 1]) < -1) )
+                        arr[old][a - 1] = x;
+                    else if( ((arr[old][a - 1]) == 0) && (x >= -1) )
+                        arr[old][a - 1] = SALA--;
                 }
             }
 
@@ -637,7 +614,7 @@ void getGraph(Graph *myGraph, FILE *fp, bool *valido, bool *especifico, boardRul
         {
             for( a = b = 0 ; (a < size) && (b < size) ; /* * */ )
             {
-                for ( a = b; a < size && arr[!old][a] != 0 ; a++);
+                for ( a = b; a < size && arr[!old][a] != 0 ; a++ );
                 for ( b = a; b < size && arr[!old][b] == 0 ; b++ );
                 x = 0;
                 for (int i = a ; i < b ; i++)
@@ -654,7 +631,7 @@ void getGraph(Graph *myGraph, FILE *fp, bool *valido, bool *especifico, boardRul
                     salaNova = false;
                     for (/* * */; a < b ; a++) 
                     {
-                        if ( (arr[!old][a]) == 0 && x < -1)
+                        if ( (arr[!old][a]) == 0 && x < -1 )
                             arr[!old][a] = x;
                         else if ( (arr[!old][a]) == 0 && x >= -1 )
                         {
@@ -773,7 +750,7 @@ void experimental(FILE *fp, boardRules *brp, bool *valido, bool *especifico, boo
     myGraph = graphInit(maxRooms);
     getGraph(myGraph, fp, valido, especifico, brp);
     printGraph(myGraph);
-
+    
     /* descobrir caminho */
     algoritmo(myGraph);
     }
@@ -781,7 +758,7 @@ void experimental(FILE *fp, boardRules *brp, bool *valido, bool *especifico, boo
     //---------------------------//
 
     /* escreve para o ficheiro de saída */
-    writeSolution(output, myGraph, 1, brp->board.columns, first);
+    writeSolution(output, myGraph, 3, brp->board.columns, first);
     graphDestroy(myGraph);
 
     experimentalPrint(myGraph, valido, especifico, first);

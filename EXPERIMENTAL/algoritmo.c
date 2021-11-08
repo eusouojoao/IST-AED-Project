@@ -197,7 +197,7 @@ void printRecursivo(FILE *fp, Graph *G, int p, int colunas)
  */
 void writeSolution(char *output, Graph *G, int tesouroRoom, int colunas, bool first)
 {
-    int i = tesouroRoom;        /* sala do tesouro                              */
+    int i = tesouroRoom-1;        /* sala do tesouro                              */
     int distance = dist[i];     /* distancia da sala do tesouro à sala inicial  */
     int cnt = 0;                /* salas percorridas até à sala inicial         */
 
