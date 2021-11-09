@@ -237,9 +237,15 @@ int getWall(void *t)
  * @param  room2: sala 2 (sala a sere eliminada)
  * @retval None
  */
-void mergeRooms(Graph *G, int room1, int room2)
+void mergeRooms(Graph *G, int room1, int room2, int treasureRoom)
 {
     int adjRoom, adjP, adjWeight;
+    if (treasureRoom == room2) //a sala do tesouro não pode ser a sala a ser eliminada, caso seja trocar as salas
+    {
+        adjRoom = room2;
+        room2 = room1;
+        room1 = adjRoom;
+    }
     Room *aux = G->adj[room2], *auxPrev = G->adj[room2], *aux2 = NULL, *aux2Prev = NULL;
     /* percorrer todas as salas (nós) adjacentes à sala 2 */
     while (aux != NULL)
