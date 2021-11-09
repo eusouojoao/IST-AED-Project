@@ -276,6 +276,7 @@ void mergeRooms(Graph *G, int room1, int room2)
             }
             aux2Prev->next = aux2->next;
             free(aux2);
+            aux2 = aux2Prev->next;
             if (aux2 == NULL)
                 G->adj[adjRoom] = NULL;
         }
