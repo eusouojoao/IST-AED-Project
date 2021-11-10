@@ -13,7 +13,7 @@ int getSala(void *t);
 int getDist(void *t);
 int getVertices(Graph *G);
 int getWall(void *t);
-void mergeRooms(Graph *G, int room1, int room2);
+void mergeRooms(Graph *G, int room1, int room2, int treasureRoom);
 void printGraph(Graph *G);
 
 #endif /* __grafo__ */
