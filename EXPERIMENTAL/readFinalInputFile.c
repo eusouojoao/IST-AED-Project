@@ -12,7 +12,7 @@
 #include "writeOutputFile.h"
 
 void experimental(FILE *fp, boardRules *brp, bool *valido, bool *especifico, bool first, char *output);
-void experimentalPrint(Graph *G, bool *valido, bool *especifico, bool first);
+void experimentalPrint(char *output, Graph *G, int salaDoTesouro, bool *valido, bool *especifico, bool first, boardRules *brp);
 
 /* linhas e colunas do tabuleiro */
 struct board
@@ -404,7 +404,6 @@ void pensar ( Graph *G, int *backup, int *old , int *new, int size, int linha )
                     if ( ( (a = backup[i]) < -1) && ( (b = new[i]) < -1 ) && (a != b) )
                     {
                         insertInGraph (G, a, b, 0, 0);
-                        mergeRooms(G,a,b);
                     }
                 }
                 else if ( old[i] > 0 )
@@ -422,12 +421,10 @@ void pensar ( Graph *G, int *backup, int *old , int *new, int size, int linha )
                     if ( ( (a = backup[i]) < -1) && ( (b = new[i]) < -1 ) && (a != b) )
                     {
                         insertInGraph (G, a, b, 0, 0);
-                        mergeRooms(G,a,b);
                     }
                     else if ( ( (a = old[i-1]) < -1) && ( (b = old[i+1]) < -1 ) && (a != b) )
                     {
                         insertInGraph (G, a, b, 0, 0);
-                        mergeRooms(G,a,b);
                     }
                 }
                 else if ( old[i] > 0 )
@@ -444,24 +441,24 @@ void pensar ( Graph *G, int *backup, int *old , int *new, int size, int linha )
             }
         }
     }
-    printf("\n");
 
     return;
 }
 
-void getGraph(Graph *myGraph, FILE *fp, bool *valido, bool *especifico, boardRules *brp)
+int getGraph(Graph *G, FILE *fp, bool *valido, bool *especifico, boardRules *brp)
 {
+    int size = brp->board.columns, n_walls = brp->n_walls;
+    int linha = 1, SALA = -2, x = 0;
+    int a = 0, b = 0, salaDoTesouro = -1;
+    bool old = 0; /* abstração, não importa se é 0 ou 1, o novo é sempre o complementar do old */
+    bool salaNova = false, salaTesouroFound = false, ler = true;
+
+    //---------------------------//
     wall *Wall = (wall *)malloc(sizeof(wall));
     if (Wall == NULL)
         exit(0);
 
-    int size = brp->board.columns, n_walls = brp->n_walls;
-    bool old = 0; /* abstração, não importa se é 0 ou 1, o novo é sempre o complementar do old */
-    int linha = 1, SALA = -2, x = 0;
-    int a = 0, b = 0;
-    bool salaNova = false;
 
-    //---------------------------//
     int **arr = (int **)malloc(2 * sizeof(int *));
     if (arr == NULL)
     {
@@ -477,11 +474,17 @@ void getGraph(Graph *myGraph, FILE *fp, bool *valido, bool *especifico, boardRul
         exit(0);
     }
 
-    arr[0] = (int *)calloc(size, sizeof(int));
-    arr[1] = (int *)calloc(size, sizeof(int));
-    if (arr[0] == NULL || arr[1] == NULL)
+    if ( (arr[0] = (int *)calloc(size, sizeof(int))) == NULL )
     {
         free(Wall);
+        free(arr);
+        exit(0);
+    }
+
+    if( (arr[1] = (int *)calloc(size, sizeof(int))) == NULL )
+    {
+        free(Wall);
+        free(arr[0]);
         free(arr);
         exit(0);
     }
@@ -513,6 +516,7 @@ void getGraph(Graph *myGraph, FILE *fp, bool *valido, bool *especifico, boardRul
     {
         while (linha == Wall->l1 && n_walls > 0)
         {
+            ler = false;
             if (fscanf(fp, "%d %d %d", &((Wall)->l1), &((Wall)->c1), &((Wall)->weight)) != 3)
             {
                 exit(0);
@@ -607,6 +611,12 @@ void getGraph(Graph *myGraph, FILE *fp, bool *valido, bool *especifico, boardRul
                 }
             }
 
+            if ( !salaTesouroFound && ( brp->key.Line >= linha ) && (brp->key.Line <= Wall->l1) )
+            {
+                salaDoTesouro = -(arr[old][0]) - 2 ;
+                salaTesouroFound = true;
+            }
+
             if (Wall->l1 != linha)
                 arr[!old][Wall->c1 - 1] = Wall->weight;
         }
@@ -643,7 +653,13 @@ void getGraph(Graph *myGraph, FILE *fp, bool *valido, bool *especifico, boardRul
                 } 
             }
 
-            pensar( myGraph, backup, arr[old], arr[!old], size, linha);
+            pensar( G, backup, arr[old], arr[!old], size, linha);
+
+            if ( !salaTesouroFound && ( brp->key.Line == linha ) )
+            {
+                salaDoTesouro = -(arr[!old][(brp->key.Column - 1)]) - 2 ;
+                salaTesouroFound = true;
+            }
 
             for (int i = 0; i < size; i++ )
                 backup[i] = arr[old][i];
@@ -661,6 +677,7 @@ void getGraph(Graph *myGraph, FILE *fp, bool *valido, bool *especifico, boardRul
         }
 
         linha = Wall->l1;
+        ler = true;
     }
 
     //---------------------------//
@@ -700,7 +717,23 @@ void getGraph(Graph *myGraph, FILE *fp, bool *valido, bool *especifico, boardRul
                 if (salaNova) SALA--;
             } 
 
-            pensar( myGraph, backup, arr[old], arr[!old], size, linha);
+        }
+
+        if (ler)
+        {
+            for (int i = 0; i < size; i++ )
+            {
+                backup[i] = arr[old][i];
+                arr[old][i] = arr[!old][i] = x;
+            }
+        }
+
+        pensar( G, backup, arr[old], arr[!old], size, linha );
+
+        if ( !salaTesouroFound && ( brp->key.Line >= linha ) && (brp->key.Column <= brp->board.columns) )
+        {
+            salaDoTesouro = -(arr[!old][(brp->key.Column - 1)]) - 2 ;
+            salaTesouroFound = true;
         }
 
         /* garbage collector */
@@ -709,7 +742,7 @@ void getGraph(Graph *myGraph, FILE *fp, bool *valido, bool *especifico, boardRul
         free(arr[1]);
         free(arr);
 
-        return ;
+        return salaDoTesouro;
     }
     //---------------------------//
 
@@ -719,25 +752,20 @@ void getGraph(Graph *myGraph, FILE *fp, bool *valido, bool *especifico, boardRul
     free(arr[1]);
     free(arr);
 
-    return ;
+    return salaDoTesouro;
 }
 
 void experimental(FILE *fp, boardRules *brp, bool *valido, bool *especifico, bool first, char *output)
 {
-    Graph *myGraph = NULL;
-
+    Graph *G = NULL;
+    int salaDoTesouro = 0;
     //---------------------------//
     int offset = ftell(fp);                               /* já lemos as boardRules, marcar posição de leitura das paredes */
     int maxRooms = getRooms(fp, valido, especifico, brp); /* obter numero majorado de salas (vértices) do grafo            */
-    printf("%d\n", maxRooms);
-
-    //exit(1); // <- está a sair aqui para testes!!! comentar para prosseguir
-
 
     /* marcar deslocamento do fp, após ter lido as paredes */
     offset -= ftell(fp);
 
-    printf("valido = %d\nespecifico = %d\n", *valido, *especifico);
     if ( (*valido) && !(*especifico) )
     {
         /* rewind ao fp o deslocamento, para ler as paredes denovo */
@@ -747,27 +775,39 @@ void experimental(FILE *fp, boardRules *brp, bool *valido, bool *especifico, boo
         }
     //---------------------------//
     /* -> criar o grafo e chamar o algoritmo (se necessário) <-*/
-    myGraph = graphInit(maxRooms);
-    getGraph(myGraph, fp, valido, especifico, brp);
-    printGraph(myGraph);
+    G = graphInit(maxRooms);
+    salaDoTesouro = getGraph(G, fp, valido, especifico, brp);
+    //printGraph(G);
     
     /* descobrir caminho */
-    algoritmo(myGraph);
+    if (salaDoTesouro >= 0)
+        algoritmo(G);
     }
     //---------------------------//
     //---------------------------//
 
     /* escreve para o ficheiro de saída */
-    writeSolution(output, myGraph, 3, brp->board.columns, first);
-    graphDestroy(myGraph);
-
-    experimentalPrint(myGraph, valido, especifico, first);
+    experimentalPrint(output, G, salaDoTesouro, valido, especifico, first, brp);
+    if ( (*valido) && !(*especifico) )
+        graphDestroy(G);
 
     //---------------------------//
     return;
 }
 
-void experimentalPrint(Graph *G, bool *valido, bool *especifico, bool first)
+void experimentalPrint(char *output, Graph *G, int salaDoTesouro, bool *valido, bool *especifico, bool first, boardRules *brp)
 {
+    if ( (*valido) && !(*especifico) )
+    {
+        writeSolution(output, G, salaDoTesouro, brp->board.columns, first);
+    }
+    else
+    {
+        if (*especifico)
+            writeZero(output, first);
+        else
+            writeInvalid(output, first);
+    }
+
     return;
 }
