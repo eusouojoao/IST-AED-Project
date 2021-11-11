@@ -12,7 +12,7 @@
  * @retval 1 caso as 2 peças sejam adjacentes
  *         0 caso as 2 peças não sejam adjacentes
  */
-int adjacentTileLC (int l, int c, int p2L, int p2C)
+int adjacentTileLC(int l, int c, int p2L, int p2C)
 {
     if (((p2L == l + 1) || (p2L == l - 1)) && c == p2C) //adjacente vertical
         return 1;
@@ -97,16 +97,17 @@ int checkA5(int **A5, int n_adj, int n_Lines, int n_Col, int l1, int c1, int tes
             return 1;
         return 0;
     }
-    
+
     /* não deve chegar aqui */
     return -1;
 }
 
- /**
+/**
  * @brief  Verifica se há uma peça adjacente de uma determinada cor (depende do mode)
  * @note   
  * @param  *AA: vector com as 4 possíveis peças adjacentes
  * @param  mode: modo de jogo (A2, A3 ou A4) associado aos números (2, 3 e 4 respetivamente)
+ * @param  n_adj: dimensão do vector AA (2-peça de canto; 3-peça lateral (não de canto); 4-restantes casos)
  * @retval 
  */
 int checkAA(int *AA, int mode, int n_adj)
@@ -139,7 +140,7 @@ int checkAA(int *AA, int mode, int n_adj)
 void pushAdjacent(int *board, int tile, int n_Lines, int n_Col)
 {
     int aux = tile;
-    aux++;                                           //verificar a peça adjacente à direita
+    aux++;                                          //verificar a peça adjacente à direita
     if (adjacentTileP(aux, n_Lines, n_Col, 1) == 1) //1-soma horizontal
     {
         if (board[aux] == 0) // caso a peça adjacente seja branca
@@ -148,7 +149,7 @@ void pushAdjacent(int *board, int tile, int n_Lines, int n_Col)
             push(aux);       //fazer o push para a pilha
         }
     }
-    aux = aux - 2;                                   //verificar a peça adjacente à esquerda
+    aux = aux - 2;                                  //verificar a peça adjacente à esquerda
     if (adjacentTileP(aux, n_Lines, n_Col, 2) == 1) //2-subtração horizontal
     {
         if (board[aux] == 0)
@@ -158,7 +159,7 @@ void pushAdjacent(int *board, int tile, int n_Lines, int n_Col)
         }
     }
     aux++;
-    aux = aux + n_Col;                               //verificar a peça adjacente em cima
+    aux = aux + n_Col;                              //verificar a peça adjacente em cima
     if (adjacentTileP(aux, n_Lines, n_Col, 0) == 1) //0-soma vertical
     {
         if (board[aux] == 0)
@@ -167,7 +168,7 @@ void pushAdjacent(int *board, int tile, int n_Lines, int n_Col)
             push(aux);
         }
     }
-    aux = aux - 2 * n_Col;                           //verificar a peça adjacente em baixo
+    aux = aux - 2 * n_Col;                          //verificar a peça adjacente em baixo
     if (adjacentTileP(aux, n_Lines, n_Col, 0) == 1) // 0-subtração vertical
     {
         if (board[aux] == 0)
@@ -194,7 +195,7 @@ int checkA6(int *board, int n_Lines, int n_Col, int p1, int p2)
     int aux = p1;
     if (board[p1] != 0 || board[p2] != 0) // pelo menos uma das peças não é branca
         return 0;
-    initPilha(n_Lines *  n_Col); //inicializa a pilha
+    initPilha(n_Lines * n_Col); //inicializa a pilha
     push(aux);
     while (!isEmpty())
     {

@@ -34,7 +34,6 @@ void inicializeBoard(int *board, int n_Lines, int n_Col)
 /**
  * @brief  Verifica se uma peça está dentro ou fora do tabuleiro
  * @note   
- * @param  *board: tabuleiro (vetor unidimensional)
  * @param  n_Lines: número total de linhas do tabuleiro 
  * @param  n_Col: número total de colunas do tabuleiro
  * @param  l: linha em que está a peça

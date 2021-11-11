@@ -56,12 +56,18 @@ int checkVariante(char *var)
 }
 
 /**
+/**
  * @brief   Inicia o modo de jogo consoante a variante especificada no ficheiro de input
- * @note    Inicia o jogo... 
- *
+ * @note    Tendo em conta o modo de jogo alguns dos parametros podem estar a
+ *          NULL, mas como é obvio não serão utilizados 
  * @param  *brp: apontador para as regras do tabuleiro 
  * @param  *board: tabuleiro
  * @param  *output: nome do ficheiro de output
+ * @param  A1: peso da parede no modo A1
+ * @param  *AA: vector com as 4 possíveis peças adjacentes
+ * @param  **A5: vetor bidimensional com a linha, a coluna e o custo de todas as peças adjacentes
+ * @param  n_adj: numero de peças adjacentes à peça a ser testada
+ * @param  tesouro: posição do "tesouro" no tabuleiro
  * @retval None
  */
 void initGameMode(boardRules *brp, int *board, char *output, int A1, int *AA, int **A5, int n_adj, int tesouro)
@@ -131,9 +137,9 @@ void initGameMode(boardRules *brp, int *board, char *output, int A1, int *AA, in
 
 /**
  * @brief  Função que lê do ficheiro de input
- * @note   Preenche o brp (apontador para boardRules) com as regras do jogo, i.e.,
- *  tamanho tabuleiro, variante do jogo... e inicializa o tabuleiro ao ler do ficheiro
- *
+ * @note   Preenche o brp (apontador para boardRules) com as regras do jogo,
+ *         i.e., tamanho tabuleiro, variante do jogo... e inicializa o tabuleiro ao ler
+ *         do ficheiro
  * @param  *fp: file pointer 
  * @param  *brp: apontador para as regras do tabuleiro
  * @param  *output: nome do ficheiro de output 

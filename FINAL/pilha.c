@@ -4,7 +4,7 @@
 #include "pilha.h"
 
 static Item *gP = NULL; //stack em si
-static int gN;          //assianala a primeira posição desocupada da pilha
+static int gN;          //assinala a primeira posição livre da pilha
 
 /**
  * @brief  Função que inicializa a pilha
@@ -72,4 +72,3 @@ void freePilha()
         free(gP);
     return;
 }
-

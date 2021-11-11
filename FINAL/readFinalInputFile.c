@@ -37,63 +37,6 @@ typedef struct _wall
     int l1, c1, weight;
 } wall;
 
-
-
-
-
-
-
-void printBoard(int *board, int columns, int lines, int tesouro)
-{
-    printf("lines:\t\t%d\n", lines);
-    printf("columns:\t%d\n\n", columns);
-    for (int j = 1; j <= lines; j++)
-        for (int i = 1; i <= columns; i++)
-        {
-            if (i == (columns))
-            {
-
-                if (tesouro == ((j - 1) * columns + i - 1))
-                {
-                    printf("\033[0;35m T\033[0m\n");
-                    continue;
-                }
-
-                if (board[((j - 1) * columns + i - 1)] == -1)
-                    printf("\033[0;31m█ \033[0m\n");
-                else if (board[((j - 1) * columns + i - 1)] > 0)
-                    printf("\033[0;37m█ \033[0m\n");
-                else
-                    printf("0 \n");
-            }
-            else
-            {
-
-                if (tesouro == ((j - 1) * columns + i - 1))
-                {
-                    printf("\033[0;35m T\033[0m");
-                    continue;
-                }
-
-                if (board[((j - 1) * columns + i - 1)] == -1)
-                    printf("\033[0;31m█ \033[0m");
-                else if (board[((j - 1) * columns + i - 1)] > 0)
-                    printf("\033[0;37m█ \033[0m");
-                else
-                    printf("0 ");
-            }
-        }
-
-    return;
-}
-
-
-
-
-
-
-
-
 /**
  * @brief   Função que indica se estamos perante um caso especifico
  * @note
@@ -110,6 +53,18 @@ bool casosEspecificos(boardRules *brp)
     return 0;
 }
 
+/**
+ * @brief  
+ * @note   
+ * @param  *fp: 
+ * @param  *brp: 
+ * @param  **Wall: 
+ * @param  **wallVec: 
+ * @param  **board: 
+ * @param  *valido: 
+ * @param  *especifico: 
+ * @retval None
+ */
 void allocs(FILE *fp, boardRules *brp, wall **Wall, int **wallVec,
             int **board, bool *valido, bool *especifico)
 {
@@ -181,6 +136,19 @@ void allocs(FILE *fp, boardRules *brp, wall **Wall, int **wallVec,
     return;
 }
 
+/**
+ * @brief  
+ * @note   
+ * @param  *brp: 
+ * @param  *board: 
+ * @param  *wallVec: 
+ * @param  *Wall: 
+ * @param  valido: 
+ * @param  especifico: 
+ * @param  first: 
+ * @param  *output: 
+ * @retval None
+ */
 void init(boardRules *brp, int *board, int *wallVec, wall *Wall,
           bool valido, bool especifico, bool first, char *output)
 {
@@ -199,8 +167,6 @@ void init(boardRules *brp, int *board, int *wallVec, wall *Wall,
         {
             Graph *myGraph = graphInit(n_rooms);
             fillGraph(myGraph, board, wallVec, brp->n_walls, brp->board.lines, brp->board.columns);
-
-            printBoard(board, brp->board.columns, brp->board.lines, convertTile(brp->key.Line, brp->key.Column, brp->board.columns));
 
             /* obtem a sala do tesouro */
             tesouro = -board[convertTile(brp->key.Line, brp->key.Column, brp->board.columns)] - 2;

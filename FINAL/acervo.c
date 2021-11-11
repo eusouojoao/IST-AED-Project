@@ -19,6 +19,7 @@ struct _acervo
  * @note   
  * @param  A: apontador para o acervo
  * @param  comparador: função de comparações
+ * @param  size: dimensão máxima do acervo
  * @retval None
  */
 void acervoInit(acervo **A, int (*comparador)(int, int), int size)

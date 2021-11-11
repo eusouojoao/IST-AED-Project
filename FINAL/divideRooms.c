@@ -75,6 +75,8 @@ void pushTiles(int *board, int tile, int n_Lines, int n_Col, int room)
  * @param  *board: tabuleiro (vetor unidimensional)
  * @param  n_Lines: número total de linhas do tabuleiro 
  * @param  n_Col: número total de colunas do tabuleiro
+ * @param  tesouroL: linha em que o "tesouro" se encontra
+ * @param  tesouroC: coluna em que o "tesouro" se encontra
  * @retval inteiro correspondente ao número de salas do tabuleiro
  */
 int divideRooms(int *board, int n_Lines, int n_Col, int tesouroL, int tesouroC)
@@ -98,7 +100,7 @@ int divideRooms(int *board, int n_Lines, int n_Col, int tesouroL, int tesouroC)
         if (board[0] == board[convertTile(tesouroL, tesouroC, n_Col)])
         {
             freePilha();
-            return 1;
+            return 1; //informa que só ha uma sala logo o tesouro está na mesma sala da posição de partida
         }
 
         for (; cursor < n_Lines * n_Col; cursor++) //avançar o cursor até à proxima sala vazia

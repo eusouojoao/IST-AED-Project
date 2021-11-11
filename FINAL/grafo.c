@@ -4,6 +4,7 @@
 
 typedef struct room Room;
 
+/* estrutura representativa de um vértice do grafo */
 struct room
 {
     int n;      //número da sala
@@ -20,12 +21,13 @@ struct graph
     Room **adj;
 };
 
+/* estrura de uma aresta do grafo */
 struct edge
 {
     int v;      //vertice 1 da aresta
     int w;      //vertice 2 da aresta
-    int p;      //posição de custo minimo no tabuleiro
-    int weight; //peso da aresta
+    int p;      //posição da parede (que tem o peso "weight")
+    int weight; //peso da parede a "partir"
 };
 
 /**
