@@ -1,0 +1,75 @@
+==155486== Memcheck, a memory error detector
+==155486== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==155486== Using Valgrind-3.17.0 and LibVEX; rerun with -h for copyright info
+==155486== Command: ./roap enunciado116.in
+==155486== Parent PID: 155310
+==155486== 
+==155486== 
+==155486== HEAP SUMMARY:
+==155486==     in use at exit: 200 bytes in 5 blocks
+==155486==   total heap usage: 502 allocs, 497 frees, 83,549 bytes allocated
+==155486== 
+==155486== 40 bytes in 1 blocks are definitely lost in loss record 1 of 5
+==155486==    at 0x48435FF: calloc (vg_replace_malloc.c:1117)
+==155486==    by 0x10D3CA: getGraph (readFinalInputFile.c:487)
+==155486==    by 0x10EEFF: experimental (readFinalInputFile.c:901)
+==155486==    by 0x10BDEC: readFinalInputFile (readFinalInputFile.c:101)
+==155486==    by 0x10BE2C: readFinalInputFile (readFinalInputFile.c:115)
+==155486==    by 0x10B4B9: main (main.c:19)
+==155486== 
+==155486== 40 bytes in 1 blocks are definitely lost in loss record 2 of 5
+==155486==    at 0x48435FF: calloc (vg_replace_malloc.c:1117)
+==155486==    by 0x10D3CA: getGraph (readFinalInputFile.c:487)
+==155486==    by 0x10EEFF: experimental (readFinalInputFile.c:901)
+==155486==    by 0x10BDEC: readFinalInputFile (readFinalInputFile.c:101)
+==155486==    by 0x10BE2C: readFinalInputFile (readFinalInputFile.c:115)
+==155486==    by 0x10BE2C: readFinalInputFile (readFinalInputFile.c:115)
+==155486==    by 0x10BE2C: readFinalInputFile (readFinalInputFile.c:115)
+==155486==    by 0x10B4B9: main (main.c:19)
+==155486== 
+==155486== 40 bytes in 1 blocks are definitely lost in loss record 3 of 5
+==155486==    at 0x48435FF: calloc (vg_replace_malloc.c:1117)
+==155486==    by 0x10D3CA: getGraph (readFinalInputFile.c:487)
+==155486==    by 0x10EEFF: experimental (readFinalInputFile.c:901)
+==155486==    by 0x10BDEC: readFinalInputFile (readFinalInputFile.c:101)
+==155486==    by 0x10BE2C: readFinalInputFile (readFinalInputFile.c:115)
+==155486==    by 0x10BE2C: readFinalInputFile (readFinalInputFile.c:115)
+==155486==    by 0x10BE2C: readFinalInputFile (readFinalInputFile.c:115)
+==155486==    by 0x10BE2C: readFinalInputFile (readFinalInputFile.c:115)
+==155486==    by 0x10B4B9: main (main.c:19)
+==155486== 
+==155486== 40 bytes in 1 blocks are definitely lost in loss record 4 of 5
+==155486==    at 0x48435FF: calloc (vg_replace_malloc.c:1117)
+==155486==    by 0x10D3CA: getGraph (readFinalInputFile.c:487)
+==155486==    by 0x10EEFF: experimental (readFinalInputFile.c:901)
+==155486==    by 0x10BDEC: readFinalInputFile (readFinalInputFile.c:101)
+==155486==    by 0x10BE2C: readFinalInputFile (readFinalInputFile.c:115)
+==155486==    by 0x10BE2C: readFinalInputFile (readFinalInputFile.c:115)
+==155486==    by 0x10BE2C: readFinalInputFile (readFinalInputFile.c:115)
+==155486==    by 0x10BE2C: readFinalInputFile (readFinalInputFile.c:115)
+==155486==    by 0x10BE2C: readFinalInputFile (readFinalInputFile.c:115)
+==155486==    by 0x10BE2C: readFinalInputFile (readFinalInputFile.c:115)
+==155486==    by 0x10B4B9: main (main.c:19)
+==155486== 
+==155486== 40 bytes in 1 blocks are definitely lost in loss record 5 of 5
+==155486==    at 0x48435FF: calloc (vg_replace_malloc.c:1117)
+==155486==    by 0x10D3CA: getGraph (readFinalInputFile.c:487)
+==155486==    by 0x10EEFF: experimental (readFinalInputFile.c:901)
+==155486==    by 0x10BDEC: readFinalInputFile (readFinalInputFile.c:101)
+==155486==    by 0x10BE2C: readFinalInputFile (readFinalInputFile.c:115)
+==155486==    by 0x10BE2C: readFinalInputFile (readFinalInputFile.c:115)
+==155486==    by 0x10BE2C: readFinalInputFile (readFinalInputFile.c:115)
+==155486==    by 0x10BE2C: readFinalInputFile (readFinalInputFile.c:115)
+==155486==    by 0x10BE2C: readFinalInputFile (readFinalInputFile.c:115)
+==155486==    by 0x10BE2C: readFinalInputFile (readFinalInputFile.c:115)
+==155486==    by 0x10BE2C: readFinalInputFile (readFinalInputFile.c:115)
+==155486==    by 0x10B4B9: main (main.c:19)
+==155486== 
+==155486== LEAK SUMMARY:
+==155486==    definitely lost: 200 bytes in 5 blocks
+==155486==    indirectly lost: 0 bytes in 0 blocks
+==155486==      possibly lost: 0 bytes in 0 blocks
+==155486==    still reachable: 0 bytes in 0 blocks
+==155486==         suppressed: 0 bytes in 0 blocks
+==155486== 
+==155486== ERROR SUMMARY: 5 errors from 5 contexts (suppressed: 0 from 0)

@@ -1,0 +1,26 @@
+==155326== Memcheck, a memory error detector
+==155326== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==155326== Using Valgrind-3.17.0 and LibVEX; rerun with -h for copyright info
+==155326== Command: ./roap enunciado102.in
+==155326== Parent PID: 155310
+==155326== 
+==155326== 
+==155326== HEAP SUMMARY:
+==155326==     in use at exit: 40 bytes in 1 blocks
+==155326==   total heap usage: 92 allocs, 91 frees, 11,853 bytes allocated
+==155326== 
+==155326== 40 bytes in 1 blocks are definitely lost in loss record 1 of 1
+==155326==    at 0x48435FF: calloc (vg_replace_malloc.c:1117)
+==155326==    by 0x10D3CA: getGraph (readFinalInputFile.c:487)
+==155326==    by 0x10EEFF: experimental (readFinalInputFile.c:901)
+==155326==    by 0x10BDEC: readFinalInputFile (readFinalInputFile.c:101)
+==155326==    by 0x10B4B9: main (main.c:19)
+==155326== 
+==155326== LEAK SUMMARY:
+==155326==    definitely lost: 40 bytes in 1 blocks
+==155326==    indirectly lost: 0 bytes in 0 blocks
+==155326==      possibly lost: 0 bytes in 0 blocks
+==155326==    still reachable: 0 bytes in 0 blocks
+==155326==         suppressed: 0 bytes in 0 blocks
+==155326== 
+==155326== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 0 from 0)

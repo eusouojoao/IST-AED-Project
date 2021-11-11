@@ -1,0 +1,26 @@
+==155701== Memcheck, a memory error detector
+==155701== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==155701== Using Valgrind-3.17.0 and LibVEX; rerun with -h for copyright info
+==155701== Command: ./roap voltas_a_bilhar06.in
+==155701== Parent PID: 155310
+==155701== 
+==155701== 
+==155701== HEAP SUMMARY:
+==155701==     in use at exit: 68 bytes in 1 blocks
+==155701==   total heap usage: 193 allocs, 192 frees, 13,999 bytes allocated
+==155701== 
+==155701== 68 bytes in 1 blocks are definitely lost in loss record 1 of 1
+==155701==    at 0x48435FF: calloc (vg_replace_malloc.c:1117)
+==155701==    by 0x10D3CA: getGraph (readFinalInputFile.c:487)
+==155701==    by 0x10EEFF: experimental (readFinalInputFile.c:901)
+==155701==    by 0x10BDEC: readFinalInputFile (readFinalInputFile.c:101)
+==155701==    by 0x10B4B9: main (main.c:19)
+==155701== 
+==155701== LEAK SUMMARY:
+==155701==    definitely lost: 68 bytes in 1 blocks
+==155701==    indirectly lost: 0 bytes in 0 blocks
+==155701==      possibly lost: 0 bytes in 0 blocks
+==155701==    still reachable: 0 bytes in 0 blocks
+==155701==         suppressed: 0 bytes in 0 blocks
+==155701== 
+==155701== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 0 from 0)

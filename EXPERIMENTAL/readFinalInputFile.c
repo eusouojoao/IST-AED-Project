@@ -69,8 +69,6 @@ void readFinalInputFile(FILE *fp, boardRules *brp, char *output)
     //---------------------------//
     static bool first = 1;
     bool valido = 1, especifico = 0;
-    wall *Wall = NULL;
-    int *board = NULL, *wallVec = NULL;
 
     //---------------------------//
     brp = (boardRules *)malloc(sizeof(boardRules));
@@ -113,13 +111,14 @@ void readFinalInputFile(FILE *fp, boardRules *brp, char *output)
     /* verifica se fp é válido, se sim, chama readInputFile() recursivamente */
     if (fp != NULL)
     {
+        printf("ola\n");
         readFinalInputFile(fp, brp, output);
     }
 
     return;
 }
 
-int getRooms(FILE *fp, bool *valido, bool *especifico, boardRules *brp)
+int getRooms(FILE *fp, bool *valido, boardRules *brp)
 {
     wall *Wall = (wall *)malloc(sizeof(wall));
     if (Wall == NULL)
@@ -140,10 +139,17 @@ int getRooms(FILE *fp, bool *valido, bool *especifico, boardRules *brp)
     }
 
     arr[0] = (int *)calloc(size, sizeof(int));
-    arr[1] = (int *)calloc(size, sizeof(int));
-    if (arr[0] == NULL || arr[1] == NULL)
+    if (arr[0] == NULL)
     {
         free(Wall);
+        free(arr);
+        exit(0);
+    }
+    arr[1] = (int *)calloc(size, sizeof(int));
+    if (arr[0] == NULL)
+    {
+        free(Wall);
+        free(arr[0]);
         free(arr);
         exit(0);
     }
@@ -186,9 +192,13 @@ int getRooms(FILE *fp, bool *valido, bool *especifico, boardRules *brp)
             {
                 /* descartar as paredes deste tabuleiro invalido */
                 while (n_walls > 0)
+                {
                     if (fscanf(fp, "%d %d %d", &((Wall)->l1), &((Wall)->c1), &((Wall)->weight)) != 3)
+                    {
                         exit(0);
-
+                    }
+                    n_walls--;
+                }
                 /* garbage collector */
                 free(Wall);
                 free(arr[0]);
@@ -390,7 +400,7 @@ int getRooms(FILE *fp, bool *valido, bool *especifico, boardRules *brp)
     return (-SALA - 2);
 }
 
-void pensar ( Graph *G, int *backup, int *old , int *new, int size, int linha )
+void pensar ( Graph *G, int *backup, int *old , int *new, int size, int linha, int salaDoTesouro )
 {
     for ( int i = 0, a = 0, b = 0 ; i < size ; i++ )
     {
@@ -401,9 +411,14 @@ void pensar ( Graph *G, int *backup, int *old , int *new, int size, int linha )
             {
                 if ( old[i] < -1 )
                 {
-                    if ( ( (a = backup[i]) < -1) && ( (b = new[i]) < -1 ) && (a != b) )
+                    if ( ((a = backup[i]) < -1) && ((b = old[i]) < -1) && (a != b) )
                     {
-                        insertInGraph (G, a, b, 0, 0);
+                        //insertInGraph (G, a, b, 0, 0);
+                        mergeRooms(G, -a -2, -b -2, salaDoTesouro);
+                    }
+                    else if ( ( (a = backup[i]) < -1) && ( (b = new[i]) < -1 ) && (a != b) )
+                    {
+                        //insertInGraph (G, a, b, 0, 0);
                     }
                 }
                 else if ( old[i] > 0 )
@@ -418,13 +433,20 @@ void pensar ( Graph *G, int *backup, int *old , int *new, int size, int linha )
             {
                 if ( old[i] < -1 )
                 {
-                    if ( ( (a = backup[i]) < -1) && ( (b = new[i]) < -1 ) && (a != b) )
+                    if ( ((a = backup[i]) < -1) && ((b = old[i]) < -1) && (a != b) )
                     {
-                        insertInGraph (G, a, b, 0, 0);
+                        //insertInGraph (G, a, b, 0, 0);
+                        mergeRooms(G, -a -2, -b -2, salaDoTesouro);
+                    }
+                    else if ( ( (a = backup[i]) < -1) && ( (b = new[i]) < -1 ) && (a != b) )
+                    {
+                        //insertInGraph (G, a, b, 0, 0);
+                        mergeRooms(G, -a -2, -b -2, salaDoTesouro);
                     }
                     else if ( ( (a = old[i-1]) < -1) && ( (b = old[i+1]) < -1 ) && (a != b) )
                     {
-                        insertInGraph (G, a, b, 0, 0);
+                        //insertInGraph (G, a, b, 0, 0);
+                        mergeRooms(G, -a -2, -b -2, salaDoTesouro);
                     }
                 }
                 else if ( old[i] > 0 )
@@ -445,13 +467,13 @@ void pensar ( Graph *G, int *backup, int *old , int *new, int size, int linha )
     return;
 }
 
-int getGraph(Graph *G, FILE *fp, bool *valido, bool *especifico, boardRules *brp)
+int getGraph(Graph *G, FILE *fp, bool *valido, boardRules *brp)
 {
     int size = brp->board.columns, n_walls = brp->n_walls;
     int linha = 1, SALA = -2, x = 0;
     int a = 0, b = 0, salaDoTesouro = -1;
     bool old = 0; /* abstração, não importa se é 0 ou 1, o novo é sempre o complementar do old */
-    bool salaNova = false, salaTesouroFound = false, ler = true;
+    bool salaNova = false, salaTesouroFound = false, ler = true, flag = true;
 
     //---------------------------//
     wall *Wall = (wall *)malloc(sizeof(wall));
@@ -500,6 +522,7 @@ int getGraph(Graph *G, FILE *fp, bool *valido, bool *especifico, boardRules *brp
     if ((Wall->l1 == 1 && Wall->c1 == 1) || (Wall->l1 == brp->key.Line && Wall->c1 == brp->key.Column))
         *valido = 0;
 
+
     if (Wall->l1 != linha)
     {
         for (int i = 0; i < size; i++)
@@ -507,9 +530,17 @@ int getGraph(Graph *G, FILE *fp, bool *valido, bool *especifico, boardRules *brp
             arr[old][i] = SALA;
         }
 
+        if ( !salaTesouroFound && ( brp->key.Line >= linha ) && (brp->key.Line <= Wall->l1) )
+        {
+            salaDoTesouro = -(arr[old][0]) - 2 ;
+            printf("tesouro = %d\n", salaDoTesouro);
+            salaTesouroFound = true;
+        }
+
         linha = Wall->l1;
         SALA--;
     }
+
     arr[!old][Wall->c1 - 1] = Wall->weight;
 
     while (n_walls > 0)
@@ -562,28 +593,27 @@ int getGraph(Graph *G, FILE *fp, bool *valido, bool *especifico, boardRules *brp
                 } 
             }
 
-            for (int i = 0; i < size; i++ )
-                backup[i] = arr[!old][i];
+            pensar( G, backup, arr[old], arr[!old], size, linha, salaDoTesouro );
 
             /* a nova linha passa a antiga */
             old = !old;
 
             for (int i = 0; i < size; i++)
             {
+                backup[i] = arr[!old][i];
                 arr[!old][i] = 0;
-                arr[old][i] = 0;
             }
 
             for( a = b = 0 ; (a < size) && (b < size) ; /* * */ )
             {
-                for ( a = b; a < size && arr[old][a] != 0 ; a++ );
-                for ( b = a; b < size && arr[old][b] == 0 ; b++ );
+                for ( a = b; a < size && arr[!old][a] != 0 ; a++ );
+                for ( b = a; b < size && arr[!old][b] == 0 ; b++ );
                 x = 0;
                 for (int i = a; i < b ; i++)
                 {
-                    if ( (backup[i]) < -1 )
+                    if ( (arr[old][i]) < -1 )
                     {
-                        x = backup[i];
+                        x = arr[old][i];
                         break; 
                     }
                 }
@@ -592,11 +622,11 @@ int getGraph(Graph *G, FILE *fp, bool *valido, bool *especifico, boardRules *brp
                     salaNova = false;
                     for (/* * */; a < b ; a++) 
                     {
-                        if ( (arr[old][a]) == 0 && x < -1 )
-                            arr[old][a] = x;
-                        else if ( (arr[old][a]) == 0 && x >= -1 )
+                        if ( (arr[!old][a]) == 0 && x < -1 )
+                            arr[!old][a] = x;
+                        else if ( (!arr[old][a]) == 0 && x >= -1 )
                         {
-                            arr[old][a] = SALA;
+                            arr[!old][a] = SALA;
                             salaNova = true;
                         }
                     }
@@ -604,18 +634,30 @@ int getGraph(Graph *G, FILE *fp, bool *valido, bool *especifico, boardRules *brp
                 } 
                 else  
                 {
-                    if( ((arr[old][a - 1]) == 0) && ((x = backup[a - 1]) < -1) )
-                        arr[old][a - 1] = x;
-                    else if( ((arr[old][a - 1]) == 0) && (x >= -1) )
-                        arr[old][a - 1] = SALA--;
+                    if( ((arr[!old][a - 1]) == 0) && ((x = arr[old][a - 1]) < -1) )
+                        arr[!old][a - 1] = x;
+                    else if( ((arr[!old][a - 1]) == 0) && (x >= -1) )
+                        arr[!old][a - 1] = SALA--;
                 }
+
             }
+
+                printf("l629; sala = %d\n", salaDoTesouro);
+
+            pensar( G, backup, arr[old], arr[!old], size, linha, salaDoTesouro );
+
+            for (int i = 0; i < size; i++ )
+            {
+                backup[i] = arr[old][i];
+                arr[old][i] = arr[!old][i];
+            }   
 
             if ( !salaTesouroFound && ( brp->key.Line >= linha ) && (brp->key.Line <= Wall->l1) )
             {
                 salaDoTesouro = -(arr[old][0]) - 2 ;
                 salaTesouroFound = true;
             }
+
 
             if (Wall->l1 != linha)
                 arr[!old][Wall->c1 - 1] = Wall->weight;
@@ -651,13 +693,15 @@ int getGraph(Graph *G, FILE *fp, bool *valido, bool *especifico, boardRules *brp
                     }
                     if (salaNova) SALA--;
                 } 
+
+                pensar( G, backup, arr[old], arr[!old], size, linha-1, salaDoTesouro );
             }
 
-            pensar( G, backup, arr[old], arr[!old], size, linha);
 
             if ( !salaTesouroFound && ( brp->key.Line == linha ) )
             {
                 salaDoTesouro = -(arr[!old][(brp->key.Column - 1)]) - 2 ;
+                printf("l668,sala = %d\n", salaDoTesouro);
                 salaTesouroFound = true;
             }
 
@@ -682,7 +726,6 @@ int getGraph(Graph *G, FILE *fp, bool *valido, bool *especifico, boardRules *brp
 
     //---------------------------//
     //---------------------------//
- 
     if (linha != brp->board.lines)
     {
         for( a = b = 0 ; (a < size) && (b < size) ; /* * */ )
@@ -719,30 +762,113 @@ int getGraph(Graph *G, FILE *fp, bool *valido, bool *especifico, boardRules *brp
 
         }
 
+        pensar( G, backup, arr[old], arr[!old], size, linha-1, salaDoTesouro );
+
         if (ler)
         {
-            for (int i = 0; i < size; i++ )
+            if (salaNova)
             {
-                backup[i] = arr[old][i];
-                arr[old][i] = arr[!old][i] = x;
+                for (int i = 0; i < size; i++ )
+                {
+                    backup[i] = arr[old][i];
+                    arr[old][i] = arr[!old][i] = SALA + 1;
+                }
             }
+            else
+                for (int i = 0; i < size; i++ )
+                {
+                    backup[i] = arr[old][i];
+                    arr[old][i] = arr[!old][i] = x;
+                }
         }
 
-        pensar( G, backup, arr[old], arr[!old], size, linha );
 
         if ( !salaTesouroFound && ( brp->key.Line >= linha ) && (brp->key.Column <= brp->board.columns) )
         {
             salaDoTesouro = -(arr[!old][(brp->key.Column - 1)]) - 2 ;
             salaTesouroFound = true;
         }
+    }
+    else
+    {
+        x = 0;
+        for (int i = 0; i < size; i++)
+            if (arr[!old][i] > 0)
+                x++;
 
-        /* garbage collector */
-        free(Wall);
-        free(arr[0]);
-        free(arr[1]);
-        free(arr);
+        if (x != 1)
+            flag = false;
+        else
+            flag = true;
 
-        return salaDoTesouro;
+        if(flag)
+        {
+            for( a = b = 0 ; (a < size) && (b < size) ; /* * */ )
+            {
+                for ( a = b; a < size && arr[!old][a] != 0 ; a++ );
+                for ( b = a; b < size && arr[!old][b] == 0 ; b++ );
+                x = 0;
+                for (int i = a ; i < b ; i++)
+                {
+                    if ( (arr[old][i]) < -1 )
+                    {
+                        x = arr[old][i];
+                        break;
+                    }
+                }
+                /* a unica forma de 'a' == 'b' é quando é uma sala de tamanho 1 com uma parede (I think) */
+                if ( a != b )
+                {
+                    salaNova = false;
+                    for (/* * */; a < b ; a++) 
+                    {
+                        if ( (arr[!old][a]) == 0 && x < -1 )
+                            arr[!old][a] = x;
+                        else if ( (arr[!old][a]) == 0 && x >= -1 )
+                        {
+                            arr[!old][a] = SALA; 
+                            salaNova = true;
+                        }
+                    }
+                    if (salaNova) SALA--;
+                } 
+            }
+
+            for (int i = 0; i < size; i++)
+                backup[i] = arr[old][i];
+
+            old = !old;
+
+            if ( !salaTesouroFound && ( brp->key.Line >= linha ) && (brp->key.Column <= brp->board.columns) )
+            {
+                salaDoTesouro = -(arr[!old][(brp->key.Column - 1)]) - 2 ;
+                salaTesouroFound = true;
+            }
+
+            for (int i = 0; i < size; i++)
+                arr[!old][i] = -1;
+        }
+        else
+        {
+            for(int i = 0; i < size; i++)
+                arr[!old][i] = -1;
+        }
+/*
+        printf("backup = ");
+        for(int i = 0; i < size; i++)
+            printf("%d ", backup[i]);
+        printf("\n");
+        printf("old = ");
+        for(int i = 0; i < size; i++)
+            printf("%d ", arr[old][i]);
+        printf("\n");
+        printf("new = ");
+        for(int i = 0; i < size; i++)
+            printf("%d ", arr[!old][i]);
+        printf("\n");
+*/
+        pensar( G, backup, arr[old], arr[!old], size, linha, salaDoTesouro );
+
     }
     //---------------------------//
 
@@ -761,7 +887,7 @@ void experimental(FILE *fp, boardRules *brp, bool *valido, bool *especifico, boo
     int salaDoTesouro = 0;
     //---------------------------//
     int offset = ftell(fp);                               /* já lemos as boardRules, marcar posição de leitura das paredes */
-    int maxRooms = getRooms(fp, valido, especifico, brp); /* obter numero majorado de salas (vértices) do grafo            */
+    int maxRooms = getRooms(fp, valido, brp); /* obter numero majorado de salas (vértices) do grafo            */
 
     /* marcar deslocamento do fp, após ter lido as paredes */
     offset -= ftell(fp);
@@ -776,9 +902,10 @@ void experimental(FILE *fp, boardRules *brp, bool *valido, bool *especifico, boo
     //---------------------------//
     /* -> criar o grafo e chamar o algoritmo (se necessário) <-*/
     G = graphInit(maxRooms);
-    salaDoTesouro = getGraph(G, fp, valido, especifico, brp);
+    salaDoTesouro = getGraph(G, fp, valido, brp);
     //printGraph(G);
     
+    //exit(1);
     /* descobrir caminho */
     if (salaDoTesouro >= 0)
         algoritmo(G);

@@ -200,6 +200,7 @@ void printRecursivo(FILE *fp, Graph *G, int p, int colunas)
 void writeSolution(char *output, Graph *G, int tesouroRoom, int colunas, bool first)
 {
     int i = tesouroRoom;        /* sala do tesouro                              */
+    printf("i = %d\n", tesouroRoom);
     int distance = dist[i];     /* distancia da sala do tesouro à sala inicial  */
     int cnt = 0;                /* salas percorridas até à sala inicial         */
     void *t = NULL;
@@ -227,9 +228,11 @@ void writeSolution(char *output, Graph *G, int tesouroRoom, int colunas, bool fi
         fprintf(fp, "%d\n", distance);
 
         for (cnt = 0; parent[i] != -1; i = parent[i])
-            for ( assignLista( G, &t, i ); (t != NULL) && (getSala(t) != parent[i]) ; ListaNext(&t) )
-                if ( getDist(t) != 0 )
+            for ( assignLista( G, &t, i ); (t != NULL) ; ListaNext(&t) )
+                if ( (getSala(t) == parent[i]) && (getDist(t) != 0) )
                     cnt++;
+
+        printf("cnt = %d\n", cnt);
 
         if (cnt == 0)
         {
