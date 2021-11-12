@@ -1,0 +1,14 @@
+==264560== Memcheck, a memory error detector
+==264560== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==264560== Using Valgrind-3.17.0 and LibVEX; rerun with -h for copyright info
+==264560== Command: ./roap enunciado111.in
+==264560== Parent PID: 264446
+==264560== 
+==264560== 
+==264560== HEAP SUMMARY:
+==264560==     in use at exit: 0 bytes in 0 blocks
+==264560==   total heap usage: 13 allocs, 13 frees, 9,341 bytes allocated
+==264560== 
+==264560== All heap blocks were freed -- no leaks are possible
+==264560== 
+==264560== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

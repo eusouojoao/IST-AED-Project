@@ -63,7 +63,7 @@ void readFinalInputFile(FILE *fp, boardRules *brp, char *output)
     static bool first = 1;
     bool valido = 1, especifico = 0, expFlag = 0;
     int *board = NULL, *wallVec = NULL;
-    float percentagem = 0.0;
+    //float percentagem = 0.0;
 
     //---------------------------//
     brp = (boardRules *)malloc(sizeof(boardRules));
@@ -90,9 +90,9 @@ void readFinalInputFile(FILE *fp, boardRules *brp, char *output)
     especifico = casosEspecificos(brp);
 
     //---------------------------//
-    percentagem = ( ((float)getWalls(brp)) / (float)(getBoardColumns(brp) * getBoardLines(brp)) ) * 100;
+    //percentagem = ( ((float)getWalls(brp)) / (float)(getBoardColumns(brp) * getBoardLines(brp)) ) * 100;
     //percentagem = 100.0;
-    if ( (percentagem >= 2.5) || (getWalls(brp) > 300000) )
+    if ( (getWalls(brp) > 100000) )
     {
         /* alocação da memória necessária */
         allocs(fp, brp, &wallVec, &board, &valido, &especifico);

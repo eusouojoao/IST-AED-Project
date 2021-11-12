@@ -58,16 +58,15 @@ void allocs(FILE *fp, boardRules *brp, int **wallVec,
 
         //---------------------------//
         /* ler paredes do ficheiro de input */
-        counter = getWalls(brp);
-        for (/* stares into the void */; counter > 0; counter--)
+        for (counter = getWalls(brp), j = 0; counter > 0 && getWalls(brp) ; counter--)
         {
 
-            if (fscanf(fp, "%d %d %d", &((Wall)->l1), &((Wall)->c1), &((Wall)->weight)) != 3)
+            if (fscanf(fp, "%d %d %d", &(Wall->l1), &(Wall->c1), &(Wall->weight)) != 3)
                 exit(0);
 
             /* preencher o tabuleiro com as paredes */
-            (*board)[convertTile((Wall)->l1, (Wall)->c1, getBoardColumns(brp))] = (Wall)->weight;
-            (*wallVec)[j] = convertTile((Wall)->l1, (Wall)->c1, getBoardColumns(brp));
+            (*board)[convertTile(Wall->l1, Wall->c1, getBoardColumns(brp))] = Wall->weight;
+            (*wallVec)[j] = convertTile(Wall->l1, Wall->c1, getBoardColumns(brp));
             j++;
         }
     }
@@ -82,9 +81,9 @@ void allocs(FILE *fp, boardRules *brp, int **wallVec,
         {
             exit(0);
         }
-        for (int aux = getWalls(brp); aux > 0; aux--)
+        for (int aux = getWalls(brp); aux > 0 ; aux--)
         {
-            if (fscanf(fp, "%d %d %d", &((Wall)->l1), &((Wall)->c1), &((Wall)->weight)) != 3)
+            if (fscanf(fp, "%d %d %d", &(Wall->l1), &(Wall->c1), &(Wall->weight)) != 3)
             {
                 exit(0);
             }

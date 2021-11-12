@@ -1,0 +1,14 @@
+==264832== Memcheck, a memory error detector
+==264832== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==264832== Using Valgrind-3.17.0 and LibVEX; rerun with -h for copyright info
+==264832== Command: ./roap small19.in
+==264832== Parent PID: 264446
+==264832== 
+==264832== 
+==264832== HEAP SUMMARY:
+==264832==     in use at exit: 0 bytes in 0 blocks
+==264832==   total heap usage: 22,235 allocs, 22,235 frees, 399,023 bytes allocated
+==264832== 
+==264832== All heap blocks were freed -- no leaks are possible
+==264832== 
+==264832== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
