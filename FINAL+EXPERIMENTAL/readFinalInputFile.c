@@ -8,6 +8,7 @@
 #include "divideRooms.h"
 #include "assembleGraph.h"
 #include "regular.h"
+#include "experimental.h"
 
 #define FINAL
 #include "writeOutputFile.h"
@@ -60,8 +61,9 @@ void readFinalInputFile(FILE *fp, boardRules *brp, char *output)
 {
     //---------------------------//
     static bool first = 1;
-    bool valido = 1, especifico = 0;
+    bool valido = 1, especifico = 0, expFlag = 0;
     int *board = NULL, *wallVec = NULL;
+    float percentagem = 0.0;
 
     //---------------------------//
     brp = (boardRules *)malloc(sizeof(boardRules));
@@ -88,21 +90,33 @@ void readFinalInputFile(FILE *fp, boardRules *brp, char *output)
     especifico = casosEspecificos(brp);
 
     //---------------------------//
-    /* alocação da memória necessária */
-    allocs(fp, brp, &wallVec, &board, &valido, &especifico);
-
-    //---------------------------//
-    if (valido && !especifico && board[convertTile(brp->key.Line, brp->key.Column, brp->board.columns)] != 0)
+    percentagem = ( ((float)getWalls(brp)) / (float)(getBoardColumns(brp) * getBoardLines(brp)) ) * 100;
+    //percentagem = 100.0;
+    if ( (percentagem >= 2.5) && (getWalls(brp) > 150000) )
     {
-        /* garbage collector */
-        free(wallVec);
-        free(board);
-        valido = 0;
+        /* alocação da memória necessária */
+        allocs(fp, brp, &wallVec, &board, &valido, &especifico);
+
+        //---------------------------//
+        if (valido && !especifico && board[convertTile(brp->key.Line, brp->key.Column, brp->board.columns)] != 0)
+        {
+            /* garbage collector */
+            free(wallVec);
+            free(board);
+            valido = 0;
+        }
+
+        //---------------------------//
+        /* inicializa o jogo */
+        expFlag = 0;
+        init(brp, board, wallVec, valido, especifico, first, output, expFlag);
+    }
+    else
+    {
+        expFlag = 1;
+        experimental(fp, brp, &valido, &especifico, first, output, expFlag);
     }
 
-    //---------------------------//
-    /* inicializa o jogo */
-    init(brp, board, wallVec, valido, especifico, first, output);
     first = 0; /* já não é o primeiro */
 
     //---------------------------//

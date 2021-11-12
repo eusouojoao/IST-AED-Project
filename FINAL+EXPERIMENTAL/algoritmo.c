@@ -8,8 +8,8 @@
 #include "algoritmo.h"
 
 /* vetores distancia e parentes alocados globalmente porque são necessários 
- * noutros ficheiros (para simplificar return values e passagens a funções)
- * */
+  noutros ficheiros (para simplificar return values e passagens a funções)
+  */
 static int *dist;
 static int *parent;
 
@@ -41,7 +41,7 @@ void algoritmo(Graph *G)
     int v, w, Dt;
     void *t;
     int Vmax = getVertices(G);
-    acervo *A = NULL; 
+    acervo *A = NULL;
 
     //---------------------------//
     dist = (int *)malloc(Vmax * sizeof(int));
@@ -72,8 +72,8 @@ void algoritmo(Graph *G)
     while (!acervoEmpty(A))
     {
         if (dist[(v = acervoGet(A))] != INT_MAX)
-            for ( assignLista(G, &t, v) ; t != NULL; ListaNext(&t) )
-                if ( dist[(w = getSala(t))] > (Dt = (dist[v] + getDist(t))) )
+            for (assignLista(G, &t, v); t != NULL; listaNext(&t))
+                if (dist[(w = getSala(t))] > (Dt = (dist[v] + getDist(t))))
                 {
                     dist[w] = Dt;
                     acervoAdd(A, w);
@@ -90,25 +90,25 @@ void algoritmo(Graph *G)
  * @brief Retorna a linha da peça que foi transformada numa coordenada unidimensional 
  * @note   
  * @param  coord: coordenada unidimensional
- * @param  colunas: número de colunas do tabuleiro
+ * @param  n_Col: número de colunas do tabuleiro
  * @retval linha (int)
  */
-int Linha(int coord, int colunas)
+int Linha(int coord, int n_Col)
 {
-    return ((int)ceil((float)(coord + 1) / (float)colunas));
+    return ((int)ceil((float)(coord + 1) / (float)n_Col));
 }
 
 /**
  * @brief  Retorna a coluna da peça que foi transformada numa coordenada unidimensional
  * @note   
  * @param  coord: coordenada unidimensional
- * @param  Linha: linha correspondente da peça
- * @param  colunas: número de colunas do tabuleiro
+ * @param  n_Lines: linha correspondente da peça
+ * @param  n_Col: número de colunas do tabuleiro
  * @retval coluna (int)
  */
-int Coluna(int coord, int Linha, int colunas)
+int Coluna(int coord, int n_Lines, int n_Col)
 {
-    return (coord + 1 - ((Linha - 1) * colunas));
+    return (coord + 1 - ((n_Lines - 1) * n_Col));
 }
 
 /**
@@ -124,16 +124,17 @@ void getParede(void *list, int p, int *wall, int *weight)
 {
     void *aux = list;
     while (aux != NULL && getSala(aux) != p)
-        ListaNext(&aux);
+        listaNext(&aux);
 
     if (aux == NULL)
         exit(0);
 
-    *wall = getWall( aux );
-    *weight = getDist( aux );
+    *wall = getWall(aux);
+    *weight = getDist(aux);
 
     return;
 }
+
 
 /**
  * @brief  Imprime da sala inicial à sala do tesouro
@@ -197,7 +198,7 @@ void printRecursivo(FILE *fp, Graph *G, int p, int colunas)
  *                  output
  * @retval None
  */
-void writeSolution(char *output, Graph *G, int tesouroRoom, int colunas, bool first)
+void writeSolution(char *output, Graph *G, int tesouroRoom, int colunas, bool first, bool experimental)
 {
     int i = tesouroRoom;        /* sala do tesouro                              */
     int distance = dist[i];     /* distancia da sala do tesouro à sala inicial  */
@@ -226,10 +227,18 @@ void writeSolution(char *output, Graph *G, int tesouroRoom, int colunas, bool fi
     {
         fprintf(fp, "%d\n", distance);
 
-        for (cnt = 0; parent[i] != -1; i = parent[i])
-            for ( assignLista( G, &t, i ); (t != NULL) ; ListaNext(&t) )
-                if ( (getSala(t) == parent[i]) && (getDist(t) != 0) )
-                    cnt++;
+        if( experimental )
+        {
+            for (cnt = 0; parent[i] != -1; i = parent[i])
+                for ( assignLista( G, &t, i ); (t != NULL) ; listaNext(&t) )
+                    if ( (getSala(t) == parent[i]) && (getDist(t) != 0) )
+                        cnt++;
+        }
+        else
+        {
+            for (cnt = 0; parent[i] != -1; i = parent[i], cnt++)
+                ;
+        }
 
         if (cnt == 0)
         {
