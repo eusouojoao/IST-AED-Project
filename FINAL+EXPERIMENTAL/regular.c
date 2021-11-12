@@ -58,7 +58,7 @@ void allocs(FILE *fp, boardRules *brp, int **wallVec,
 
         //---------------------------//
         /* ler paredes do ficheiro de input */
-        for (counter = getWalls(brp), j = 0; counter > 0 && getWalls(brp) ; counter--)
+        for (counter = getWalls(brp), j = 0; counter > 0 ; counter--)
         {
 
             if (fscanf(fp, "%d %d %d", &(Wall->l1), &(Wall->c1), &(Wall->weight)) != 3)
@@ -95,6 +95,15 @@ void allocs(FILE *fp, boardRules *brp, int **wallVec,
         }
     }
 
+    if ((*valido) && !(*especifico) && 
+    ( (*board)[convertTile(getKeyLine(brp), getKeyColumn(brp), getBoardColumns(brp))] != 0 
+      || (*board)[convertTile(1, 1, getBoardColumns(brp))] != 0 ) )
+    {
+        /* garbage collector */
+        free(*wallVec);
+        free(*board);
+        (*valido) = 0;
+    }
     //---------------------------//
     if( Wall != NULL)
         free(Wall);
@@ -150,7 +159,7 @@ void init(boardRules *brp, int *board, int *wallVec, bool valido, bool especific
     }
     else
     {
-        if (especifico)
+        if (especifico && valido)
             writeZero(output, first);
         else
             writeInvalid(output, first);

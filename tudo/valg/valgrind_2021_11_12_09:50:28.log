@@ -1,0 +1,14 @@
+==34603== Memcheck, a memory error detector
+==34603== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==34603== Using Valgrind-3.17.0 and LibVEX; rerun with -h for copyright info
+==34603== Command: ./roap small23.in
+==34603== Parent PID: 34055
+==34603== 
+==34603== 
+==34603== HEAP SUMMARY:
+==34603==     in use at exit: 0 bytes in 0 blocks
+==34603==   total heap usage: 22,235 allocs, 22,235 frees, 399,023 bytes allocated
+==34603== 
+==34603== All heap blocks were freed -- no leaks are possible
+==34603== 
+==34603== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

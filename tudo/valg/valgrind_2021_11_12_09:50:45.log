@@ -1,0 +1,14 @@
+==34713== Memcheck, a memory error detector
+==34713== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==34713== Using Valgrind-3.17.0 and LibVEX; rerun with -h for copyright info
+==34713== Command: ./roap voltas_a_bilhar07.in
+==34713== Parent PID: 34055
+==34713== 
+==34713== 
+==34713== HEAP SUMMARY:
+==34713==     in use at exit: 0 bytes in 0 blocks
+==34713==   total heap usage: 206 allocs, 206 frees, 13,199 bytes allocated
+==34713== 
+==34713== All heap blocks were freed -- no leaks are possible
+==34713== 
+==34713== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

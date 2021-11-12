@@ -210,7 +210,7 @@ int getRooms(FILE *fp, bool *valido, boardRules *brp)
 
             n_walls--;
 
-            if ((Wall->l1 == 1 && Wall->c1 == 1) || (Wall->l1 == getKeyLine(brp) && Wall->c1 == getKeyColumn(brp)))
+            if ( !valido || (Wall->l1 == 1 && Wall->c1 == 1) || (Wall->l1 == getKeyLine(brp) && Wall->c1 == getKeyColumn(brp)))
             {
                 /* descartar as paredes deste tabuleiro invalido */
                 while (n_walls > 0)
@@ -928,24 +928,22 @@ void experimental(FILE *fp, boardRules *brp, bool *valido, bool *especifico, boo
         {
             exit(0);
         }
-    //---------------------------//
-    /* -> criar o grafo e chamar o algoritmo (se necessário) <-*/
-    G = graphInit(maxRooms);
-    salaDoTesouro = getGraph(G, fp, valido, brp);
-    
-    /* descobrir caminho */
-    if (salaDoTesouro >= 0)
-        algoritmo(G);
+        //---------------------------//
+        /* -> criar o grafo e chamar o algoritmo (se necessário) <-*/
+        G = graphInit(maxRooms);
+        salaDoTesouro = getGraph(G, fp, valido, brp);
+        
+        /* descobrir caminho */
+        if (salaDoTesouro >= 0)
+            algoritmo(G);
+
+        //---------------------------//
+        /* escreve para o ficheiro de saída */
+        experimentalPrint(output, G, salaDoTesouro, valido, especifico, first, getBoardColumns(brp), expFlag);
+        graphDestroy(G);
     }
     //---------------------------//
-    //---------------------------//
 
-    /* escreve para o ficheiro de saída */
-    experimentalPrint(output, G, salaDoTesouro, valido, especifico, first, getBoardColumns(brp), expFlag);
-    if ( (*valido) && !(*especifico) )
-        graphDestroy(G);
-
-    //---------------------------//
     return;
 }
 
@@ -969,7 +967,7 @@ void experimentalPrint(char *output, Graph *G, int salaDoTesouro, bool *valido, 
     }
     else
     {
-        if (*especifico)
+        if (*especifico && *valido)
             writeZero(output, first);
         else
             writeInvalid(output, first);

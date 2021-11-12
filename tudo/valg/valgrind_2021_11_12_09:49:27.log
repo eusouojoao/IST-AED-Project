@@ -1,0 +1,14 @@
+==34102== Memcheck, a memory error detector
+==34102== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==34102== Using Valgrind-3.17.0 and LibVEX; rerun with -h for copyright info
+==34102== Command: ./roap enunciado103.in
+==34102== Parent PID: 34055
+==34102== 
+==34102== 
+==34102== HEAP SUMMARY:
+==34102==     in use at exit: 0 bytes in 0 blocks
+==34102==   total heap usage: 13 allocs, 13 frees, 9,341 bytes allocated
+==34102== 
+==34102== All heap blocks were freed -- no leaks are possible
+==34102== 
+==34102== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
