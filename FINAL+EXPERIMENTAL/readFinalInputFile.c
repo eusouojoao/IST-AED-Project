@@ -92,7 +92,7 @@ void readFinalInputFile(FILE *fp, boardRules *brp, char *output)
     //---------------------------//
     percentagem = ( ((float)getWalls(brp)) / (float)(getBoardColumns(brp) * getBoardLines(brp)) ) * 100;
     //percentagem = 100.0;
-    if ( (percentagem >= 2.5) && (getWalls(brp) > 150000) )
+    if ( (percentagem >= 2.5) || (getWalls(brp) > 300000) )
     {
         /* alocação da memória necessária */
         allocs(fp, brp, &wallVec, &board, &valido, &especifico);
