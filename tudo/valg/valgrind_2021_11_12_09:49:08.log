@@ -1,6 +1,0 @@
-==33808== Memcheck, a memory error detector
-==33808== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
-==33808== Using Valgrind-3.17.0 and LibVEX; rerun with -h for copyright info
-==33808== Command: ./roap enunciado115.in
-==33808== Parent PID: 33492
-==33808== 
